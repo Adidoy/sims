@@ -257,12 +257,12 @@ class LedgerCard extends Model implements Auditable, UserResolver
 			$receipt->invoice = isset($this->invoice) ? $this->invoice : null;
 
 			$receipt->save();
-
+			
 			$supply_info = $receipt->supplies()->find($supply->id);
 
 			if(isset($supply_info) && count($supply_info) > 0)
 			{
-
+				
 				// $supply_info->pivot->received_quantity = (isset($supply_info->pivot->received_quantity) ? $supply_info->pivot->received_quantity : 0 ) + $this->received_quantity;
 
 				// $supply_info->pivot->remaining_quantity = (isset($supply_info->pivot->remaining_quantity) ? $supply_info->pivot->remaining_quantity : 0 ) + $this->received_quantity;

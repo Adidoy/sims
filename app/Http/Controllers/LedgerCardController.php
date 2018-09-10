@@ -270,7 +270,7 @@ class LedgerCardController extends Controller {
 	 */
 	public function printAllLedgerCard()
 	{
-		$orientation = 'Portrait'
+		$orientation = 'Portrait';
 		$supplies = App\Supply::all();
 		$data = [
 			'supplies' => $supplies
@@ -291,9 +291,8 @@ class LedgerCardController extends Controller {
 	 */
 	public function printSummaryLedgerCard($stocknumber)
 	{
-		$orientation = 'Portrait'
-		$ledgercards = App\MonthlyLedgerCardView::findByStockNumber($stocknumber)
-								->get();
+		$orientation = 'Portrait';
+		$ledgercards = App\MonthlyLedgerCardView::findByStockNumber($stocknumber)->get();
 		$supply = App\Supply::findByStockNumber($stocknumber);
 		$data = ['supply' => $supply, 'ledgercards' => $ledgercards ];
 
@@ -312,7 +311,7 @@ class LedgerCardController extends Controller {
 	 */
 	public function printLedgerCard($stocknumber)
 	{
-		$orientation = 'Portrait'
+		$orientation = 'Portrait';
 		$supply = App\Supply::find($stocknumber);
 		$ledgercards = App\LedgerCard::findBySupplyId($supply->id)->get();
 

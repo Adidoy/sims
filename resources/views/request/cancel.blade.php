@@ -16,7 +16,7 @@
 <!-- Default box -->
   <div class="box" style="padding:10px;">
     <div class="box-body">
-    {{ Form::open(['method'=>'put','route'=>array('request.cancel',$request->id),'class'=>'form-horizontal','id'=>'requestForm']) }}
+    {{ Form::open(['method'=>'post','route'=>array('request.cancel',$request->id),'class'=>'form-horizontal','id'=>'requestForm']) }}
       
       @include('errors.alert')
 
@@ -32,7 +32,7 @@
         <tbody>
           @foreach($request->supplies as $supply)
           <tr>
-            <td>{{ $supply->stocknumber }}<input type="hidden" name="stocknumber[]" value="{{ $supply->stocknumber }}"</td>
+            <td>{{ $supply->stocknumber }}<input type="hidden" name="stocknumber[]" value="{{ $supply->stocknumber }}"> </td>
             <td>{{ $supply->details }}</td>
             <td>{{ $supply->pivot->quantity_requested }}</td>
           </tr>
@@ -55,7 +55,7 @@
           <button type="button" id="back" class="btn btn-md btn-default">Go Back</button>
         </div>
       </div>
-      {{ Form::close() }}
+      {{ Form::close() }} 
     </div><!-- /.box-body -->
   </div><!-- /.box -->
 @endsection
