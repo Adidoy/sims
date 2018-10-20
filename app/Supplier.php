@@ -21,6 +21,10 @@ class Supplier extends Model
 		'Name' => 'required'
 	);
 
+	public function scopeFindBySupplierName($query, $value)	{
+		return $query->where('name', '=', $value);
+	}
+
 	public function purchaseorder()
 	{
 		return $this->hasMany('App\PurchaseOrder','supplier_id','id');

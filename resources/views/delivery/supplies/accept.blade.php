@@ -2,7 +2,7 @@
 
 @section('header')
 	<section class="content-header">
-		<legend><h3 class="text-muted">Accept</h3></legend>
+		<legend><h3 class="text-muted">Item Delivery</h3></legend>
 		<ul class="breadcrumb">
 			<li><a href="{{ url('inventory/supply') }}">Supply Inventory</a></li>
 			<li class="active">Item Delivery</li>
@@ -17,7 +17,7 @@
     <div class="box-body">
 		{{ Form::open(['method'=>'post','route'=>array('supply.stockcard.accept'),'class'=>'form-horizontal','id'=>'stockCardForm']) }}
 		@include('errors.alert')
-		@include('inventory.supply.form')
+		@include('delivery.supplies.form')
 		{{ Form::close() }}
     </div><!-- /.box-body -->
   </div><!-- /.box -->

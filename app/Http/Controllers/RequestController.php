@@ -618,9 +618,9 @@ class RequestController extends Controller
     if($request->ajax()) {
       $id = $this->sanitizeString($id);
       $requests = App\Request::find($id);
-      if(count($requests) <= 0 && Auth::user()->access == 1 || Auth::user()->access == 6) {
+      if((count($requests) <= 0) && (Auth::user()->access == 1 || Auth::user()->access == 6)) {
         return json_encode('error');
-      }
+      } 
 
       $requests->status = "request expired";
       $requests->cancelled_by = Auth::user()->id;

@@ -132,9 +132,15 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('inventory/physical', 'PhysicalInventoryController@index');
 		Route::get('inventory/physical/print', 'PhysicalInventoryController@print');
 
-		Route::get('inventory/supply/stockcard/accept',[
+		/* Route::get('inventory/supply/stockcard/accept',[
 			'as' => 'supply.stockcard.accept.form',
 			'uses' => 'StockCardController@create'
+		]); */
+
+		//08 October 2018
+		Route::get('delivery/supply/',[
+			'as' => 'supply.stockcard.accept.form',
+			'uses' => 'DeliveryController@create'
 		]);
 
 		Route::get('inventory/supply/stockcard/release',[
@@ -144,7 +150,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::post('inventory/supply/stockcard/create',[
 			'as' => 'supply.stockcard.accept',
-			'uses' => 'StockCardController@store'
+			'uses' => 'DeliveryController@store'
 		]);
 
 		Route::post('inventory/supply/stockcard/release',[
