@@ -19,6 +19,21 @@
 
 <!-- references and receipts -->
 <div class="row">
+	@if ($errors->any())
+		<div class="alert alert-danger">
+			<ul>
+				@foreach ($errors->all() as $error)
+					<li>{{ $error }}</li>
+				@endforeach
+			</ul>
+		</div>
+	@endif
+
+	@if (\Session::get('success'))
+		<div class="alert alert-success">
+			<p>{{ \Session::get('success') }}</p>
+		</div>
+	@endif
 	<!-- purchase order form -->
 	<div class="col-sm-4" id="reference-form">
 		<div class="panel panel-default">
@@ -365,6 +380,10 @@
 		quantity = $('#quantity').val()
 		details = $('#supply-item').val()
 		unitcost = $('#unitcost').val()
+		if ((quantity <= 0) || (unitcost <= 0.00)) {
+			swal("Error", "Negative value or Zero is not allowed", "error");
+			return;
+		}
 		if(addForm(stocknumber,details,quantity,unitcost))
 		{
 			$('#stocknumber').val("")
@@ -396,11 +415,11 @@ function addForm(_stocknumber = "",_info ="" ,_quantity = "",  _unitcost = "" )
 				<td><input type="text" class="stocknumber-list form-control text-center" value="` + _stocknumber + `" name="stocknumber[` + _stocknumber + `]" style="border:none;" /></td>
 				<td><input type="hidden" class="form-control text-center" value="` + _info + `" name="info[` + _stocknumber + `]" style="border:none;" />` + _info + `</td>
 				<td>
-					<input type="number" class="form-control text-center" value="` + _quantity + `" name="quantity[` + _stocknumber + `]" style="border:none;"  />
+					<input type="number" min=1 pattern="[0-9]*" class="form-control text-center" value="` + _quantity + `" name="quantity[` + _stocknumber + `]" style="border:none;"  />
 				</td>
 
 				<td>
-					<input type="number" step=0.01 class="form-control text-center" value="` + _unitcost + `" name="unitcost[` + _stocknumber + `]" style="border:none;"  />
+					<input type="number" step=0.01 min=1.00 class="form-control text-center" value="` + _unitcost + `" name="unitcost[` + _stocknumber + `]" style="border:none;"  />
 				</td>
 				
 				<td>

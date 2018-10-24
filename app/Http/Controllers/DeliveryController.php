@@ -58,6 +58,17 @@ class DeliveryController extends Controller {
 		$stocknumbers = $request->get("stocknumber");
 		$quantity = $request->get("quantity");
 		$unitcost = $request->get("unitcost");
+		$this->validate($request, [
+			'po_no' => 'required',
+			'invoice_no' => 'required',
+			'delrcpt_no' => 'unique:deliveries_header',
+		]) ;
+
+		App\DeliveryHeader::create([
+			'po_no' => $po_no,
+			'invoice_no' => $invoice_no,
+			'delrcpt_no' => $dr_no,
+		]);
 		DB::beginTransaction();
 			$supplier = App\Supplier::findBySupplierName($supplier)->first();
 			$delivery_header = new App\DeliveryHeader;
@@ -70,12 +81,13 @@ class DeliveryController extends Controller {
     		$delivery_header->delrcpt_no = $dr_no;
 			$delivery_header->delivery_date = Carbon\Carbon::parse($dr_date);
 			$delivery_header->received_by = $username;
-			$delivery_header->save();	
+			$delivery_header->save();
  			$new_delivery = App\DeliveryHeader::orderBy('created_at', 'desc') -> first();
 				foreach($stocknumbers as $stocknumber) {
+					$supply = App\Supply::StockNumber($stocknumber)->first();
 					$deliveries_detail = new App\DeliveriesDetail;
 					$deliveries_detail->delivery_id = $new_delivery->id;
-					$deliveries_detail->stocknumber = $stocknumber;
+					$deliveries_detail->supply_id = $supply->id;
 					$deliveries_detail->quantity_delivered = $quantity["$stocknumber"];
 					$deliveries_detail->unit_cost = $unitcost["$stocknumber"];
 					$deliveries_detail->save();

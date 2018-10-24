@@ -15,7 +15,8 @@ class CreateDeliveryDetailsTable extends Migration
         Schema::create('deliveries_details', function (Blueprint $table) {
             $table->integer('delivery_id')->unsigned();
             $table->foreign('delivery_id')->references('id')->on('deliveries_header');
-            $table->string('stocknumber');
+            $table->integer('supply_id')->unsigned();
+            $table->foreign('supply_id')->references('id')->on('supplies');
             $table->integer('quantity_delivered');
             $table->decimal('unit_cost',8,2);
             $table->softDeletes();
