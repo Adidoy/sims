@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Auth;
 use Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 class DeliveryHeader extends Model
 {
@@ -27,6 +27,23 @@ class DeliveryHeader extends Model
         'date_invoice', 'date_delivered', 'date_purchaseorder', 'date_processed', 'supplier_name'
     ];
 
+    public function rules() {
+        return [
+			'Purchase Order Number' => 'required',
+			'Invoice Number' => 'required',
+			'Delivery Receipt Number' => 'bail|required|unique:deliveries_header,delrcpt_no',
+        ];
+    }
+
+    public function messages() {
+        return [
+			'Purchase Order Number.required' => 'APR/Purchase Order Number is required.',
+			'Invoice Number.required' => 'Invoice Number is required.',
+            'Delivery Receipt Number.required' => 'Delivery Reciept Number is required.',
+            'Delivery Receipt Number.unique' => 'Delivery Reciept Number already exists.',
+        ];
+    }
+
     public function getDateInvoiceAttribute() {
         if($this->invoice_date == null || $this->invoice_date == "") return "None";
         return Carbon\Carbon::parse($this->invoice_date)->toFormattedDateString();
@@ -41,7 +58,7 @@ class DeliveryHeader extends Model
     }
 
     public function getDateProcessedAttribute($value) {
-        return Carbon\Carbon::parse($this->created_at)->format('M d, Y H:i A');
+        return Carbon\Carbon::parse($this->created_at)->format('d F Y   h:i A');
     }
 
     public function getSupplierNameAttribute() {
@@ -57,7 +74,7 @@ class DeliveryHeader extends Model
     }
 
     public function supplies() {
-        return $this->belongsToMany('App\Supply', 'deliveries_details',  'delivery_id', 'supply_id')
+        return $this->belongsToMany('App\Supply', 'deliveries_supplies',  'delivery_id', 'supply_id')
             ->withPivot('quantity_delivered', 'unit_cost');
     }
 

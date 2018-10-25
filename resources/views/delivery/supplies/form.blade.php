@@ -374,62 +374,59 @@
 		}
 
 
-	$('#add').on('click',function(){
-		row = parseInt($('#supplyTable > tbody > tr:last').text())
-		stocknumber = $('#stocknumber').val()
-		quantity = $('#quantity').val()
-		details = $('#supply-item').val()
-		unitcost = $('#unitcost').val()
-		if ((quantity <= 0) || (unitcost <= 0.00)) {
-			swal("Error", "Negative value or Zero is not allowed", "error");
-			return;
+		$('#add').on('click',function(){
+			row = parseInt($('#supplyTable > tbody > tr:last').text())
+			stocknumber = $('#stocknumber').val()
+			quantity = $('#quantity').val()
+			details = $('#supply-item').val()
+			unitcost = $('#unitcost').val()
+			if ((quantity < 1) || (unitcost < 1.00)) {
+				swal("Error", "Negative value or Zero is not allowed", "error");
+				return;
+			}
+
+			if(addForm(stocknumber,details,quantity,unitcost)) {
+				$('#stocknumber').val("")
+				$('#quantity').val("")
+				$('#unitcost').val("")
+				$('#stocknumber-details').html("")
+			}
+		})
+
+		function addForm(_stocknumber = "",_info ="" ,_quantity = "",  _unitcost = "" ) {
+			error = false
+			$('.stocknumber-list').each(function() {
+				if (_stocknumber == $(this).val()) {
+					error = true;	
+					return;
+				}
+			});
+
+			if(error) {
+				swal("Error", "Stocknumber already exists", "error");
+				return false;
+			}
+
+			$('#supplyTable > tbody').prepend(`
+				<tr>
+					<td><input type="text" class="stocknumber-list form-control text-center" value="` + _stocknumber + `" name="stocknumber[` + _stocknumber + `]" style="border:none;" /></td>
+					<td><input type="hidden" class="form-control text-center" value="` + _info + `" name="info[` + _stocknumber + `]" style="border:none;" />` + _info + `</td>
+					<td>
+						<input type="number" min=1 pattern="[0-9]*" class="form-control text-center" value="` + _quantity + `" name="quantity[` + _stocknumber + `]" style="border:none;"  />
+					</td>
+
+					<td>
+						<input type="number" step=0.01 min=1.00 class="form-control text-center" value="` + _unitcost + `" name="unitcost[` + _stocknumber + `]" style="border:none;"  />
+					</td>
+					
+					<td>
+						<button type="button" class="remove btn btn-md btn-danger text-center"><span class="glyphicon glyphicon-remove"></span></button>
+					</td>
+				</tr>
+			`)
+
+			return true;
 		}
-		if(addForm(stocknumber,details,quantity,unitcost))
-		{
-			$('#stocknumber').val("")
-			$('#quantity').val("")
-			$('#unitcost').val("")
-			$('#stocknumber-details').html("")
-		}
-	})
-
-function addForm(_stocknumber = "",_info ="" ,_quantity = "",  _unitcost = "" )
-	{
-		error = false
-		$('.stocknumber-list').each(function() {
-		    if (_stocknumber == $(this).val())
-		    {
-		    	error = true;	
-		    	return;
-		    }
-		});
-
-		if(error)
-		{
-			swal("Error", "Stocknumber already exists", "error");
-			return false;
-		}
-
-		$('#supplyTable > tbody').prepend(`
-			<tr>
-				<td><input type="text" class="stocknumber-list form-control text-center" value="` + _stocknumber + `" name="stocknumber[` + _stocknumber + `]" style="border:none;" /></td>
-				<td><input type="hidden" class="form-control text-center" value="` + _info + `" name="info[` + _stocknumber + `]" style="border:none;" />` + _info + `</td>
-				<td>
-					<input type="number" min=1 pattern="[0-9]*" class="form-control text-center" value="` + _quantity + `" name="quantity[` + _stocknumber + `]" style="border:none;"  />
-				</td>
-
-				<td>
-					<input type="number" step=0.01 min=1.00 class="form-control text-center" value="` + _unitcost + `" name="unitcost[` + _stocknumber + `]" style="border:none;"  />
-				</td>
-				
-				<td>
-					<button type="button" class="remove btn btn-md btn-danger text-center"><span class="glyphicon glyphicon-remove"></span></button>
-				</td>
-			</tr>
-		`)
-
-		return true;
-	}
 		
 		//remove supply from list
 		$('#supplyTable').on('click','.remove',function() {
