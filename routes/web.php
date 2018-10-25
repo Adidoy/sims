@@ -132,26 +132,22 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('inventory/physical', 'PhysicalInventoryController@index');
 		Route::get('inventory/physical/print', 'PhysicalInventoryController@print');
 
-		/* Route::get('inventory/supply/stockcard/accept',[
-			'as' => 'supply.stockcard.accept.form',
-			'uses' => 'StockCardController@create'
-		]); */
-
 		//08 October 2018
-		Route::get('delivery/supply/',[
-			'as' => 'supply.stockcard.accept.form',
-			'uses' => 'DeliveryController@create'
+
+		//Route::get('delivery/supply/get', 'DeliveryController@index');
+
+		Route::resource('delivery/supply','DeliveryController');
+		Route::post('delivery/supply/store',[
+			'as' => 'deliverycontroller.store',
+			'uses' => 'DeliveryController@store'
 		]);
+		Route::get('delivery/supply/{id}/', 'DeliveryController@show');
 
 		Route::get('inventory/supply/stockcard/release',[
 			'as' => 'supply.stockcard.release.form',
 			'uses' => 'StockCardController@releaseForm'
 		]);
 
-		Route::post('inventory/supply/stockcard/create',[
-			'as' => 'supply.stockcard.accept',
-			'uses' => 'DeliveryController@store'
-		]);
 
 		Route::post('inventory/supply/stockcard/release',[
 			'as' => 'supply.stockcard.release',

@@ -15,6 +15,7 @@ class CreateDeliveryHeaderTable extends Migration
     {
         Schema::create('deliveries_header', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('local');
             $table->integer('supplier_id')->unsigned()->nullable();
             $table->foreign('supplier_id')
                     ->references('id')

@@ -4,8 +4,8 @@
 	<section class="content-header">
 		<legend><h3 class="text-muted">Item Delivery</h3></legend>
 		<ul class="breadcrumb">
-			<li><a href="{{ url('inventory/supply') }}">Supply Inventory</a></li>
-			<li class="active">Item Delivery</li>
+			<li>Supply Inventory</li>
+			<li class="active"><a href="{{ url('delivery/supply/create/') }}">Item Delivery</a></li>
 		</ul>
 	</section>
 @endsection
@@ -15,7 +15,7 @@
 <!-- Default box -->
   <div class="box" style="padding:10px;">
     <div class="box-body">
-		{{ Form::open(['method'=>'post','route'=>array('supply.stockcard.accept'),'class'=>'form-horizontal','id'=>'stockCardForm']) }}
+		{{ Form::open(['method'=>'post','route'=>array('deliverycontroller.store'),'class'=>'form-horizontal','id'=>'stockCardForm']) }}
 		@include('errors.alert')
 		@include('delivery.supplies.form')
 		{{ Form::close() }}
