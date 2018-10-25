@@ -28,8 +28,8 @@
     {{-- <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script> --}}
 
 
-    {{ HTML::script(asset('js/jquery-3.3.1.min.js')) }}
-    {{-- {{ HTML::script(asset('js/jquery-ui.js')) }} --}}
+    {{ HTML::script(asset('js/jquery.min.js')) }}
+    {{ HTML::script(asset('js/jquery-ui.js')) }}
 
     {{ HTML::script(asset('js/bootstrap.min.js')) }}
     {{ HTML::script(asset('js/sweetalert.min.js')) }}

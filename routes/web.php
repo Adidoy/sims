@@ -132,22 +132,20 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('inventory/physical', 'PhysicalInventoryController@index');
 		Route::get('inventory/physical/print', 'PhysicalInventoryController@print');
 
-		//08 October 2018
-
-		//Route::get('delivery/supply/get', 'DeliveryController@index');
-
-		Route::resource('delivery/supply','DeliveryController');
-		Route::post('delivery/supply/store',[
-			'as' => 'deliverycontroller.store',
-			'uses' => 'DeliveryController@store'
+		Route::get('inventory/supply/stockcard/accept',[
+			'as' => 'supply.stockcard.accept.form',
+			'uses' => 'StockCardController@create'
 		]);
-		Route::get('delivery/supply/{id}/', 'DeliveryController@show');
 
 		Route::get('inventory/supply/stockcard/release',[
 			'as' => 'supply.stockcard.release.form',
 			'uses' => 'StockCardController@releaseForm'
 		]);
 
+		Route::post('inventory/supply/stockcard/create',[
+			'as' => 'supply.stockcard.accept',
+			'uses' => 'StockCardController@store'
+		]);
 
 		Route::post('inventory/supply/stockcard/release',[
 			'as' => 'supply.stockcard.release',
@@ -294,11 +292,24 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::get('get/supply/stocknumber','SupplyInventoryController@show');
 
-
 });
 
-// Route::get('hris/login', 'SessionsController@getHrisLogin');
-// Route::post('hris/login', 'SessionsController@hrisLogin');
-
-Route::get('login', 'SessionsController@getLogin');
+Route::get('login', [
+	'as' => 'login',
+	'uses'=>'SessionsController@getLogin'
+	]); 
 Route::post('login', 'SessionsController@login');
+
+Route::get('/forgot_password',[
+	'as' => 'get.forgot.password',
+	'uses' =>'ResetPasswordController@getForgotPassword'
+]);
+Route::post('/forgot_password/reset/',[
+	'as' => 'password.email',
+	'uses' => 'ResetPasswordController@resetPasswordViaEmail'
+]);
+Route::get('/password/reset/','ResetPasswordController@afterEmail');
+Route::post('/password/reset/{token}/',[
+	'as' => 'password.request',
+	'uses' => 'ResetPasswordController@resetPassword'
+]);

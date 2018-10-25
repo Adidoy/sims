@@ -128,15 +128,18 @@ class RequestController extends Controller
   public function show(Request $request,$id) {
     $id = $this->sanitizeString($id);
     $requests = App\Request::find($id);
+
     if(count($requests) <= 0 || (Auth::user()->access != 1 && Auth::user()->access != 6 && $requests->requestor_id != Auth::user()->id && Auth::user()->office != App\Office::find($requests->office_id)->code)) {
       return view('errors.404');
     }
+
     if($request->ajax()) {
       $supplies = $requests->supplies;
       return json_encode([
         'data' => $supplies
       ]);
     }
+
     return view('request.show')
       ->with('request',$requests)
       ->with('title','Request');

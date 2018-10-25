@@ -11,8 +11,7 @@ class CreateRequestSignatories extends Migration
      *
      * @return void
      */
-    public function up()
-    {
+    public function up() {
         Schema::create('requests_signatories', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('request_id');
@@ -31,6 +30,6 @@ class CreateRequestSignatories extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('request_signatories');
+        Schema::drop('requests_signatories');
     }
 }

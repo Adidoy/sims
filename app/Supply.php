@@ -1,31 +1,40 @@
 <?php
 namespace App;
 
-use DB;
-use Carbon;
-use App\Unit;
-use App\Receipt;
-use App\Request;
-use App\Category;
-use App\StockCard;
-use App\LedgerCard;
-use App\PurchaseOrder;
 use Illuminate\Database\Eloquent\Model;
+use Carbon;
+use DB;
 
-class Supply extends Model
-{
+class Supply extends Model{
 
 	protected $table = 'supplies';
 	protected $primaryKey = 'id';
-	protected $fillable = ['stocknumber', 'details', 'unit', 'reorderpoint'];
+	protected $fillable = ['stocknumber','details','unit','reorderpoint'];
 	public $incrementing = false;
 	public $timestamps = true;
 
-	public function legitimateStockNumber()
-	{
+	public static $rules = array(
+		'Stock Number' => 'required|unique:supplies,stocknumber',
+		'Details' => 'required|unique:supplies,details',
+		'Unit' => 'required',
+		'Reorder Point' => 'required|integer'
+	);
+
+	public function legitimateStockNumber(){
 		return [
 			'Stock Number' => 'required|exists:supplies,stocknumber'
 		];
+	}
+
+	public function updateRules()
+	{
+		$stocknumber = $this->stocknumber;
+		return array(
+				'Stock Number' => 'required|unique:supplies,stocknumber,'.$stocknumber.',stocknumber',
+				'Details' => 'required',
+				'Unit' => 'required',
+				'Reorder Point' => 'integer'
+		);
 	}
 
 	protected $appends = [
@@ -44,32 +53,41 @@ class Supply extends Model
 	public function getUnitCostAttribute($value)
 	{
 		$cost = ReceiptSupply::findByStockNumber($this->stocknumber)
-								->where('remaining_quantity', '>', 0)
+								->where('remaining_quantity','>',0)
 								->whereNotNull('unitcost')
 								->select('unitcost')
 								->avg('unitcost');
-		
-		return (count($cost) > 0) ? $cost : 0;
+		if(count($cost) > 0)
+			return $cost;
+		else
+			return 0;
 	}
 
 	public function getTempBalanceAttribute($value)
 	{
 
 		$balance = StockCard::findBySupplyId($this->id)
-						->orderBy('date', 'desc')
-						->orderBy('created_at', 'desc')
-						->orderBy('id', 'desc')
+						->orderBy('date','desc')
+						->orderBy('created_at','desc')
+						->orderBy('id','desc')
 						->pluck('balance_quantity')
 						->first();
 
-		$balance = (empty($balance) || $balance == null || $balance == '') ? 0 : $balance;
+		if(empty($balance) || $balance == null || $balance == '')
+		{
+			$balance = 0;
+		}
 
-		$temporaryIssuedQuantity = DB::table('requests_supplies')
+		$temp_issued = 0 ;
+
+		$temp_issued = DB::table('requests_supplies')
 						->where('supply_id', '=', $this->id)
 						->whereIn('request_id', Request::where('status', '=', 'approved')->pluck('id'))
 						->sum('quantity_issued');
 
-		return $balance - $temporaryIssuedQuantity;
+		$balance = $balance - $temp_issued;
+
+		return $balance	;
 	}
 
 	public function getStockBalanceAttribute($value)
@@ -82,8 +100,12 @@ class Supply extends Model
 						->pluck('balance_quantity')
 						->first();
 
-		$balance = (empty($balance) || $balance == null || $balance == '') ? 0 : $balance;
-		return $balance;
+		if(empty($balance) || $balance == null || $balance == '')
+		{
+			$balance = 0;
+		}
+
+		return $balance	;
 	}
 
 	public function getLedgerBalanceAttribute($value)
@@ -95,23 +117,27 @@ class Supply extends Model
 						->pluck('balance_quantity')
 						->first();
 
-		$balance = (empty($balance) || $balance == null || $balance == '') ? 0 : $balance;
-		return $balance;
+		if(empty($balance) || $balance == null || $balance == '')
+		{
+			$balance = 0;
+		}
+
+		return $balance	;
 	}
 
 	public function scopeIssued($query)
 	{
-		return $query->where('issuedquantity', '>', 0);
+		return $query->where('issuedquantity','>',0);
 	}
 
 	public function scopeFindByStockNumber($query,$value)
 	{
-		return $query->where('stocknumber', '=', $value)->first();
+		return $query->where('stocknumber','=',$value)->first();
 	}
 
 	public function scopeFindByCategoryName($query, $value)
 	{
-		return $query->whereHas('category', function($query) use ($value) {
+		return $query->whereHas('category', function($query) use ($value){
 			$query->where('name', '=', $value);
 		} );
 	}
@@ -123,53 +149,53 @@ class Supply extends Model
 
 	public function scopeStockNumber($query,$value)
 	{
-		return $query->where('stocknumber', '=', $value);
+		return $query->where('stocknumber','=',$value);
 	}
 
-	public function getUnitPriceAttribute($value)
-	{
-		return number_format($value, 2, '.', ',');
-	}
-	
 	public function stockcards()
 	{
-		return $this->hasMany(StockCard::class, 'supply_id');
+		return $this->hasMany('App\StockCard','supply_id');
 	}
 
 	public function ledgercards()
 	{
-		return $this->hasMany(LedgerCard::class, 'supply_id');
+		return $this->hasMany('App\LedgerCard','supply_id');
 	}
 
-	public function category()
+	public function getUnitPriceAttribute($value)
 	{
-		return $this->belongsTo(Category::class, 'category_id', 'id');
-	}
-
-	public function unit()
-	{
-		return $this->belongsTo(Unit::class, 'unit_id', 'id');
+		return number_format($value,2,'.',',');
 	}
 
 	public function purchaseorders()
 	{
-		return $this->belongsToMany(PurchaseOrder::class, 'purchaseorders_supplies', 'supply_id', 'purchaseorder_id')
+		return $this->belongsToMany('App\PurchaseOrder','purchaseorders_supplies', 'supply_id','purchaseorder_id')
           ->withPivot('unitcost', 'received_quantity', 'ordered_quantity', 'remaining_quantity')
           ->withTimestamps();
 	}
 
 	public function receipts()
 	{
-		return $this->belongsToMany(Receipt::class, 'receipts_supplies', 'supply_id', 'receipt_id')
+		return $this->belongsToMany('App\Receipt','receipts_supplies','supply_id','receipt_id')
           ->withPivot('unitcost', 'quantity', 'remaining_quantity')
           ->withTimestamps();
 	}
 
 	public function requests()
 	{
-		return $this->belongsToMany(Request::class, 'requests_supplies', 'supply_id', 'request_id')
+		return $this->belongsToMany('App\Request','requests_supplies','supply_id','request_id')
             ->withPivot('quantity_requested', 'quantity_issued', 'quantity_released', 'comments')
             ->withTimestamps();
+	}
+
+	public function category()
+	{
+		return $this->belongsTo('App\Category', 'category_id', 'id');
+	}
+
+	public function unit()
+	{
+		return $this->belongsTo('App\Unit', 'unit_id', 'id');
 	}
 
 }

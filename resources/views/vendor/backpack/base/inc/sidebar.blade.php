@@ -66,13 +66,7 @@
           <li><a href="{{ url('inventory/supply') }}"><i class="fa fa-list-alt" aria-hidden="true"></i> <span> Inventory </span></a></li>
           <li><a href="{{ url('inventory/physical') }}"><i class="fa fa-archive" aria-hidden="true"></i> <span> Physical Inventory </span></a></li>
           <li><a href="{{ url('inspection') }}"><i class="fa fa-search" aria-hidden="true"></i> <span> Inspection </span></a></li>
-          <li class="treeview">
-            <a href="#"><i class="fa fa-share" aria-hidden="true"></i><span>Item Delivery</span><i class="fa fa-angle-left pull-right"></i></a>
-              <ul class="treeview-menu">
-                <li><a href="{{ url('delivery/supply/') }}"><i class="fa fa-plus" aria-hidden="true"></i> <span> Supplies </span></a></li>
-                <li><a href="@if(Auth::user()->access == 1) {{ url('#') }} @endif"><li><i class="fa fa-plus" aria-hidden="true"></i>Equipment and <br/>Other Properties</a></li>
-              </ul>
-          </li>
+          <li><a href="@if(Auth::user()->access == 1) {{ url('inventory/supply/stockcard/accept') }}@endif"><i class="fa fa-plus" aria-hidden="true"></i> <span> Accepts Item </span></a></li>
           <li class="treeview">
             <a href="#"><i class="fa fa-share" aria-hidden="true"></i><span>R. I. S.</span><i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
@@ -193,7 +187,7 @@
           
           @if(Auth::user()->access == 7)
           <li><a href="{{ url('inventory/supply') }}"><i class="fa fa-list-alt" aria-hidden="true"></i> <span> Inventory </span></a></li>
-          <li><a href="{{ url('delivery/supply/') }}"><i class="fa fa-plus" aria-hidden="true"></i> <span> Item Delivery </span></a></li>
+          <li><a href="{{ url('inventory/supply/stockcard/accept') }}"><i class="fa fa-plus" aria-hidden="true"></i> <span> Accepts Item </span></a></li>
           
           <li class="header">Information System</li>
           <li><a href="{{ url('announcement') }}"><i class="fa fa-bullhorn" aria-hidden="true"></i> <span> Announcement </span></a></li>

@@ -38,6 +38,7 @@ class StockCardController extends Controller {
 				->with('title',$supply->stocknumber);
 	}
 
+
 	/**
 	 * Show the form for creating a new resource.
 	 *

@@ -43,7 +43,7 @@
 
     <!-- jQuery 2.2.0 -->
     {{-- <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script> --}}
-    <script src="{{ asset('js/jquery.min.js') }}?x=1"></script>
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
     
     <script src="{{ asset('js/jquery-ui.js') }}"></script>
     <!-- Bootstrap 3.3.5 -->
