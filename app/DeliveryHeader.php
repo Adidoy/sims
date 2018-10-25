@@ -58,7 +58,7 @@ class DeliveryHeader extends Model
     }
 
     public function getDateProcessedAttribute($value) {
-        return Carbon\Carbon::parse($this->created_at)->format('d F Y   h:i A');
+        return Carbon\Carbon::parse($this->created_at)->format('d F Y h:i A');
     }
 
     public function getSupplierNameAttribute() {

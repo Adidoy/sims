@@ -48,25 +48,18 @@ class DeliveryController extends Controller {
 	 * @return Response
 	 */
 	public function store(Request $request)	{
-		$po_no = $this->sanitizeString($request->get('po_no'));
-		$po_date = $this->sanitizeString($request->get('po_date'));
-		$invoice_no = $this->sanitizeString($request->get('invoice_no'));
-		$invoice_date = $this->sanitizeString($request->get('invoice_date'));
-		$dr_no = $this->sanitizeString($request->get('dr_no'));
-		$dr_date = $this->sanitizeString($request->get('dr_date'));
-		$supplier = $this->sanitizeString($request->get("supplier"));
-		$username = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
+		$deliveryHeader = new App\DeliveryHeader;
+		$supplier = App\Supplier::findBySupplierName($request->get("supplier"))->first();
+		$userName = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
 		$stocknumbers = $request->get("stocknumber");
 		$quantity = $request->get("quantity");
 		$unitcost = $request->get("unitcost");
-		
-		$delivery_header = new App\DeliveryHeader;
-		
+	
 		$validator = Validator::make([
 			'Purchase Order Number' => $request->get('po_no'),
 			'Invoice Number' => $request->get('invoice_no'),
 			'Delivery Receipt Number' => $request->get('dr_no'),
-		],$delivery_header->rules(),$delivery_header->messages());
+		],$deliveryHeader->rules(),$deliveryHeader->messages());
 
 		if($validator->fails()) {
 			return redirect('delivery/supply/create')
@@ -74,43 +67,27 @@ class DeliveryController extends Controller {
 				->withErrors($validator);
 		}
 		
-		$supplier = App\Supplier::findBySupplierName($request->get("supplier"))->first();
-		$userName = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
-
 		DB::beginTransaction();
-			// $deliveryHeader = App\DeliveryHeader::create([
-			// 	'local' => $this->generateLocalCode($request, 'delivery'),
-			// 	'supplier_id' => $supplier->id,
-			// 	'purchaseorder_no' => $request->get('po_no'),
-			// 	'purchaseorder_date' => $request->get('po_date'),
-			// 	'invoice_no' => $request->get('invoice_no'),
-			// 	'invoice_date' => $request->get('invoice_date'),
-			// 	'delrcpt_no' => $request->get('dr_no'),
-			// 	'delivery_date' => $request->get('dr_date'),
-			// 	'received_by' => $userName
-			// ]);
-
-			//$supplier = App\Supplier::findBySupplierName($supplier)->first();
-			$delivery_header->local = $this->generateLocalCode($request, 'delivery');
-			$delivery_header->supplier_id = $supplier->id;
-    		$delivery_header->purchaseorder_no = $po_no;
-    		$delivery_header->purchaseorder_date = Carbon\Carbon::parse($po_date);
-    		$delivery_header->invoice_no = $invoice_no;
-    		$delivery_header->invoice_date = Carbon\Carbon::parse($invoice_date);
-    		$delivery_header->delrcpt_no = $dr_no;
-			$delivery_header->delivery_date = Carbon\Carbon::parse($dr_date);
-			$delivery_header->received_by = $username;
-			$delivery_header->save();
- 			$new_delivery = App\DeliveryHeader::orderBy('created_at', 'desc') -> first();
-				foreach($stocknumbers as $stocknumber) {
-					$supply = App\Supply::StockNumber($stocknumber)->first();
-					$deliveries_detail = new App\DeliveriesDetail;
-					$deliveries_detail->delivery_id = $new_delivery->id;
-					$deliveries_detail->supply_id = $supply->id;
-					$deliveries_detail->quantity_delivered = $quantity["$stocknumber"];
-					$deliveries_detail->unit_cost = $unitcost["$stocknumber"];
-					$deliveries_detail->save();
-				}
+			$deliveryHeader = App\DeliveryHeader::create([
+				'local' => $this->generateLocalCode($request, 'delivery'),
+				'supplier_id' => $supplier->id,
+				'purchaseorder_no' => $request->get('po_no'),
+				'purchaseorder_date' => Carbon\Carbon::parse($request->get('po_date')),
+				'invoice_no' => $request->get('invoice_no'),
+				'invoice_date' => Carbon\Carbon::parse($request->get('invoice_date')),
+				'delrcpt_no' => $request->get('dr_no'),
+				'delivery_date' => Carbon\Carbon::parse($request->get('dr_date')),
+				'received_by' => $userName
+			]);
+			foreach($stocknumbers as $stocknumber) {
+				$supply = App\Supply::StockNumber($stocknumber)->first();
+				App\DeliveriesDetail::create([
+					'delivery_id' => $deliveryHeader->id,
+					'supply_id' =>   $supply->id,
+					'quantity_delivered' => $quantity["$stocknumber"],
+					'unit_cost' => $unitcost["$stocknumber"]
+				]);
+			}
 		DB::commit();
 		\Alert::success('Supplies Delivery Recorded')->flash();
 		return redirect('delivery/supply/');

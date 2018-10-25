@@ -11,7 +11,8 @@ class DeliveriesDetail extends Model
     protected $table = 'deliveries_supplies';
     protected $primaryKey = 'delivery_id';
     protected $fillable = [
-    	'stocknumber',
+        'delivery_id',
+    	'supply_id',
     	'quantity_delivered',
         'unit_cost'
     ];
