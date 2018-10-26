@@ -87,12 +87,15 @@
             <a href="{{ route('get.forgot.password') }}">Reset Password</a>
           </div>
         </div>
-        
-        <div class="panel-footer" style=" font-size: 20px;">
-          <a href="{{ url('https://onedrive.live.com/view.aspx?cid=c5fb49234dd366a6&page=view&resid=C5FB49234DD366A6!1351&parId=C5FB49234DD366A6!1330&app=Word') }}">SIMS User's Application Form </a>
-        </div>
+
         <div class="panel-footer">
-          <a href="{{ url('faqs') }}">Frequently Asked Questions </a>
+            <a href="{{ url('faqs') }}">Frequently Asked Questions </a>
+            <a 
+            class="pull-right"
+            href="https://onedrive.live.com/view.aspx?cid=c5fb49234dd366a6&page=view&resid=C5FB49234DD366A6!1351&parId=C5FB49234DD366A6!1330&app=Word">
+                <strong>User's Application Form</strong>
+            </a>
+            <div class="clearfix"></div>
         </div>
     </div>
 </div>
