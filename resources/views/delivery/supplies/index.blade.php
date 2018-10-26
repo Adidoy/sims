@@ -22,6 +22,7 @@
 				<th class="col-sm-1">Purchase Order No.</th>
 				<th class="col-sm-1">Invoice No.</th>
 				<th class="col-sm-1">Delivery Receipt No.</th>
+				<th class="col-sm-1">Date Processed</th>
 				<th class="col-sm-1">Processed by</th>
 				<th class="no-sort col-sm-1"></th>
 			</thead>
@@ -56,6 +57,7 @@
 				{ data: "purchaseorder_no" },
 				{ data: "invoice_no" },
 				{ data: "delrcpt_no" },
+				{ data: "date_processed" },
 				{ data: "received_by" },
 				{ data: function(callback){
 	            	return `

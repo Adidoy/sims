@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DeliveriesDetail extends Model
 {
-    protected $table = 'deliveries_details';
+    protected $table = 'deliveries_supplies';
     protected $primaryKey = 'delivery_id';
     protected $fillable = [
     	'stocknumber',

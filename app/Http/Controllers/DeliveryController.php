@@ -1,15 +1,16 @@
 <?php
 namespace App\Http\Controllers;
 
-use App;
-use Validator;
-use Carbon;
+
 use DB;
-use Auth;
+use App;
 use PDF;
+use Auth;
+use Carbon;
 use Session;
-use App\Http\Controllers\Controller;
+use Validator;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Input;
 
 class DeliveryController extends Controller {
@@ -58,10 +59,39 @@ class DeliveryController extends Controller {
 		$stocknumbers = $request->get("stocknumber");
 		$quantity = $request->get("quantity");
 		$unitcost = $request->get("unitcost");
+		
+		$delivery_header = new App\DeliveryHeader;
+		
+		$validator = Validator::make([
+			'Purchase Order Number' => $request->get('po_no'),
+			'Invoice Number' => $request->get('invoice_no'),
+			'Delivery Receipt Number' => $request->get('dr_no'),
+		],$delivery_header->rules(),$delivery_header->messages());
+
+		if($validator->fails()) {
+			return redirect('delivery/supply/create')
+				->withInput()
+				->withErrors($validator);
+		}
+		
+		$supplier = App\Supplier::findBySupplierName($request->get("supplier"))->first();
+		$userName = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
+
 		DB::beginTransaction();
-			$supplier = App\Supplier::findBySupplierName($supplier)->first();
-			$delivery_header = new App\DeliveryHeader;
-			$delivery_header->local = $this->generateLocalCode($request);
+			// $deliveryHeader = App\DeliveryHeader::create([
+			// 	'local' => $this->generateLocalCode($request, 'delivery'),
+			// 	'supplier_id' => $supplier->id,
+			// 	'purchaseorder_no' => $request->get('po_no'),
+			// 	'purchaseorder_date' => $request->get('po_date'),
+			// 	'invoice_no' => $request->get('invoice_no'),
+			// 	'invoice_date' => $request->get('invoice_date'),
+			// 	'delrcpt_no' => $request->get('dr_no'),
+			// 	'delivery_date' => $request->get('dr_date'),
+			// 	'received_by' => $userName
+			// ]);
+
+			//$supplier = App\Supplier::findBySupplierName($supplier)->first();
+			$delivery_header->local = $this->generateLocalCode($request, 'delivery');
 			$delivery_header->supplier_id = $supplier->id;
     		$delivery_header->purchaseorder_no = $po_no;
     		$delivery_header->purchaseorder_date = Carbon\Carbon::parse($po_date);
@@ -70,12 +100,13 @@ class DeliveryController extends Controller {
     		$delivery_header->delrcpt_no = $dr_no;
 			$delivery_header->delivery_date = Carbon\Carbon::parse($dr_date);
 			$delivery_header->received_by = $username;
-			$delivery_header->save();	
+			$delivery_header->save();
  			$new_delivery = App\DeliveryHeader::orderBy('created_at', 'desc') -> first();
 				foreach($stocknumbers as $stocknumber) {
+					$supply = App\Supply::StockNumber($stocknumber)->first();
 					$deliveries_detail = new App\DeliveriesDetail;
 					$deliveries_detail->delivery_id = $new_delivery->id;
-					$deliveries_detail->stocknumber = $stocknumber;
+					$deliveries_detail->supply_id = $supply->id;
 					$deliveries_detail->quantity_delivered = $quantity["$stocknumber"];
 					$deliveries_detail->unit_cost = $unitcost["$stocknumber"];
 					$deliveries_detail->save();
@@ -105,30 +136,28 @@ class DeliveryController extends Controller {
 			->with('title','Supplies Delivery');
 	}
 
-	public function generateLocalCode(Request $request) {
-		$deliveries = App\DeliveryHeader::get();
-		$id = 1;
+	public function generateLocalCode(Request $request, $trxType) {
 		$now = Carbon\Carbon::now();
 		$const = $now->format('y') . '-' . $now->format('m');
-	
-		if(count($deliveries) > 0) {
-		  $id = count($deliveries) + 1;
-		}
-		else {
-		  $id = count(App\DeliveryHeader::get()) + 1;
-		}
+
+		if($trxType == 'delivery')
+			$trx = App\DeliveryHeader::get();
+		else
+			$trx = App\Inspection::get();
+
+		$id = count($trx) + 1;
 	
 		if (strlen($id) == 1) 
-		  $requestcode =  '000'.$id;
+		  $trxCode =  '000'.$id;
 		elseif (strlen($id) == 2) 
-		  $requestcode =  '00'.$id;
+		  $trxCode =  '00'.$id;
 		elseif (strlen($id) == 3) 
-		  $requestcode =  '0'.$id;
+		  $trxCode =  '0'.$id;
 		elseif (strlen($id) == 4) 
-		  $requestcode =  $id;
+		  $trxCode =  $id;
 		else
-		  $requestcode =  $id;
+		  $trxCode =  $id;
 		
-		return 'DAI-' . $const . '-' . $requestcode;
+		return 'DAI-' . $const . '-' . $trxCode;
 	} 
 }
