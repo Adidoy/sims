@@ -1,5 +1,5 @@
 @extends('backpack::layout')
-
+ 
 @section('header')
 	<section class="content-header">
 		<legend>
@@ -145,11 +145,12 @@
                 'id': id
             },
             dataType: 'json',
-            success: function(response){
-                if(response == 'success'){
+            success: function(response) {
+                if(response == 'success') {
                     swal('Operation Successful','Operation Complete please reload the page!','success'),
                     location.reload();
-                }else{
+                }
+                else {
                     swal('Operation Unsuccessful','Error occurred while processing your request','error')
                 }
             },

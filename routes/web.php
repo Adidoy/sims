@@ -136,6 +136,7 @@ Route::middleware(['auth'])->group(function(){
 			'as' => 'supply.stockcard.accept.form',
 			'uses' => 'StockCardController@create'
 		]);
+		Route::get('delivery/supply/{id}/', 'DeliveryController@show');
 
 		Route::get('inventory/supply/stockcard/release',[
 			'as' => 'supply.stockcard.release.form',
