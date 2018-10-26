@@ -12,22 +12,22 @@
     border-radius: 2px;
   }
 
-  .btn-primary:hover {
-    background-color: #336E7B;
-  }
+    .btn-primary:hover {
+        background-color: #336E7B;
+    }
 
-  .panel {
-    padding: 0px 5px;
-  }
+    .panel {
+        padding: 0px 5px;
+    }
 
-  .panel-heading {
-    margin: 5px;
-  }
+    .panel-heading {
+        margin: 5px;
+    }
 
-  .hris-login:hover {
-    background-color: #1BA39C;
-    color: white;
-  }
+    .hris-login:hover {
+        background-color: #1BA39C;
+        color: white;
+    }
 </style>
 @endsection
 
@@ -70,18 +70,19 @@
               </div>
             </div>
 
-            <div class="addons">
-              <p class="text-muted"></p> 
-            </div>
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <button 
+                            type="submit" 
+                            id="login-button" 
+                            data-loading-text="Logging in..." 
+                            class="btn btn-lg btn-primary btn-block" 
+                            autocomplete="off">
+                            Login
+                        </button>
+                    </div>
+                </div>
 
-            <div class="form-group">
-              <div class="col-md-12">
-                  <button type="submit" id="loginButton" data-loading-text="Logging in..." class="btn btn-lg btn-primary btn-block" autocomplete="off">
-                  Login
-                </button>
-              </div>
-            </div>
-          </form>
           <div class="col-md-12">
             <a href="{{ route('get.forgot.password') }}">Reset Password</a>
           </div>
@@ -93,23 +94,21 @@
         <div class="panel-footer">
           <a href="{{ url('faqs') }}">Frequently Asked Questions </a>
         </div>
-      </div>
-    </div> 
-  </div>
+    </div>
 </div>
 @stop
 
 @section('scripts-include')
-<script>
-  $(document).ready(function(){
-    $("#loginButton").click(function() {
-        var $btn = $(this);
-        $btn.button('loading');
-        // simulating a timeout
-        setTimeout(function () {
-            $btn.button('reset');
-        }, 1000);
-    });
-  })
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#login-button").click(function() {
+            var $btn = $(this);
+            $btn.button('loading');
+
+            setTimeout(function () {
+                $btn.button('reset');
+            }, 1000);
+        });
+    })
 </script>
 @endsection
