@@ -132,10 +132,12 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('inventory/physical', 'PhysicalInventoryController@index');
 		Route::get('inventory/physical/print', 'PhysicalInventoryController@print');
 
-		Route::get('inventory/supply/stockcard/accept',[
-			'as' => 'supply.stockcard.accept.form',
-			'uses' => 'StockCardController@create'
+		Route::post('delivery/supply/create',[
+			'as' => 'delivery.supply.create',
+			'uses' => 'DeliveryController@store'
 		]);
+		Route::get('delivery/supply/create','DeliveryController@create');
+		Route::resource('delivery/supply', 'DeliveryController');
 		Route::get('delivery/supply/{id}/', 'DeliveryController@show');
 
 		Route::get('inventory/supply/stockcard/release',[

@@ -15,7 +15,7 @@
 <!-- Default box -->
   <div class="box" style="padding:10px;">
     <div class="box-body">
-		{{ Form::open(['method'=>'post','route'=>array('deliverycontroller.store'),'class'=>'form-horizontal','id'=>'stockCardForm']) }}
+		{{ Form::open(['method'=>'post','route'=>array('delivery.supply.create'),'class'=>'form-horizontal','id'=>'stockCardForm']) }}
 		@include('errors.alert')
 		@include('delivery.supplies.form')
 		{{ Form::close() }}
