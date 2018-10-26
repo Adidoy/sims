@@ -66,7 +66,13 @@
           <li><a href="{{ url('inventory/supply') }}"><i class="fa fa-list-alt" aria-hidden="true"></i> <span> Inventory </span></a></li>
           <li><a href="{{ url('inventory/physical') }}"><i class="fa fa-archive" aria-hidden="true"></i> <span> Physical Inventory </span></a></li>
           <li><a href="{{ url('inspection') }}"><i class="fa fa-search" aria-hidden="true"></i> <span> Inspection </span></a></li>
-          <li><a href="@if(Auth::user()->access == 1) {{ url('inventory/supply/stockcard/accept') }}@endif"><i class="fa fa-plus" aria-hidden="true"></i> <span> Accepts Item </span></a></li>
+          <li class="treeview">
+            <a href="#"><i class="fa fa-paperclip" aria-hidden="true"></i><span>Item Delivery</span><i class="fa fa-angle-left pull-right"></i></a>
+              <ul class="treeview-menu">
+                <li><a href="{{ url('delivery/supply') }}"><li><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Supplies</a></li>
+                <li><a href="{{ url('delivery/property') }}"><li><i class="fa fa-laptop" aria-hidden="true"></i>Equipment and Other Property</a></li>
+              </ul>
+          </li>
           <li class="treeview">
             <a href="#"><i class="fa fa-share" aria-hidden="true"></i><span>R. I. S.</span><i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">

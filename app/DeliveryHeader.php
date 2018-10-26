@@ -78,10 +78,6 @@ class DeliveryHeader extends Model
             ->withPivot('quantity_delivered', 'unit_cost');
     }
 
-    public function scopeFindBySupplierName($query, $value)	{
-		return $query->where('name', '=', $value);
-	}
-
     public function scopeFindByNumber($query, $value) {
         return $query->where('number', '=', $value)->first();
     }
