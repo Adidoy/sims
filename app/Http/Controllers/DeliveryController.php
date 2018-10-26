@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers;
 
-
 use DB;
 use App;
 use PDF;

@@ -92,7 +92,9 @@ class User extends \Eloquent implements Authenticatable, Auditable, UserResolver
 		5 => "Director",
 		6 => "PSMO-Releasing",
 		7 => "PSMO-Accepting",
-		8 => "PSMO-Disposal"
+		8 => "PSMO-Disposal",
+		9 => "Inspection Chief",
+		10 => "Inspection Team"
 	];
 
 	public function getFullnameAttribute()
@@ -146,7 +148,6 @@ class User extends \Eloquent implements Authenticatable, Auditable, UserResolver
 			->where('username', $username)
 			->exists();
 	}
-
 
 	public function officeInfo()
 	{

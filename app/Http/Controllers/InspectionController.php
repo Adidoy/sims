@@ -14,39 +14,33 @@ class InspectionController extends Controller
 
     public $status = [];
 
-    public function __construct()
-    {
-        $this->status = App\Inspection::$status_list;
-    }
+    // public function __construct()
+    // {
+    //     $this->status = App\Inspection::$status_list;
+    // }
 
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
-    {
-
-        if($request->ajax())
-        {
-            $inspection = new App\Inspection;
-
-            if(Auth::user()->access == 4)
-            {
-                $inspection = $inspection->whereIn('status', [ $this->status[0], $this->status[1], $this->status[2], $this->status[5], $this->status[99] ]); 
-            }
-
-            if(Auth::user()->access == 5)
-            {
-                $inspection = $inspection->whereIn('status', [ $this->status[2], $this->status[3], $this->status[4], $this->status[5], $this->status[99] ]); 
-            }
-
-            $inspection = $inspection->get();
-            return datatables($inspection)->toJson();
-        }
-
-        return view('inspection.index')
-                ->with('title', 'Inspection');
+    public function index(Request $request) {
+        // if($request->ajax())
+        // {
+        //     $inspection = new App\Inspection;
+        //     if(Auth::user()->access == 4)
+        //     {
+        //         $inspection = $inspection->whereIn('status', [ $this->status[0], $this->status[1], $this->status[2], $this->status[5], $this->status[99] ]); 
+        //     }
+        //     if(Auth::user()->access == 5)
+        //     {
+        //         $inspection = $inspection->whereIn('status', [ $this->status[2], $this->status[3], $this->status[4], $this->status[5], $this->status[99] ]); 
+        //     }
+        //     $inspection = $inspection->get();
+        //     return datatables($inspection)->toJson();
+        // }
+        // return view('inspection.index')
+        //         ->with('title', 'Inspection');
     }
 
     /**
