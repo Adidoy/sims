@@ -40,9 +40,9 @@
 
           @if(false)
 
-          <li><a href="{{ url(config('backpack.base.route_prefix', 'admin') . '/elfinder') }}"><i class="fa fa-files-o"></i> <span>File manager</span></a></li>
-          <li><a href="{{ url(config('backpack.base.route_prefix', 'admin') . '/language') }}"><i class="fa fa-flag-o"></i> <span>Languages</span></a></li>
-          <li><a href="{{ url(config('backpack.base.route_prefix', 'admin') . '/language/texts') }}"><i class="fa fa-language"></i> <span>Language Files</span></a></li>
+          <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/elfinder') }}"><i class="fa fa-files-o"></i> <span>File manager</span></a></li>
+          <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/language') }}"><i class="fa fa-flag-o"></i> <span>Languages</span></a></li>
+          <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/language/texts') }}"><i class="fa fa-language"></i> <span>Language Files</span></a></li>
           <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/log') }}"><i class="fa fa-terminal"></i> <span>Logs</span></a></li>
           <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/setting') }}"><i class="fa fa-cog"></i> <span>Settings</span></a></li>
           <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/page') }}"><i class="fa fa-file-o"></i> <span>Pages</span></a></li>
@@ -63,9 +63,16 @@
           @endif
           
           @if(Auth::user()->access == 1)
-          <li><a href="{{ url('inventory/supply') }}"><i class="fa fa-list-alt" aria-hidden="true"></i> <span> Inventory </span></a></li>
+          <li><a href="{{ url('inventory/supply') }}"><i class="fa fa-list-alt" aria-hidden="true"></i><span> Inventory </span></a></li>
           <li><a href="{{ url('inventory/physical') }}"><i class="fa fa-archive" aria-hidden="true"></i> <span> Physical Inventory </span></a></li>
-          <li><a href="{{ url('inspection') }}"><i class="fa fa-search" aria-hidden="true"></i> <span> Inspection </span></a></li>
+          <!-- <li><a href="{{ url('inspection') }}"><i class="fa fa-search" aria-hidden="true"></i> <span> Inspection </span></a></li> -->
+          <li class="treeview">
+            <a href="#"><i class="fa fa-search" aria-hidden="true"></i><span>Inspection</span><i class="fa fa-angle-left pull-right"></i></a>
+              <ul class="treeview-menu">
+                <li><a href="{{ url('inspection/supply') }}"><li><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Supplies</a></li>
+                <li><a href="{{ url('delivery/property') }}"><li><i class="fa fa-laptop" aria-hidden="true"></i>Equipment and Other Property</a></li>
+              </ul>
+          </li>
           <li class="treeview">
             <a href="#"><i class="fa fa-paperclip" aria-hidden="true"></i><span>Item Delivery</span><i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
@@ -84,7 +91,7 @@
           <script>
             $(document).ready(function(){
               /** add active class and stay opened when selected */
-              var url = window.location;
+              var url = window.location;             
 
               // for sidebar menu entirely but not cover treeview
               $('ul.sidebar-menu a').filter(function() {
