@@ -9,24 +9,30 @@ use Carbon;
 use DB;
 use Validator;
 
-class InspectionController extends Controller
-{
-
-    public $status = [];
-
-    // public function __construct()
-    // {
-    //     $this->status = App\Inspection::$status_list;
-    // }
-
+class InspectionController extends Controller {
+    
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request) {
-        return view('inspection.supplies.view')
+        return view('delivery.supplies.index')
+            ->with('trx', 'inspection')
             ->with('title', 'Inspection');
+    }
+
+     /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Request $request, $id) {
+
+        $delivery = App\DeliveryHeader::with('supplies')->find($id);
+        return view('inspection.supplies.inspect')
+            ->with('delivery', $delivery);
     }
 
     /**
@@ -38,21 +44,7 @@ class InspectionController extends Controller
     {
         return view('inspection.initial')
             ->with('title', 'Create');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Request $request, $id) {
-
-        $delivery = App\DeliveryHeader::with('supplies')->find($id);
-        //return $delivery;
-        return view('inspection.supplies.inspect')
-            ->with('delivery', $delivery);
-    }
+    } 
 
     public function getApprovalForm(Request $request, $id)
     {

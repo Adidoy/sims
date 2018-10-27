@@ -13,14 +13,14 @@ class Inspection extends Model
 	public $supply_list = [];
 
 	protected $fillable = [ 
-		'date',
-		'stocknumber',
-		'reference',
-		'receipt', 
-		'received',
-		'issued',
-		'organization',
-		'daystoconsume'
+		'local',
+		'inspection_personnel',
+		'inspection_date',
+		'remarks',
+		'inspection_approval', 
+		'inspection_approval_date',
+		'property_custodian_acknowledgement',
+		'property_custodian_acknowledgement_date'
 	]; 
 
 	public static $status_list = [
@@ -42,6 +42,18 @@ class Inspection extends Model
 		'Receipt Quantity' => 'required|integer',
 		'Days To Consume' => 'max:100'
 	);
+
+	public function rules() {
+        return [
+			'Remarks' => 'required'
+        ];
+    }
+
+    public function messages() {
+        return [
+			'Remarks.required' => 'Please provide remarks for this report.'
+        ];
+    }
 
 	protected $appends = [
 		'code', 'inspector_name'

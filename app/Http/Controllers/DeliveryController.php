@@ -25,6 +25,7 @@ class DeliveryController extends Controller {
 			return datatables($deliveries)->toJson();
 		}
 		return view('delivery.supplies.index')
+			->with('trx','delivery')
 			->with('title', 'Supply Delivery');
 	}
 

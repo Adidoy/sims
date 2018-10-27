@@ -2,8 +2,17 @@
 
 @section('header')
 	<section class="content-header">
-		<legend><h3 class="text-muted">Items Delivery</h3></legend>
+		@if($trx == 'inspection')
+			<legend><h3 class="text-muted">Delivered Items</h3></legend>
+		@elseif($trx=='delivery')
+			<legend><h3 class="text-muted">Items Delivery</h3></legend>
+		@endif
 		<ol class="breadcrumb">
+			@if($trx == 'inspection')
+				<li>Inspection</li>
+			@elseif($trx=='delivery')
+				<li>Delivery</li>
+			@endif
 			<li>Supplies</li>
 			<li class="active">Home</li>
 		</ol>
@@ -61,17 +70,23 @@
 				{ data: "received_by" },
 				{ data: function(callback){
 	            	return `
-					<a href="{{ url('delivery/supply') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i> View</a>
+					@if($trx == 'inspection')
+						<a href="{{ url('inspection/supply') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i>  Inspect</a>
+					@else
+						<a href="{{ url('delivery/supply') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i> View</a>
+					@endif
 	            	`;
 	            } }
 			],
 	    });
 
 		$("div.toolbar").html(`
+			@if($trx == 'delivery')
 				<a href="{{ url('delivery/supply/create') }}" class="btn btn-sm btn-primary">
 					<span class="glyphicon glyphicon-tag" aria-hidden="true"></span>
 					<span id="nav-text">Create New Delivery Record</span>
 				</a>
+			@endif
 		`);
 
 		$('#page-body').show();
