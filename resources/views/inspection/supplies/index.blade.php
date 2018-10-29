@@ -12,7 +12,6 @@
 @endsection
 
 @section('content')
-<!-- Default box -->
   <div class="box">
     <div class="box-body">
 		<div class="panel panel-body table-responsive">
@@ -30,45 +29,43 @@
 		</table>
 		</div>
 
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
-
+    </div>
+  </div>
 @endsection
 
 @section('after_scripts')
+	<script>
+		$(document).ready(function() {
 
-<script>
-	$(document).ready(function() {
+			var table = $('#deliveriesTable').DataTable({
+				language: {
+						searchPlaceholder: "Search..."
+				},
+				columnDefs:[
+					{ targets: 'no-sort', orderable: false },
+				],
+				"dom": "<'row'<'col-sm-3'l><'col-sm-6'<'toolbar'>><'col-sm-3'f>>" +
+								"<'row'<'col-sm-12'tr>>" +
+								"<'row'<'col-sm-5'i><'col-sm-7'p>>",
+				"processing": true,
+				ajax: "{{ url('inspection/supply/') }}",
+				columns: [
+					{ data: "local" },
+					{ data: "name" },
+					{ data: "purchaseorder_no" },
+					{ data: "invoice_no" },
+					{ data: "delrcpt_no" },
+					{ data: "created_at" },
+					{ data: "received_by" },
+					{ data: function(callback){
+						return `
+							<a href="{{ url('inspection/supply') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i>  Inspect</a>
+						`;
+					} }
+				],
+			});
 
-	    var table = $('#deliveriesTable').DataTable({
-			language: {
-					searchPlaceholder: "Search..."
-			},
-	    	columnDefs:[
-				{ targets: 'no-sort', orderable: false },
-	    	],
-			"dom": "<'row'<'col-sm-3'l><'col-sm-6'<'toolbar'>><'col-sm-3'f>>" +
-							"<'row'<'col-sm-12'tr>>" +
-							"<'row'<'col-sm-5'i><'col-sm-7'p>>",
-			"processing": true,
-			ajax: "{{ url('inspection/supply/') }}",
-			columns: [
-				{ data: "local" },
-				{ data: "name" },
-				{ data: "purchaseorder_no" },
-				{ data: "invoice_no" },
-				{ data: "delrcpt_no" },
-				{ data: "created_at" },
-				{ data: "received_by" },
-				{ data: function(callback){
-	            	return `
-						<a href="{{ url('inspection/supply') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i>  Inspect</a>
-	            	`;
-	            } }
-			],
-	    });
-
-		$('#page-body').show();
-	} );
-</script>
+			$('#page-body').show();
+		});
+	</script>
 @endsection
