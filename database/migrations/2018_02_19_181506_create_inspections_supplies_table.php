@@ -17,19 +17,14 @@ class CreateInspectionsSuppliesTable extends Migration
             $table->integer('inspection_id')->unsigned();
             $table->foreign('inspection_id')
                     ->references('id')
-                    ->on('inspections')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');        
+                    ->on('inspections');        
             $table->integer('supply_id')->unsigned();
             $table->foreign('supply_id')
                     ->references('id')
-                    ->on('supplies')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $table->integer('quantity_received');
-            $table->integer('quantity_adjusted')->nullable();
-            $table->integer('quantity_final')->nullable();
-            $table->string('daystoconsume')->nullable();
+                    ->on('supplies');
+            $table->integer('quantity_passed');
+            $table->integer('quantity_failed')->nullable();
+            $table->string('comment');
             $table->primary(['inspection_id', 'supply_id']);
             $table->timestamps();
         });

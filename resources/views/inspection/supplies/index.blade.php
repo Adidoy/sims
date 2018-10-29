@@ -2,10 +2,11 @@
 
 @section('header')
 	<section class="content-header">
-		<legend><h3 class="text-muted">Inspection</h3></legend>
+		<legend><h3 class="text-muted">Delivered Items</h3></legend>
 		<ol class="breadcrumb">
+			<li>Inspection</li>
 			<li>Supplies</li>
-			<li class="active">Deliveries</li>
+			<li class="active">Home</li>
 		</ol>
 	</section>
 @endsection
@@ -50,29 +51,22 @@
 							"<'row'<'col-sm-12'tr>>" +
 							"<'row'<'col-sm-5'i><'col-sm-7'p>>",
 			"processing": true,
-			ajax: "{{ url('delivery/supply/') }}",
+			ajax: "{{ url('inspection/supply/') }}",
 			columns: [
 				{ data: "local" },
-				{ data: "supplier_name" },
+				{ data: "name" },
 				{ data: "purchaseorder_no" },
 				{ data: "invoice_no" },
 				{ data: "delrcpt_no" },
-				{ data: "date_processed" },
+				{ data: "created_at" },
 				{ data: "received_by" },
 				{ data: function(callback){
 	            	return `
-					<a href="{{ url('delivery/supply') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i> View</a>
+						<a href="{{ url('inspection/supply') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i>  Inspect</a>
 	            	`;
 	            } }
 			],
 	    });
-
-		$("div.toolbar").html(`
-				<a href="{{ url('delivery/supply/create') }}" class="btn btn-sm btn-primary">
-					<span class="glyphicon glyphicon-tag" aria-hidden="true"></span>
-					<span id="nav-text">Create New Delivery Record</span>
-				</a>
-		`);
 
 		$('#page-body').show();
 	} );

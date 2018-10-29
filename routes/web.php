@@ -123,14 +123,10 @@ Route::middleware(['auth'])->group(function(){
 		// Route::get('inspection/{id}/apply', 'InspectionController@applyToStockCard');
 		// Route::get('inspection/{id}/approve', 'InspectionController@getApprovalForm');
 		// Route::put('inspection/{id}/approve', 'InspectionController@approval');
-		Route::get('inspection/supply/{id}/', 'InspectionController@show');
-		Route::resource('inspection/supply', 'InspectionController');
+
 	});
 
 	Route::middleware(['amo'])->group(function(){
-
-		Route::get('inventory/physical', 'PhysicalInventoryController@index');
-		Route::get('inventory/physical/print', 'PhysicalInventoryController@print');
 
 		Route::post('delivery/supply/create',[
 			'as' => 'delivery.supply.create',
@@ -139,6 +135,15 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('delivery/supply/create','DeliveryController@create');
 		Route::resource('delivery/supply', 'DeliveryController');
 		Route::get('delivery/supply/{id}/', 'DeliveryController@show');
+
+		Route::get('inspection/supply/{id}/', 'InspectionController@show');
+		Route::post('inspection/supply/accept',[
+			'as' => 'inspection.accept',
+			'uses'=>'InspectionController@store'
+		]);
+		Route::resource('inspection/supply', 'InspectionController');
+
+		//========================== Old Code Starts Here ========================//
 
 		Route::get('inventory/supply/stockcard/release',[
 			'as' => 'supply.stockcard.release.form',
@@ -154,6 +159,9 @@ Route::middleware(['auth'])->group(function(){
 			'as' => 'supply.stockcard.release',
 			'uses' => 'StockCardController@release'
 		]);
+
+		Route::get('inventory/physical', 'PhysicalInventoryController@index');
+		Route::get('inventory/physical/print', 'PhysicalInventoryController@print');
 
 		Route::get('inventory/supply/{id}/stockcard/print','StockCardController@printStockCard');
 

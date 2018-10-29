@@ -16,6 +16,10 @@ class CreateInspectionsTable extends Migration
         Schema::create('inspections', function (Blueprint $table) {
             $table->increments('id');
             $table->string('local');
+            $table->integer('delivery_id')->unsigned();
+            $table->foreign('delivery_id')
+                ->references('id')
+                ->on('deliveries_header');  
             $table->string('inspection_personnel');
             $table->dateTime('inspection_date');
             $table->string('remarks');

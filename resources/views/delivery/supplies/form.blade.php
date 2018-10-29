@@ -409,7 +409,7 @@
 
 			$('#supplyTable > tbody').prepend(`
 				<tr>
-					<td><input type="text" class="stocknumber-list form-control text-center" value="` + _stocknumber + `" name="stocknumber[` + _stocknumber + `]" style="border:none;" /></td>
+					<td><input type="hidden" class="form-control text-center" value="` + _stocknumber + `" name="stocknumber[` + _stocknumber + `]" style="border:none;" />`+_stocknumber+`</td>
 					<td><input type="hidden" class="form-control text-center" value="` + _info + `" name="info[` + _stocknumber + `]" style="border:none;" />` + _info + `</td>
 					<td>
 						<input type="number" min=1 pattern="[0-9]*" class="form-control text-center" value="` + _quantity + `" name="quantity[` + _stocknumber + `]" style="border:none;"  />

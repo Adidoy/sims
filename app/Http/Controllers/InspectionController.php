@@ -2,44 +2,92 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use DB;
 use App;
 use Auth;
 use Carbon;
-use DB;
 use Validator;
+use Illuminate\Http\Request;
 
 class InspectionController extends Controller {
-    
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index(Request $request) {
-        return view('delivery.supplies.index')
-            ->with('trx', 'inspection')
+        if($request->ajax()) {
+            $deliveries = App\DeliveryHeader::findAllDeliveries();
+			return datatables($deliveries)->toJson();
+		}
+        return view('inspection.supplies.index')
             ->with('title', 'Inspection');
     }
 
-     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show(Request $request, $id) {
-
         $delivery = App\DeliveryHeader::with('supplies')->find($id);
         return view('inspection.supplies.inspect')
             ->with('delivery', $delivery);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function store(Request $request) {
+        $inspectionHeader = new App\Inspection;
+        $inspector = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
+        $delivery = App\DeliveryHeader::findByLocal($request->get("deliveryLocal"));
+        $stocknumbers = $request->get("stocknumber");
+        $quantity = $request->get("quantity");
+		$quantity_passed = $request->get("quantity_passed");
+        $comment = $request->get("passed_comment");
+        
+        $validator = Validator::make([
+            'Remarks' => $request->get('remarks')
+        ], $inspectionHeader->rules(), $inspectionHeader->messages());
+
+        if($validator->fails()) {
+            return redirect(inspection.supplies.inspect)
+                ->withInput()
+                ->withErrors($validator);
+        }
+
+        DB::beginTransaction();
+                $inspectionHeader = App\Inspection::create([
+                'local' => $this->generateLocalCode($request),
+                'delivery_id' => $delivery->id,
+                'inspection_personnel' => $inspector,
+                'inspection_date' => Carbon\Carbon::now(),
+                'remarks' => $request->get('remarks')
+            ]);
+            foreach($stocknumbers as $stocknumber) {
+				$supply = App\Supply::StockNumber($stocknumber)->first();
+				App\InspectionSupplies::create([
+					'inspection_id' => $inspectionHeader->id,
+					'supply_id' =>   $supply->id,
+                    'quantity_passed' => $quantity_passed["$stocknumber"],
+                    'quantity_failed' => $quantity["$stocknumber"] - $quantity_passed["$stocknumber"],
+					'comment' => $comment["$stocknumber"]
+                ]);
+            }
+        DB::commit();
+        \Alert::success('Inspection Report created successfully!')->flash();
+		return redirect('/inspection/supply/');       
+            
+    }
+
+	public function generateLocalCode(Request $request) {
+		$now = Carbon\Carbon::now();
+		$const = $now->format('y') . '-' . $now->format('m');
+		$id = count(App\Inspection::get()) + 1;
+	
+		if (strlen($id) == 1) 
+		  $trxCode =  '000'.$id;
+		elseif (strlen($id) == 2) 
+		  $trxCode =  '00'.$id;
+		elseif (strlen($id) == 3) 
+		  $trxCode =  '0'.$id;
+		elseif (strlen($id) == 4) 
+		  $trxCode =  $id;
+		else
+		  $trxCode =  $id;
+		
+		return 'IAR-' . $const . '-' . $trxCode;
+	} 
+
     public function getInitialVerifyForm()
     {
         return view('inspection.initial')

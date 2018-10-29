@@ -3,6 +3,7 @@
 namespace App;
 
 use Auth;
+use DB;
 use Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -69,6 +70,18 @@ class DeliveryHeader extends Model
         return 'None';
     }
 
+    public function scopeFindByLocal($query, $value) {
+        return $query->where('local', '=', $value)->first();
+    }
+
+    public function scopeFindAllDeliveries($query) {
+        return DB::table('deliveries_header')
+            ->join('suppliers','suppliers.id','=','deliveries_header.supplier_id')
+            ->whereNotIn('deliveries_header.id', DB::table('inspections')->pluck('id'))
+            ->select('deliveries_header.id','deliveries_header.local', 'suppliers.name', 'deliveries_header.purchaseorder_no', 'deliveries_header.invoice_no', 'deliveries_header.delrcpt_no', 'deliveries_header.received_by', 'deliveries_header.created_at')
+            ->get();
+    }
+
     public function supplier() {
       return $this->belongsTo('App\Supplier','supplier_id','id');
     }
@@ -76,6 +89,10 @@ class DeliveryHeader extends Model
     public function supplies() {
         return $this->belongsToMany('App\Supply', 'deliveries_supplies',  'delivery_id', 'supply_id')
             ->withPivot('quantity_delivered', 'unit_cost');
+    }
+
+    public function inspection() {
+        return $this->hasOne('App\Inspection', 'delivery_id');
     }
 
     public function scopeFindByNumber($query, $value) {
