@@ -2,13 +2,12 @@
 
 namespace App;
 
-use Auth;
 use DB;
+use Auth;
 use Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class DeliveryHeader extends Model
-{
+class DeliveryHeader extends Model {
     protected $table = 'deliveries_header';
     protected $primaryKey = 'id';
     public $timestamps = true;
