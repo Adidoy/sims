@@ -87,7 +87,7 @@ class User extends \Eloquent implements Authenticatable, Auditable, UserResolver
 		0 => "Administrator",
 		1 => "PSMO",
 		2 => "Accounting",
-		3 => "Offices", 
+		3 => "Offices",  
 		4 => "Chief",
 		5 => "Director",
 		6 => "PSMO-Releasing",
