@@ -20,9 +20,9 @@ class SupplyInventoryController extends Controller {
 		if($request->ajax())
 		{
 
-			// $supplies = App\Supply::with('unit')->get();
-			$supplies = DB::table('supplies_v')->get();
-			// $supplies = App\Supply::with('unit')->take(App\Supply::count());	
+			$supplies = App\Supply::with('unit')->get();
+			//$supplies = DB::table('supplies_v')->get();
+			$supplies = App\Supply::with('unit')->take(App\Supply::count());	
 			return datatables($supplies)->toJson();
 		}
 		return view('inventory.supply.index')
@@ -70,7 +70,6 @@ class SupplyInventoryController extends Controller {
 			{
 				$stocknumber = $this->sanitizeString($request->get('term'));
 				$supply = App\Supply::where('stocknumber', 'like', '%'. $stocknumber . '%')->pluck('stocknumber');
-
 				return json_encode($supply);
 			}
 		}

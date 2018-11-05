@@ -22,6 +22,7 @@ class CreateInspectionsSuppliesTable extends Migration
             $table->foreign('supply_id')
                     ->references('id')
                     ->on('supplies');
+            $table->decimal('unit_cost',8,2);
             $table->integer('quantity_passed');
             $table->integer('quantity_failed')->nullable();
             $table->string('comment');

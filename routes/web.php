@@ -56,6 +56,21 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::middleware(['except-offices'])->group(function(){
 
+		
+		Route::get('inspection/supply/', 'InspectionController@index');
+		Route::get('inspection/supply/{id}/', 'InspectionController@show');
+		Route::get('inspection/view/supply/', 'InspectionController@showInspected');
+		Route::get('inspection/view/supply/{id?}', 'InspectionController@showInspected');
+		Route::post('inspection/supply/accept/',[
+			'as' => 'inspection.accept',
+			'uses'=>'InspectionController@store'
+		]);
+		Route::post('inspection/supply/{id}/approve/',[
+			'as' => 'inspection.approve',
+			'uses'=>'InspectionController@approveInspection'
+		]);
+
+		//====================== old codes ===========================
 		Route::get('rsmi', [
 			'as' => 'rsmi.index',
 			'uses' => 'RSMIController@index'
@@ -124,6 +139,7 @@ Route::middleware(['auth'])->group(function(){
 		// Route::get('inspection/{id}/approve', 'InspectionController@getApprovalForm');
 		// Route::put('inspection/{id}/approve', 'InspectionController@approval');
 
+
 	});
 
 	Route::middleware(['amo'])->group(function(){
@@ -135,13 +151,6 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('delivery/supply/create','DeliveryController@create');
 		Route::resource('delivery/supply', 'DeliveryController');
 		Route::get('delivery/supply/{id}/', 'DeliveryController@show');
-
-		Route::get('inspection/supply/{id}/', 'InspectionController@show');
-		Route::post('inspection/supply/accept',[
-			'as' => 'inspection.accept',
-			'uses'=>'InspectionController@store'
-		]);
-		Route::resource('inspection/supply', 'InspectionController');
 
 		//========================== Old Code Starts Here ========================//
 

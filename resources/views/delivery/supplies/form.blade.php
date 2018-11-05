@@ -291,10 +291,10 @@
 		})
 
 		//stock number onfocus = false
-		$('#stocknumber').on('click focus-in mousein keyup focus-out', function(){
+		$('#stocknumber').on('keyup focusout', function(){
 			setStockNumberDetails()
 		})
-	
+
 		//accept click
 		$('#accept').on('click',function() {
 			if($('#supplyTable > tbody > tr').length == 0) {
@@ -324,42 +324,30 @@
 
 		//show stock details
 		function setStockNumberDetails() {
-			$.ajax({
+			$.ajax ({
 				headers: {
 					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 				},
 				type: 'get',
-				url: '{{ url('inventory/supply') }}' +  '/' + $('#stocknumber').val(),
+				url: `{{ url("/inventory/supply/") }}` + `/` + $('#stocknumber').val(),
 				dataType: 'json',
-				success: function(response){
+				success: function(response) {
 					try {
 						details = response.data.details
 						unit = response.data.unit_name
-						@if($type == 'ledger')
-						balance = response.data.ledger_balance
-						@else
 						balance = response.data.stock_balance
-						@endif
 						$('#supply-item').val(details.toString())
 						$('#stocknumber-details').html(`
 							<div class="alert alert-success">
 								<ul class="list-unstyled">
 									<li><strong>Item:</strong> ` + details + ` </li>
 									<li><strong>Unit:</strong> <span class="label label-warning">` + unit + `</span> </li>
-									<li><strong>Remaining Balance:</strong> `
-									+ balance +
-									`</li>
+									<li><strong>Remaining Balance:</strong> ` + balance + `</li>
 								</ul>
 							</div>
-						`)
-
-						url = "{{ url('inventory/supply')  }}" +  '/' + $('#stocknumber').val() + '/compute/daystoconsume'
-
-						$.getJSON( url, function( data ) {
-						$('#daystoconsume').val(data)
-						});
-											
-					} catch (e) {
+						`)				
+					} 
+					catch (e) {
 						$('#stocknumber-details').html(`
 							<div class="alert alert-danger">
 								<ul class="list-unstyled">
@@ -367,7 +355,6 @@
 								</ul>
 							</div>
 						`)
-
 					}
 				}
 			})
@@ -505,14 +492,10 @@
 			}
 		}
 
-		$('#stocknumber').on('change focusin focusout mousein keyup', function() {
-			setStockNumberDetails()
-		})
-
 		$('#supplyInventoryTable').on('click','.add-stock',function() {
-		$('#stocknumber').val($(this).data('id'))
-		$('#addStockNumberModal').modal('hide')
-		setStockNumberDetails()
+			$('#stocknumber').val($(this).data('id'))
+			$('#addStockNumberModal').modal('hide')
+				setStockNumberDetails()
 		})
 
 		$('#fundcluster').on('change', function(){

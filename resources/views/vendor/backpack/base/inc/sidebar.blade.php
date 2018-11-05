@@ -111,6 +111,10 @@
           <li class="header">Information System</li>
           <li><a href="{{ url('announcement') }}"><i class="fa fa-bullhorn" aria-hidden="true"></i> <span> Announcement </span></a></li>
           @endif
+
+          @if((Auth::user()->access == 10)||(Auth::user()->access == 9))
+            @include('vendor.backpack.base.inc.sidebar.menu_inspection_team')
+          @endif
           <!-- ======================================= -->
           <li class="header">{{ trans('backpack::base.user') }}</li>
           @if(Auth::user()->access == 0)

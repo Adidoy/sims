@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Input;
 
 class DeliveryController extends Controller {
 
-	public function index(Request $request) {
+	public function index(Request $request) 
+	{
 		if($request->ajax()) {
 			$deliveries = App\DeliveryHeader::with('supplier')->get();
 			return datatables($deliveries)->toJson();
@@ -23,7 +24,8 @@ class DeliveryController extends Controller {
 			->with('title', 'Supply Delivery');
 	}
 
-	public function create() {
+	public function create() 
+	{
 		$supplier = App\Supplier::pluck('name','name');
 		return view('delivery.supplies.accept')
 			->with('title','Supply Delivery')
@@ -31,8 +33,8 @@ class DeliveryController extends Controller {
 			->with('supplier',$supplier);
 	}
 
-	public function show(Request $request, $id) {
-		$id = $this->sanitizeString($id);
+	public function show(Request $request, $id) 
+	{
 		$delivery = App\DeliveryHeader::with('supplies')->find($id);
     	if($request->ajax()) {
         	$supplies = $delivery->supplies;
@@ -45,7 +47,8 @@ class DeliveryController extends Controller {
 			->with('title','Supplies Delivery');
 	}
 
-	public function store(Request $request)	{
+	public function store(Request $request)	
+	{
 		$deliveryHeader = new App\DeliveryHeader;
 		$supplier = App\Supplier::findBySupplierName($request->get("supplier"))->first();
 		$userName = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
@@ -79,7 +82,7 @@ class DeliveryController extends Controller {
 			]);
 			foreach($stocknumbers as $stocknumber) {
 				$supply = App\Supply::StockNumber($stocknumber)->first();
-				App\InspectionSupplies::create([
+				App\DeliveriesDetail::create([
 					'delivery_id' => $deliveryHeader->id,
 					'supply_id' =>   $supply->id,
 					'quantity_delivered' => $quantity["$stocknumber"],
@@ -91,7 +94,8 @@ class DeliveryController extends Controller {
 		return redirect('delivery/supply/');
 	}
 
-	public function generateLocalCode(Request $request) {
+	public function generateLocalCode(Request $request) 
+	{
 		$now = Carbon\Carbon::now();
 		$const = $now->format('y') . '-' . $now->format('m');
 		$id = count(App\DeliveryHeader::get()) + 1;

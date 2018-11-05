@@ -55,7 +55,7 @@
 					{ data: "purchaseorder_no" },
 					{ data: "invoice_no" },
 					{ data: "delrcpt_no" },
-					{ data: "created_at" },
+					{ data: "date_processed" },
 					{ data: "received_by" },
 					{ data: function(callback){
 						return `

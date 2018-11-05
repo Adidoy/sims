@@ -21,7 +21,7 @@
                             <td><input type="hidden" name="stocknumber[{{ $supply->stocknumber }}]" value="{{ $supply->stocknumber }}" class="form-control"  />{{ $supply->stocknumber }}</td>
                             <td>{{ $supply->details }}</td>
                             <td>{{ $supply->unit->name }}</td>
-                            <td>{{ $supply->pivot->unit_cost }}</td>
+                            <td><input type="hidden" name="unit_cost[{{ $supply->stocknumber }}]" value="{{ $supply->pivot->unit_cost }}" class="form-control"  />{{ $supply->pivot->unit_cost }}</td>
                             <td><input type="hidden" class="form-control" name="quantity[{{ $supply->stocknumber }}]"  value="{{ $supply->pivot->quantity_delivered }}"  /> {{ $supply->pivot->quantity_delivered }} </td>
                             <td><input type="number" name="quantity_passed[{{ $supply->stocknumber }}]" max="{{ $supply->pivot->quantity_delivered }}" min="0" class="form-control" value="{{ $supply->pivot->quantity_delivered }}"  /></td>
                             <td><input type="text" name="passed_comment[{{ $supply->stocknumber }}]" class="form-control"/></td>
@@ -42,7 +42,7 @@
             <div class="pull-right">
                 <br />
                 <div class="btn-group">
-                    <button type="button" id="save" class="btn btn-md btn-danger btn-block">Save</button>
+                    <button type="button" id="save" class="btn btn-md btn-danger btn-block">Submit</button>
                 </div>
                 <div class="btn-group">
                     <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('/inspection/supply') }}"'>Cancel</button>
@@ -54,7 +54,7 @@
 @section('after_scripts')
     <script>
         $('document').ready(function(){
-            deliveryLocal = stocknumber = $('#deliveryLocal').val()
+            deliveryLocal = $('#deliveryLocal').val()
             $('#save').on('click',function() {
                 swal({
                     title: "Are you sure?",
@@ -75,6 +75,6 @@
                     }
                 })
 		    })
-        })
+        })      
     </script>
 @endsection

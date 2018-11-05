@@ -73,14 +73,6 @@ class DeliveryHeader extends Model {
         return $query->where('local', '=', $value)->first();
     }
 
-    public function scopeFindAllDeliveries($query) {
-        return DB::table('deliveries_header')
-            ->join('suppliers','suppliers.id','=','deliveries_header.supplier_id')
-            ->whereNotIn('deliveries_header.id', DB::table('inspections')->pluck('id'))
-            ->select('deliveries_header.id','deliveries_header.local', 'suppliers.name', 'deliveries_header.purchaseorder_no', 'deliveries_header.invoice_no', 'deliveries_header.delrcpt_no', 'deliveries_header.received_by', 'deliveries_header.created_at')
-            ->get();
-    }
-
     public function supplier() {
       return $this->belongsTo('App\Supplier','supplier_id','id');
     }
