@@ -65,7 +65,7 @@ Route::middleware(['auth'])->group(function(){
 			'as' => 'inspection.accept',
 			'uses'=>'InspectionController@store'
 		]);
-		Route::post('inspection/supply/{id}/{action}/',[
+		Route::post('inspection/supply/{id}/action={action}/',[
 			'as' => 'inspection.approve',
 			'uses'=>'InspectionController@approveInspection'
 		]);

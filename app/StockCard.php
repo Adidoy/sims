@@ -66,6 +66,15 @@ class StockCard extends Model implements Auditable, UserResolver
 		'parsed_date', 'reference_information', 'month', 'parsed_month', 'supply_name', 'stocknumber','sector_office'
 	];
 
+	//========================================================================//
+	public function scopeFindBalanceQuantity($query, $value) {
+		return $query->where('supply_id', '=' , $value)
+			->select('balance_quantity')
+			->orderBy('id', 'DESC')
+			->first();
+	}
+	//========================================================================//
+
 	public function getSupplyNameAttribute($value)
 	{
 		return count($this->supply) > 0 ? $this->supply->details : 'N/A';
@@ -127,7 +136,7 @@ class StockCard extends Model implements Auditable, UserResolver
 
 	public function getParsedDateAttribute()
 	{
-		return Carbon\Carbon::parse($this->created_at)->format("F d Y h:m:s A");;
+		return Carbon\Carbon::parse($this->date)->toFormattedDateString();
 	}
 
 	/*
@@ -136,7 +145,7 @@ class StockCard extends Model implements Auditable, UserResolver
 	*	a. Carbon\Carbon::parse($value)->format('F d Y');
 	*	b. Carbon\Carbon::parse($value)->toFormattedDateString();
 	*/
-	public function getDateAttribute($value) 
+	public function getDateAttribute($value)
 	{
 		return Carbon\Carbon::parse($value)->toFormattedDateString();
 	}

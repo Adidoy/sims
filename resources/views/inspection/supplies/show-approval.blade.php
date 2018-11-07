@@ -11,10 +11,10 @@
 		</ul>
 	</section>
 @endsection 
-{{$kemerlu = ''}}
+
 @section('content')
     <div class="box">
-        {{ Form::open(['method'=>'post','route' => array('inspection.approve', $inspection->id, $kemerlu),'class'=>'form-horizontal','id'=>'inspectForm']) }}   
+ 
         <div class="box-body">
 		    <div class="panel panel-body table-responsive">
 			    <table class="table table-hover table-striped table-bordered table-condensed" id="headerTable" cellspacing="0" width="100%">
@@ -52,15 +52,17 @@
 		    </div>
             @if(Auth::user()->access == 9)
                 @if( !isset($inspection->inspection_approval_date) )
-                    {{ $kemerlu = 'kembular' }}
-                    <div class="pull-right">
-                        <div class="btn-group">
-                            <button type="button" id="approve" class="btn btn-md btn-primary btn-block">Approve</button>
+                    {{$kemerlu = "approve"}}
+                    {{ Form::open(['method'=>'post','route' => array('inspection.approve', $inspection->id, $kemerlu),'class'=>'form-horizontal','id'=>'inspectForm']) }}  
+                        <div class="pull-right">
+                            <div class="btn-group">
+                                <button type="button" id="approve" class="btn btn-md btn-primary btn-block">Approve</button>
+                            </div>
+                            <div class="btn-group">
+                                <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('inspection/view/supply') }}"'>Cancel</button>
+                            </div>
                         </div>
-                        <div class="btn-group">
-                            <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('inspection/view/supply') }}"'>Cancel</button>
-                        </div>
-                    </div>
+                    {{ Form::close() }}
                 @else
                     <div class="pull-right">
                         <div class="btn-group">
@@ -71,14 +73,17 @@
             @endif
             @if(Auth::user()->access == 4)
                 @if( !isset($inspection->property_custodian_acknowledgement_date) && isset($inspection->inspection_approval_date))
-                    <div class="pull-right">
-                        <div class="btn-group">
-                            <button type="button" id="approve" class="btn btn-md btn-primary btn-block">Acknowledge</button>
+                    {{$kemerlu = "acknowledge"}}
+                    {{ Form::open(['method'=>'post','route' => array('inspection.approve', $inspection->id, $kemerlu),'class'=>'form-horizontal','id'=>'inspectForm']) }}  
+                        <div class="pull-right">
+                            <div class="btn-group">
+                                <button type="button" id="approve" class="btn btn-md btn-primary btn-block">Acknowledge</button>
+                            </div>
+                            <div class="btn-group">
+                                <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('inspection/view/supply') }}"'>Cancel</button>
+                            </div>
                         </div>
-                        <div class="btn-group">
-                            <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('inspection/view/supply') }}"'>Cancel</button>
-                        </div>
-                    </div>
+                    {{ Form::close() }}
                 @else
                     <div class="pull-right">
                         <div class="btn-group">
@@ -88,7 +93,6 @@
                 @endif
             @endif
         </div>
-        {{ Form::close() }}
     </div>
 @endsection
 

@@ -122,15 +122,48 @@ class InspectionController extends Controller
 
     public function approveInspection(Request $request, $id, $action)
     {
-        return $action;
-        // DB::beginTransaction();
-        //     $inspection = App\Inspection::find($id);
-        //     $inspection->inspection_approval = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
-        //     $inspection->inspection_approval_date = Carbon\Carbon::now();
-        //     $inspection->save();
-        // DB::commit();
-        // \Alert::success('Inspection Report is approved!')->flash();
-		// return redirect('/inspection/view/supply');       
+        if ($action == "approve") {
+            DB::beginTransaction();
+                $inspection = App\Inspection::find($id);
+                $inspection->inspection_approval = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
+                $inspection->inspection_approval_date = Carbon\Carbon::now();
+                $inspection->save();
+            DB::commit();
+            \Alert::success('Inspection Report is approved!')->flash();
+            return redirect('/inspection/view/supply'); 
+        } else {
+            try{
+                DB::beginTransaction();
+                    $inspection = App\Inspection::with('supplies')->find($id);
+                    $inspection->property_custodian_acknowledgement = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
+                    $inspection->property_custodian_acknowledgement_date = Carbon\Carbon::now();
+                    $inspection->save();
+                    $delivery = App\DeliveryHeader::find($inspection->delivery_id);
+                    foreach($inspection->supplies as $supply) {
+                        $balance = App\StockCard::findBalanceQuantity($supply->id);
+                        $stockCard = new App\StockCard;
+                        $stockCard->date = Carbon\Carbon::now();
+                        $stockCard->supply_id = $supply->id;
+                        $stockCard->reference = "PO/APR No.: " . $delivery->purchaseorder_no . " / Invoice No.: " . $delivery->invoice_no;
+                        $stockCard->receipt = "Delivery: " . $delivery->local . " / Inspection: " . $inspection->local;
+                        $stockCard->organization = 'None';
+                        $stockCard->received_quantity = $supply->pivot->quantity_passed;
+                        $stockCard->issued_quantity = 0;
+                        $stockCard->balance_quantity = $balance->balance_quantity + $supply->pivot->quantity_passed;
+                        $stockCard->daystoconsume = 'N/A';
+                        $stockCard->user_id = Auth::user()->id;
+                        $stockCard->save();
+                    }
+                DB::commit();
+                \Alert::success('Inspection Report is is acknowledged! Stock cards updated!')->flash();
+                return redirect('/inspection/view/supply'); 
+            } catch(\Exception $e) {
+                DB::rollback();
+                \Alert::error('An error occured! Please try again. Message: '.$e->getMessage())->flash();
+                return redirect('/inspection/view/supply'); 
+            }
+        }
+      
     }
 
     public function generateLocalCode(Request $request) 

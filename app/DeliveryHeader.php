@@ -7,7 +7,8 @@ use Auth;
 use Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class DeliveryHeader extends Model {
+class DeliveryHeader extends Model 
+{
     protected $table = 'deliveries_header';
     protected $primaryKey = 'id';
     public $timestamps = true;
@@ -23,11 +24,10 @@ class DeliveryHeader extends Model {
         'received_by'
     ];
 
-    protected $appends = [
-        'date_invoice', 'date_delivered', 'date_purchaseorder', 'date_processed', 'supplier_name'
-    ];
+    protected $appends = [ 'date_invoice', 'date_delivered', 'date_purchaseorder', 'date_processed', 'supplier_name' ];
 
-    public function rules() {
+    public function rules() 
+    {
         return [
 			'Purchase Order Number' => 'required',
 			'Invoice Number' => 'required',
@@ -35,7 +35,8 @@ class DeliveryHeader extends Model {
         ];
     }
 
-    public function messages() {
+    public function messages() 
+    {
         return [
 			'Purchase Order Number.required' => 'APR/Purchase Order Number is required.',
 			'Invoice Number.required' => 'Invoice Number is required.',
@@ -44,24 +45,29 @@ class DeliveryHeader extends Model {
         ];
     }
 
-    public function getDateInvoiceAttribute() {
+    public function getDateInvoiceAttribute() 
+    {
         if($this->invoice_date == null || $this->invoice_date == "") return "None";
         return Carbon\Carbon::parse($this->invoice_date)->toFormattedDateString();
     }
 
-    public function getDateDeliveredAttribute($value) {
+    public function getDateDeliveredAttribute($value) 
+    {
         return Carbon\Carbon::parse($this->delivery_date)->toFormattedDateString();
     }
 
-    public function getDatePurchaseorderAttribute($value) {
+    public function getDatePurchaseorderAttribute($value) 
+    {
         return Carbon\Carbon::parse($this->purchaseorder_date)->toFormattedDateString();
     }
 
-    public function getDateProcessedAttribute($value) {
+    public function getDateProcessedAttribute($value) 
+    {
         return Carbon\Carbon::parse($this->created_at)->format('d F Y h:i A');
     }
 
-    public function getSupplierNameAttribute() {
+    public function getSupplierNameAttribute() 
+    {
         if(isset($this->supplier) && count($this->supplier) > 0):
             if($this->supplier->name)
                 return $this->supplier->name;
@@ -69,24 +75,29 @@ class DeliveryHeader extends Model {
         return 'None';
     }
 
-    public function scopeFindByLocal($query, $value) {
+    public function scopeFindByLocal($query, $value) 
+    {
         return $query->where('local', '=', $value)->first();
     }
 
-    public function supplier() {
-      return $this->belongsTo('App\Supplier','supplier_id','id');
+    public function scopeFindByID($query, $value) 
+    {
+        return $query->where('id', '=', $value)->first();
     }
 
-    public function supplies() {
+    public function supplier() 
+    {
+        return $this->belongsTo('App\Supplier','supplier_id','id');
+    }
+  
+    public function supplies() 
+    {
         return $this->belongsToMany('App\Supply', 'deliveries_supplies',  'delivery_id', 'supply_id')
             ->withPivot('quantity_delivered', 'unit_cost');
     }
-
-    public function inspection() {
+  
+    public function inspection() 
+    {
         return $this->hasOne('App\Inspection', 'delivery_id');
-    }
-
-    public function scopeFindByNumber($query, $value) {
-        return $query->where('number', '=', $value)->first();
     }
 }
