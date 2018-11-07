@@ -50,7 +50,7 @@ class InspectionController extends Controller
                 ->with('inspection', $inspection)
                 ->with('title', 'Inspection');
         }   
-    }
+    }  
 
     public function store(Request $request) 
     {
@@ -120,16 +120,17 @@ class InspectionController extends Controller
             
     }
 
-    public function approveInspection(Request $request)
+    public function approveInspection(Request $request, $id, $action)
     {
-        DB::beginTransaction();
-            $inspection = App\Inspection::find($request->get('inspectionID'));
-            $inspection->inspection_approval = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
-            $inspection->inspection_approval_date = Carbon\Carbon::now();
-            $inspection->save();
-        DB::commit();
-        \Alert::success('Inspection Report created successfully!')->flash();
-		return redirect('/inspection/supply/');       
+        return $action;
+        // DB::beginTransaction();
+        //     $inspection = App\Inspection::find($id);
+        //     $inspection->inspection_approval = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
+        //     $inspection->inspection_approval_date = Carbon\Carbon::now();
+        //     $inspection->save();
+        // DB::commit();
+        // \Alert::success('Inspection Report is approved!')->flash();
+		// return redirect('/inspection/view/supply');       
     }
 
     public function generateLocalCode(Request $request) 

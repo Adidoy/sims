@@ -75,8 +75,7 @@
           @endif
           
           @if(Auth::user()->access == 4)
-          <li><a href="{{ url('inventory/physical') }}"><i class="fa fa-archive" aria-hidden="true"></i> <span> Physical Inventory </span></a></li>
-          <li><a href="{{ url('inspection') }}"><i class="fa fa-search" aria-hidden="true"></i> <span> Inspection </span></a></li>
+            @include('vendor.backpack.base.inc.sidebar.menu_psmo_chief_supplies')
           @endif
           
           @if(Auth::user()->access == 5)

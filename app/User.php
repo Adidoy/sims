@@ -85,10 +85,10 @@ class User extends \Eloquent implements Authenticatable, Auditable, UserResolver
 
 	public static $access_list = [
 		0 => "Administrator",
-		1 => "PSMO",
+		1 => "PSMO-Director",
 		2 => "Accounting",
 		3 => "Offices",  
-		4 => "Chief",
+		4 => "Chief-Supplies",
 		5 => "Director",
 		6 => "PSMO-Releasing",
 		7 => "PSMO-Accepting",
