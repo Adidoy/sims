@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App;
 use DB;
+use App;
 use Auth;
 use Hash;
 use Carbon;
 use Session;
 use Validator;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Input;
 
 class AccountsController extends Controller {
@@ -20,39 +20,32 @@ class AccountsController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function index(Request $request)
-	{
-		if($request->ajax())
-		{
-
+	public function index(Request $request)	{
+		if($request->ajax()) {
 			$users = App\User::all();
 			return datatables($users)->toJson();
 		}
 		return view('account.index')
-				->with('title','Accounts');
+			->with('title','Accounts');
 	}
-
 
 	/**
 	 * Show the form for creating a new resource.
 	 *
 	 * @return Response
 	 */
-	public function create()
-	{
+	public function create() {
 		return view('account.create')
-				->with('title','Accounts')
-				->with('office',App\Office::orderBy('name')->pluck('name','code'));
+			->with('title','Accounts')
+			->with('office',App\Office::orderBy('name')->pluck('name','code'));
 	}
-
 
 	/**
 	 * Store a newly created resource in storage.
 	 *
 	 * @return Response
 	 */
-	public function store(Request $request)
-	{
+	public function store(Request $request)	{
 		$lastname = $this->sanitizeString(Input::get('lastname'));
 		$firstname = $this->sanitizeString(Input::get('firstname'));
 		$middlename = $this->sanitizeString(Input::get('middlename'));
@@ -74,8 +67,7 @@ class AccountsController extends Controller {
 			'Office' => $office
 		],App\User::$rules);
 
-		if($validator->fails())
-		{
+		if($validator->fails())	{
 			return redirect('account/create')
 				->withErrors($validator)
 				->withInput();
@@ -102,21 +94,18 @@ class AccountsController extends Controller {
 		return redirect('account');
 	}
 
-
 	/**
 	 * Display the specified resource.
 	 *
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($id)
-	{
+	public function show($id) {
 		$user = App\User::find($id);
 		return view('account.show')
 			->with('person',$user)
 			->with('title','Accounts');
 	}
-
 
 	/**
 	 * Show the form for editing the specified resource.
@@ -124,9 +113,8 @@ class AccountsController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
-	{
-		if(isset($id)){
+	public function edit($id) {
+		if(isset($id)) {
 			$user = App\User::find($id);
 			return view('account.update')
 				->with('user',$user)
@@ -135,15 +123,13 @@ class AccountsController extends Controller {
 		}
 	}
 
-
 	/**
 	 * Update the specified resource in storage.
 	 *
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
-	{
+	public function update($id)	{
 		$lastname = $this->sanitizeString(Input::get('lastname'));
 		$firstname = $this->sanitizeString(Input::get('firstname'));
 		$middlename = $this->sanitizeString(Input::get('middlename'));
@@ -163,8 +149,7 @@ class AccountsController extends Controller {
 			'Username' => $username,
 		],$user->updateRules());
 
-		if($validator->fails())
-		{
+		if($validator->fails())	{
 			return redirect("account/$id/edit")
 				->withInput()
 				->withErrors($validator);
@@ -183,46 +168,35 @@ class AccountsController extends Controller {
 		return redirect('account');
 	}
 
-
-	/**
+ 	/**
 	 * Remove the specified resource from storage.
 	 *
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy(Request $request,$id)
-	{
-		if($request->ajax())
-		{
-			if($id == Auth::user()->id)
-			{
+	public function destroy(Request $request,$id) {
+		if($request->ajax()) {
+			if($id == Auth::user()->id)	{
 				return json_encode('self');
 			}
-			else if(App\User::count() <= 1)
-			{
+			else if(App\User::count() <= 1) {
 				return json_encode('invalid');
 			}
-			else
-			{
+			else {
 				$user = App\User::find($id);
 				$user->action = 'delete';
 				$user->createAuditTrail();
 				$user->delete();
-
 				return json_encode('success');
 			}
 		}
 
 		$user = App\User::find($id);
-
-		if( count($user) <= 0 )
-		{
+		if( count($user) <= 0 )	{
 			\Alert::error('Error Ocurred while processing your data')->flash();
 			return Redirect::back();
 		}
-
 		$user->delete();
-
 		\Alert::success('Account removed!')->flash();
 		return redirect('account/view/delete');
 	}
@@ -233,35 +207,27 @@ class AccountsController extends Controller {
 	 * user id
 	 *@param  int  $id
 	 */
-	public function resetPassword(Request $request)
-	{
-		if($request->ajax())
-		{
+	public function resetPassword(Request $request)	{
+		if($request->ajax()) {
 			$id = $this->sanitizeString(Input::get('id'));
 		 	$user = App\User::find($id);
 		 	$user->password = Hash::make('12345678');
 		 	$user->save();
-
 		 	return json_encode('success');
 		}
 	}
 
-	public function changeAccessLevel()
-	{
+	public function changeAccessLevel()	{
 		$id = $this->sanitizeString(Input::get("id"));
 		$access = $this->sanitizeString(Input::get('newaccesslevel'));
 
-		if(Auth::user()->access != 0)
-		{
-
+		if(Auth::user()->access != 0) {
 			\Alert::error('You do not have enough priviledge to change the users access level')->flash();
 			return redirect('account');
 		}
-
 		$user = App\User::find($id);
 		$user->access = $access;
 		$user->save();
-
 		\Alert::success('Access updated')->flash();
 		return redirect('account');
 	}

@@ -1,5 +1,5 @@
 @extends('backpack::layout')
-
+ 
 @section('header')
 	<section class="content-header">
 		<legend>
@@ -106,7 +106,7 @@
           </a>
           @endif
 
-          @if($request->status != null && ($request->status == 'Approved')) 
+          @if(($request->status != null) && ($request->status == 'Approved')) 
           <button id="expire" type="button" data-id="{{ $request->id }}" class="btn btn-warning btn-sm"> 
             <i class="fa fa-refresh" aria-hidden="true"> Expire</i> 
           </button> 
@@ -145,11 +145,12 @@
                 'id': id
             },
             dataType: 'json',
-            success: function(response){
-                if(response == 'success'){
+            success: function(response) {
+                if(response == 'success') {
                     swal('Operation Successful','Operation Complete please reload the page!','success'),
                     location.reload();
-                }else{
+                }
+                else {
                     swal('Operation Unsuccessful','Error occurred while processing your request','error')
                 }
             },

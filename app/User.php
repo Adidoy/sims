@@ -2,18 +2,21 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Auth\Authenticatable;
-use OwenIt\Auditing\Contracts\Auditable;
-use OwenIt\Auditing\Contracts\UserResolver;
 use Auth;
-
+use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Notifications\Notifiable;
+use OwenIt\Auditing\Contracts\UserResolver;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Auth\Authenticatable as AuthenticableTrait;
+
 
 class User extends \Eloquent implements Authenticatable, Auditable, UserResolver
 {
 	use AuthenticableTrait;
-    use \OwenIt\Auditing\Auditable;
+	use \OwenIt\Auditing\Auditable;
+	use Notifiable;
 
 	//Database driver
 	/*
@@ -82,14 +85,16 @@ class User extends \Eloquent implements Authenticatable, Auditable, UserResolver
 
 	public static $access_list = [
 		0 => "Administrator",
-		1 => "PSMO",
+		1 => "PSMO-Director",
 		2 => "Accounting",
-		3 => "Offices", 
-		4 => "Chief",
+		3 => "Offices",  
+		4 => "Chief-Supplies",
 		5 => "Director",
 		6 => "PSMO-Releasing",
 		7 => "PSMO-Accepting",
-		8 => "PSMO-Disposal"
+		8 => "PSMO-Disposal",
+		9 => "Inspection Chief",
+		10 => "Inspection Team"
 	];
 
 	public function getFullnameAttribute()
@@ -138,6 +143,11 @@ class User extends \Eloquent implements Authenticatable, Auditable, UserResolver
 		return Auth::check() ? Auth::user()->getAuthIdentifier() : null;
 	}
 
+	public function scopeUserExists($query, $email, $username) {
+		return $query -> where('email', $email)
+			->where('username', $username)
+			->exists();
+	}
 
 	public function officeInfo()
 	{
@@ -152,5 +162,10 @@ class User extends \Eloquent implements Authenticatable, Auditable, UserResolver
     public function scopeFindByUserName($query, $value)
     {
     	$query->where('username', '=', $value);
-    }
+	}
+
+	public function scopeFindByEmail($query, $value)
+    {
+    	$query->where('email', '=', $value);
+	}
 }

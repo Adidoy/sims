@@ -19,6 +19,21 @@
 
 <!-- references and receipts -->
 <div class="row">
+	@if ($errors->any())
+		<div class="alert alert-danger">
+			<ul>
+				@foreach ($errors->all() as $error)
+					<li>{{ $error }}</li>
+				@endforeach
+			</ul>
+		</div>
+	@endif
+
+	@if (\Session::get('success'))
+		<div class="alert alert-success">
+			<p>{{ \Session::get('success') }}</p>
+		</div>
+	@endif
 	<!-- purchase order form -->
 	<div class="col-sm-4" id="reference-form">
 		<div class="panel panel-default">
@@ -239,7 +254,7 @@
 				<button type="button" id="accept" class="btn btn-md btn-primary btn-block" data-loading-text="Submitting..." autocomplete="off">Accept Delivery</button>
 			</div>
 			<div class="btn-group">
-				<button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('/dashboard') }}"'>Cancel</button>
+				<button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('/delivery/supply') }}"'>Cancel</button>
 			</div>
 		</div>
 	</div>
@@ -276,10 +291,10 @@
 		})
 
 		//stock number onfocus = false
-		$('#stocknumber').on('click focus-in mousein keyup focus-out', function(){
+		$('#stocknumber').on('keyup focusout', function(){
 			setStockNumberDetails()
 		})
-	
+
 		//accept click
 		$('#accept').on('click',function() {
 			if($('#supplyTable > tbody > tr').length == 0) {
@@ -309,42 +324,30 @@
 
 		//show stock details
 		function setStockNumberDetails() {
-			$.ajax({
+			$.ajax ({
 				headers: {
 					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 				},
 				type: 'get',
-				url: '{{ url('inventory/supply') }}' +  '/' + $('#stocknumber').val(),
+				url: `{{ url("/inventory/supply/") }}` + `/` + $('#stocknumber').val(),
 				dataType: 'json',
-				success: function(response){
+				success: function(response) {
 					try {
 						details = response.data.details
 						unit = response.data.unit_name
-						@if($type == 'ledger')
-						balance = response.data.ledger_balance
-						@else
 						balance = response.data.stock_balance
-						@endif
 						$('#supply-item').val(details.toString())
 						$('#stocknumber-details').html(`
 							<div class="alert alert-success">
 								<ul class="list-unstyled">
 									<li><strong>Item:</strong> ` + details + ` </li>
 									<li><strong>Unit:</strong> <span class="label label-warning">` + unit + `</span> </li>
-									<li><strong>Remaining Balance:</strong> `
-									+ balance +
-									`</li>
+									<li><strong>Remaining Balance:</strong> ` + balance + `</li>
 								</ul>
 							</div>
-						`)
-
-						url = "{{ url('inventory/supply')  }}" +  '/' + $('#stocknumber').val() + '/compute/daystoconsume'
-
-						$.getJSON( url, function( data ) {
-						$('#daystoconsume').val(data)
-						});
-											
-					} catch (e) {
+						`)				
+					} 
+					catch (e) {
 						$('#stocknumber-details').html(`
 							<div class="alert alert-danger">
 								<ul class="list-unstyled">
@@ -352,65 +355,65 @@
 								</ul>
 							</div>
 						`)
-
 					}
 				}
 			})
 		}
 
 
-	$('#add').on('click',function(){
-		row = parseInt($('#supplyTable > tbody > tr:last').text())
-		stocknumber = $('#stocknumber').val()
-		quantity = $('#quantity').val()
-		details = $('#supply-item').val()
-		unitcost = $('#unitcost').val()
-		if(addForm(stocknumber,details,quantity,unitcost))
-		{
-			$('#stocknumber').val("")
-			$('#quantity').val("")
-			$('#unitcost').val("")
-			$('#stocknumber-details').html("")
+		$('#add').on('click',function(){
+			row = parseInt($('#supplyTable > tbody > tr:last').text())
+			stocknumber = $('#stocknumber').val()
+			quantity = $('#quantity').val()
+			details = $('#supply-item').val()
+			unitcost = $('#unitcost').val()
+			if ((quantity < 1) || (unitcost < 1.00)) {
+				swal("Error", "Negative value or Zero is not allowed", "error");
+				return;
+			}
+
+			if(addForm(stocknumber,details,quantity,unitcost)) {
+				$('#stocknumber').val("")
+				$('#quantity').val("")
+				$('#unitcost').val("")
+				$('#stocknumber-details').html("")
+			}
+		})
+
+		function addForm(_stocknumber = "",_info ="" ,_quantity = "",  _unitcost = "" ) {
+			error = false
+			$('.stocknumber-list').each(function() {
+				if (_stocknumber == $(this).val()) {
+					error = true;	
+					return;
+				}
+			});
+
+			if(error) {
+				swal("Error", "Stocknumber already exists", "error");
+				return false;
+			}
+
+			$('#supplyTable > tbody').prepend(`
+				<tr>
+					<td><input type="hidden" class="form-control text-center" value="` + _stocknumber + `" name="stocknumber[` + _stocknumber + `]" style="border:none;" />`+_stocknumber+`</td>
+					<td><input type="hidden" class="form-control text-center" value="` + _info + `" name="info[` + _stocknumber + `]" style="border:none;" />` + _info + `</td>
+					<td>
+						<input type="number" min=1 pattern="[0-9]*" class="form-control text-center" value="` + _quantity + `" name="quantity[` + _stocknumber + `]" style="border:none;"  />
+					</td>
+
+					<td>
+						<input type="number" step=0.01 min=1.00 class="form-control text-center" value="` + _unitcost + `" name="unitcost[` + _stocknumber + `]" style="border:none;"  />
+					</td>
+					
+					<td>
+						<button type="button" class="remove btn btn-md btn-danger text-center"><span class="glyphicon glyphicon-remove"></span></button>
+					</td>
+				</tr>
+			`)
+
+			return true;
 		}
-	})
-
-function addForm(_stocknumber = "",_info ="" ,_quantity = "",  _unitcost = "" )
-	{
-		error = false
-		$('.stocknumber-list').each(function() {
-		    if (_stocknumber == $(this).val())
-		    {
-		    	error = true;	
-		    	return;
-		    }
-		});
-
-		if(error)
-		{
-			swal("Error", "Stocknumber already exists", "error");
-			return false;
-		}
-
-		$('#supplyTable > tbody').prepend(`
-			<tr>
-				<td><input type="text" class="stocknumber-list form-control text-center" value="` + _stocknumber + `" name="stocknumber[` + _stocknumber + `]" style="border:none;" /></td>
-				<td><input type="hidden" class="form-control text-center" value="` + _info + `" name="info[` + _stocknumber + `]" style="border:none;" />` + _info + `</td>
-				<td>
-					<input type="number" class="form-control text-center" value="` + _quantity + `" name="quantity[` + _stocknumber + `]" style="border:none;"  />
-				</td>
-
-				<td>
-					<input type="number" step=0.01 class="form-control text-center" value="` + _unitcost + `" name="unitcost[` + _stocknumber + `]" style="border:none;"  />
-				</td>
-				
-				<td>
-					<button type="button" class="remove btn btn-md btn-danger text-center"><span class="glyphicon glyphicon-remove"></span></button>
-				</td>
-			</tr>
-		`)
-
-		return true;
-	}
 		
 		//remove supply from list
 		$('#supplyTable').on('click','.remove',function() {
@@ -489,14 +492,10 @@ function addForm(_stocknumber = "",_info ="" ,_quantity = "",  _unitcost = "" )
 			}
 		}
 
-		$('#stocknumber').on('change focusin focusout mousein keyup', function() {
-			setStockNumberDetails()
-		})
-
 		$('#supplyInventoryTable').on('click','.add-stock',function() {
-		$('#stocknumber').val($(this).data('id'))
-		$('#addStockNumberModal').modal('hide')
-		setStockNumberDetails()
+			$('#stocknumber').val($(this).data('id'))
+			$('#addStockNumberModal').modal('hide')
+				setStockNumberDetails()
 		})
 
 		$('#fundcluster').on('change', function(){

@@ -152,12 +152,16 @@
               <br />
               <span id="name" style="margin-top: 30px; font-size: 15px;  font-weight: bold;"> {{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</span>
               <br />
+              <span id="position"  class="text-center" style="font-size:10px;"> {{ Auth::user()->position }}</span>
+              <br />
               <span id="office" class="text-center" style="font-size:10px;">{{ App\Office::findByCode(Auth::user()->office)->name }}</span>
             </td>
             <td style="text-align: center;" colspan="4">
               <br />
               <br />
               <span id="name" class="text-muted" style="margin-top: 30px; font-size: 15px;  font-weight: bold;">{{ (App\Office::findByCode(Auth::user()->office)->head != '') ? App\Office::findByCode(Auth::user()->office)->head : '[ Signature Over Printed Name ]' }}</span>
+              <br />
+              <span id="position" class="text-center" style="font-size:10px;">{{ (App\Office::findByCode(Auth::user()->office)->head_title )  }}</span>
               <br />
               <span id="office" class="text-center" style="font-size:10px;">{{ App\Office::findByCode(Auth::user()->office)->name }}</span>
             </td>
