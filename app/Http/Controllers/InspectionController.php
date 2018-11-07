@@ -117,7 +117,6 @@ class InspectionController extends Controller
         DB::commit();
         \Alert::success('Inspection Report created successfully!')->flash();
 		return redirect('/inspection/supply/');       
-            
     }
 
     public function approveInspection(Request $request, $id, $action)
