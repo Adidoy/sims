@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Maintenance;
 
 use App;
 use Carbon;
@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 
-class CategoriesController extends Controller
+class CategoryController extends Controller
 {
 	/**
 	 * Display a listing of the resource.

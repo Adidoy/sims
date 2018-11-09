@@ -11,6 +11,8 @@
 |
 */
 
+App\Http\Modules\Maintenance\Routes::all();
+
 
 Route::get('faqs','FaqsController@index');
 
