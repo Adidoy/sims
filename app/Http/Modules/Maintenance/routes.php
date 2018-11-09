@@ -2,7 +2,7 @@
 
 namespace App\Http\Modules\Maintenance;
 
-Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Route;
 
 class Routes
 {
@@ -29,8 +29,11 @@ class Routes
                 Route::resource('supplier','SuppliersController');
                 Route::resource('department','DepartmentController');
                 Route::resource('category','CategoryController');
-                Route::get('category/assign/{id}', 'CategoriesController@showAssign');
-                Route::put('category/assign/{id}', 'CategoriesController@assign');
+
+                Route::prefix('category')->namespace('category')->group(function() {
+                    Route::get('assign/{id}', 'AssignmentController@show');
+                    Route::put('assign/{id}', 'AssignmentController@store');
+                });
             });
         });
     }

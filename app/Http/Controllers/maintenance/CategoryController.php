@@ -2,17 +2,33 @@
 
 namespace App\Http\Controllers\Maintenance;
 
-use App;
-use Carbon;
-use Session;
-use Validator;
-use DB;
-use App\Http\Controllers\Controller;
+// use DB;
+// use App;
+// use Carbon;
+// use Session;
+// use Validator;
+use App\Category;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Input;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\View;
+use App\Commands\Category\CreateCategory;
+use App\Commands\Category\UpdateCategory;
+use App\Http\Requests\CategoryRequest\CategoryStoreRequest;
+use App\Http\Requests\CategoryRequest\CategoryUpdateRequest;
 
 class CategoryController extends Controller
 {
+
+	/**
+	 * Constructor class for the class
+	 * Initialize the title of the current
+	 * page
+	 */
+	public function __construct()
+	{
+		View::share('title', 'Category');
+	}
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -20,13 +36,12 @@ class CategoryController extends Controller
 	 */
 	public function index(Request $request)
 	{
-		if($request->ajax())
-		{
-			$categories = App\Category::all();
+		if($request->ajax()) {
+			$categories = Category::all();
 			return datatables($categories)->toJson();
 		}
-		return view('maintenance.category.index')
-					->with('title','Category');
+
+		return view('maintenance.category.index');
 	}
 
 
@@ -37,8 +52,7 @@ class CategoryController extends Controller
 	 */
 	public function create()
 	{
-		return view('maintenance.category.create')
-					->with('title','Category');
+		return view('maintenance.category.create');
 	}
 
 
@@ -47,31 +61,9 @@ class CategoryController extends Controller
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function store(CategoryStoreRequest $request)
 	{
-
-		$name = $this->sanitizeString(Input::get('name'));
-		$code = $this->sanitizeString(Input::get('code'));
-
-		$category = new App\Category;
-
-		$validator = Validator::make([
-			'Name' => $name,
-			'Code' => $code
-		],$category->rules());
-
-		if($validator->fails())
-		{
-			return redirect('maintenance/category/create')
-				->withInput()
-				->withErrors($validator);
-		}
-
-		$category->uacs_code = $code;
-		$category->name = $name;
-		$category->save();
-
-		\Alert::success('Category added')->flash();
+		$this->dispatch(new CreateCategory($request));
 		return redirect('maintenance/category');
 	}
 
@@ -86,15 +78,11 @@ class CategoryController extends Controller
 	{
 		if($request->ajax())
 		{
-			if(Input::has('term'))
-			{
-				$code = $this->sanitizeString(Input::get('term'));
-				return json_encode( App\Category::where('code','like','%'.$code.'%')->pluck('code')->toArray());
+			if($request->has('term')) {
+				return Category::codeLike($request->term)->assignTo('data')->json();
 			}
 
-			return json_encode([
-				'data' => App\Category::findByCode($id)
-			]);
+			return Category::code($id)->assignTo('data')->json();
 		}
 	}
 
@@ -107,17 +95,8 @@ class CategoryController extends Controller
 	 */
 	public function edit($id)
 	{
-
-		$id = $this->sanitizeString($id);
-		$category = App\Category::find($id);
-
-		if(count($category) <= 0)
-		{
-			return view('errors.404');
-		}
-		return view("maintenance.category.edit")
-				->with('category',$category)
-				->with('title','Category');
+		$category = Category::findOrFail($id);
+		return view('maintenance.category.edit', compact('category'));
 	}
 
 
@@ -127,32 +106,9 @@ class CategoryController extends Controller
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(CategoryUpdateRequest $request, $id)
 	{
-
-		$id = $this->sanitizeString($id);
-		$name = $this->sanitizeString(Input::get('name'));
-		$code = $this->sanitizeString(Input::get('code'));
-
-		$category = App\Category::find($id);
-
-		$validator = Validator::make([
-			'Name' => $name,
-			'Code' => $code
-		],$category->updateRules());
-
-		if($validator->fails())
-		{
-			return redirect("maintenance/category/$id/edit")
-				->withInput()
-				->withErrors($validator);
-		}
-
-		$category->uacs_code = $code;
-		$category->name = $name;
-		$category->save();
-
-		\Alert::success('Category Information Updated')->flash();
+		$this->dispatch(new UpdateCategory($request, $id));
 		return redirect('maintenance/category');
 	}
 
@@ -165,53 +121,7 @@ class CategoryController extends Controller
 	 */
 	public function destroy(Request $request, $id)
 	{
-			$id = $this->sanitizeString($id);
-
-			if($request->ajax())
-			{
-				$category = App\Category::find($id);
-
-				if(count($category) <= 0) return json_encode('error');
-				$category->delete();
-				return json_encode('success');
-			}
-
-			$category = App\Category::find($id);
-			if(count($category) <= 0) \Alert::error('Problem Encountered While Processing Your Data')->flash();
-			$category->delete();
-			\Alert::success('Category Removed')->flash();
-
-			return redirect('maintenance/category');
-	}
-
-	public function showAssign($id)
-	{
-		$category = App\Category::find($id);
-		$supply = App\Supply::findByCategoryName($category->name)->get();
-		return view('maintenance.category.assign')
-					->with('category',$category)
-					->with('supply', $supply);
-	}
-
-	public function assign(Request $request, $id)
-	{
-		$id = $this->sanitizeString($id);
-		$category = App\Category::find($id);
-		$stocknumbers = [];
-
-		foreach($request->get('stocknumber') as $stocknumber):
-			array_push($stocknumbers, $this->sanitizeString($stocknumber));
-		endforeach;
-
-		DB::beginTransaction();
-
-		App\Supply::findByCategoryName($category->name)->update([ 'category_id' => null ]);
-		App\Supply::whereIn('stocknumber', $stocknumbers)->update([ 'category_id' => $category->id ]);
-
-		DB::commit();
-
-		\Alert::success("Category $category->name sync with Supplies")->flash();
-		return redirect("maintenance/category/assign/$id");
-
+		$this->dispatch(new RemoveCategory($request, $id));
+		return redirect('maintenance/category');
 	}
 }
