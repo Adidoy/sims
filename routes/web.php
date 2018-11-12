@@ -11,6 +11,8 @@
 |
 */
 
+App\Http\Modules\Maintenance\Routes::all();
+
 
 Route::get('faqs','FaqsController@index');
 
@@ -93,24 +95,6 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('get/purchaseorder/all','PurchaseOrderController@show');
 
 		Route::get('get/receipt/all','ReceiptController@show');
-
-		Route::get('maintenance/supply/print','SupplyController@print');
-
-		Route::resource('maintenance/supply','SupplyController');
-
-		Route::resource('maintenance/office','OfficeController');
-
-		Route::resource('maintenance/unit','UnitsController');
-
-		Route::resource('maintenance/supplier','SuppliersController');
-		
-		Route::resource('maintenance/department','DepartmentController');
-		Route::get('get/department/code','DepartmentController@show');
-
-		Route::get('maintenance/category/assign/{id}', 'CategoriesController@showAssign');
-		Route::put('maintenance/category/assign/{id}', 'CategoriesController@assign');
-
-		Route::resource('maintenance/category','CategoriesController');
 
 		Route::get('uacs/months', 'UACSController@getAllMonths');
 		Route::get('uacs', 'UACSController@getIndex');
