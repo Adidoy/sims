@@ -15,7 +15,7 @@
     <div class="box" style="padding:10px;">
         <div class="box-body">
             {{ Form::open(['method'=>'post','route'=>array('inspection.accept'),'class'=>'form-horizontal','id'=>'inspectForm']) }}
-		        @include('inspection.supplies.form')
+		        @include('inspection.supplies.forms.form')
 		    {{ Form::close() }}
         </div>
     </div>

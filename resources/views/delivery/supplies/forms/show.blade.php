@@ -19,7 +19,7 @@
 			<table class="table table-hover table-striped table-bordered table-condensed" id="headerTable" cellspacing="0" width="100%">
 				    <thead>
 						<tr>
-							<th>Processed By:  <span style="font-weight:normal">{{ isset($delivery->received_by) ? $delivery->received_by : 'None' }}</span> </th>						
+							<th>Processed By:  <span style="font-weight:normal">{{ isset($delivery->user_name) ? $delivery->user_name : 'None' }}</span> </th>						
 							<th>Date Processed:  <span style="font-weight:normal">{{ isset($delivery->date_processed) ? $delivery->date_processed : 'None' }}</span> </th>
                         </tr>
                         <tr >
@@ -43,6 +43,7 @@
                         <tr>          
 						    <th class="text-center">Stock Number</th>
 						    <th class="text-center">Item Name</th>
+							<th class="text-center">Unit of Measure</th>
 						    <th class="text-center">Quantity Delivered</th>
 						    <th class="text-center">Unit Cost</th>
 					    </tr>
@@ -63,13 +64,14 @@
 			"processing": true,
 			ajax: "{{ url("delivery/supply/$delivery->id") }}",
 			columnDefs: [{
-					targets: [2,3],
+					targets: [3,4],
 					className: "text-right"
 				}
 			],
 			columns: [
 					{ data: "stocknumber" },
 					{ data: "details" },
+					{ data: "unit.name" },
 					{ data: "pivot.quantity_delivered" },
 					{ data: "pivot.unit_cost" }
 			],

@@ -15,20 +15,19 @@
   <div class="box">
     <div class="box-body">
 		<div class="panel panel-body table-responsive">
-		<table class="table table-hover table-striped table-bordered table-condensed" id="deliveriesTable">
-			<thead>
-				<th class="col-sm-1">Delivery No.</th>
-				<th class="col-sm-1">Supplier</th>
-				<th class="col-sm-1">Purchase Order No.</th>
-				<th class="col-sm-1">Invoice No.</th>
-				<th class="col-sm-1">Delivery Receipt No.</th>
-				<th class="col-sm-1">Date Processed</th>
-				<th class="col-sm-1">Processed by</th>
-				<th class="no-sort col-sm-1"></th>
-			</thead>
-		</table>
+			<table class="table table-hover table-striped table-bordered table-condensed" id="deliveriesTable">
+				<thead>
+					<th class="col-sm-1">Delivery No.</th>
+					<th class="col-sm-1">Supplier</th>
+					<th class="col-sm-1">Purchase Order No.</th>
+					<th class="col-sm-1">Invoice No.</th>
+					<th class="col-sm-1">Delivery Receipt No.</th>
+					<th class="col-sm-1">Date Processed</th>
+					<th class="col-sm-1">Processed by</th>
+					<th class="no-sort col-sm-1"></th>
+				</thead>
+			</table>
 		</div>
-
     </div>
   </div>
 @endsection
@@ -56,7 +55,7 @@
 					{ data: "invoice_no" },
 					{ data: "delrcpt_no" },
 					{ data: "date_processed" },
-					{ data: "received_by" },
+					{ data: "user_name" },
 					{ data: function(callback){
 						return `
 							<a href="{{ url('inspection/supply') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i>  Inspect</a>

@@ -135,6 +135,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('delivery/supply/create','DeliveryController@create');
 		Route::resource('delivery/supply', 'DeliveryController');
 		Route::get('delivery/supply/{id}/', 'DeliveryController@show');
+		Route::get('delivery/supply/{id}/print', 'DeliveryController@print');
 
 		//========================== Old Code Starts Here ========================//
 

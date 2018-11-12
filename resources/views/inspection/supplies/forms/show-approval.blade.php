@@ -14,7 +14,6 @@
 
 @section('content')
     <div class="box">
- 
         <div class="box-body">
 		    <div class="panel panel-body table-responsive">
 			    <table class="table table-hover table-striped table-bordered table-condensed" id="headerTable" cellspacing="0" width="100%">
@@ -39,21 +38,20 @@
 			    <table class="table table-hover table-striped table-bordered table-condensed" id="inspectionTable" cellspacing="0" width="100%">
                     <thead>
                         <tr>
-                            <th class="col-sm-1">Stock Number</th>
-                            <th class="col-sm-1">Information</th>
-                            <th class="col-sm-1">Unit</th>
-                            <th class="col-sm-1">Cost</th>
-                            <th class="col-sm-1">Quantity Passed</th>
-                            <th class="col-sm-1">Quantity Failed</th>
-                            <th class="col-sm-1">Comment</th>
+                            <th  class="text-center">Stock Number</th>
+                            <th  class="text-center">Information</th>
+                            <th  class="text-center">Unit</th>
+                            <th  class="text-center">Cost</th>
+                            <th  class="text-center">Quantity Passed</th>
+                            <th  class="text-center">Quantity Failed</th>
+                            <th  class="text-center">Comment</th>
                         </tr>
                     </thead>
 			    </table>
 		    </div>
             @if(Auth::user()->access == 9)
                 @if( !isset($inspection->inspection_approval_date) )
-                    {{$kemerlu = "approve"}}
-                    {{ Form::open(['method'=>'post','route' => array('inspection.approve', $inspection->id, $kemerlu),'class'=>'form-horizontal','id'=>'inspectForm']) }}  
+                    {{ Form::open(['method'=>'post','route' => array('inspection.approve', $inspection->id, "approve"),'class'=>'form-horizontal','id'=>'inspectForm']) }}  
                         <div class="pull-right">
                             <div class="btn-group">
                                 <button type="button" id="approve" class="btn btn-md btn-primary btn-block">Approve</button>
@@ -73,8 +71,7 @@
             @endif
             @if(Auth::user()->access == 4)
                 @if( !isset($inspection->property_custodian_acknowledgement_date) && isset($inspection->inspection_approval_date))
-                    {{$kemerlu = "acknowledge"}}
-                    {{ Form::open(['method'=>'post','route' => array('inspection.approve', $inspection->id, $kemerlu),'class'=>'form-horizontal','id'=>'inspectForm']) }}  
+                    {{ Form::open(['method'=>'post','route' => array('inspection.approve', $inspection->id, "acknowledge"),'class'=>'form-horizontal','id'=>'inspectForm']) }}  
                         <div class="pull-right">
                             <div class="btn-group">
                                 <button type="button" id="approve" class="btn btn-md btn-primary btn-block">Acknowledge</button>
@@ -106,6 +103,11 @@
                 },
                 "processing": true,
                 ajax: "{{ url("inspection/view/supply/$inspection->id") }}",
+                columnDefs: [{
+					targets: [3,4,5],
+					className: "text-right"
+				    }
+			    ],
                 columns: [
                     { data: "stocknumber" },
                     { data: "details" },
@@ -135,8 +137,7 @@
                         swal("Cancelled", "Operation Cancelled", "error");
                     }
                 })
-		    })
+		    });
         });
-        
     </script>
 @endsection

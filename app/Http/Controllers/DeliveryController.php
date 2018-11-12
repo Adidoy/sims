@@ -20,14 +20,14 @@ class DeliveryController extends Controller {
 			$deliveries = App\DeliveryHeader::with('supplier')->get();
 			return datatables($deliveries)->toJson();
 		}
-		return view('delivery.supplies.index')
+		return view('delivery.supplies.forms.index')
 			->with('title', 'Supply Delivery');
 	}
 
 	public function create() 
 	{
 		$supplier = App\Supplier::pluck('name','name');
-		return view('delivery.supplies.accept')
+		return view('delivery.supplies.forms.accept')
 			->with('title','Supply Delivery')
 			->with('type', 'stock')
 			->with('supplier',$supplier);
@@ -39,10 +39,10 @@ class DeliveryController extends Controller {
     	if($request->ajax()) {
         	$supplies = $delivery->supplies;
         	return json_encode([
-           		'data' => $supplies
+				'data' => $supplies
 		  	]);
 		}
-		return view('delivery.supplies.show')
+		return view('delivery.supplies.forms.show')
 			->with('delivery', $delivery)
 			->with('title','Supplies Delivery');
 	}
@@ -51,7 +51,7 @@ class DeliveryController extends Controller {
 	{
 		$deliveryHeader = new App\DeliveryHeader;
 		$supplier = App\Supplier::findBySupplierName($request->get("supplier"))->first();
-		$userName = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
+		//$userName = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
 		$stocknumbers = $request->get("stocknumber");
 		$quantity = $request->get("quantity");
 		$unitcost = $request->get("unitcost");
@@ -78,7 +78,7 @@ class DeliveryController extends Controller {
 				'invoice_date' => Carbon\Carbon::parse($request->get('invoice_date')),
 				'delrcpt_no' => $request->get('dr_no'),
 				'delivery_date' => Carbon\Carbon::parse($request->get('dr_date')),
-				'received_by' => $userName
+				'received_by' => Auth::user()->id
 			]);
 			foreach($stocknumbers as $stocknumber) {
 				$supply = App\Supply::StockNumber($stocknumber)->first();
@@ -112,5 +112,31 @@ class DeliveryController extends Controller {
 		  $trxCode =  $id;
 		
 		return 'DAI-' . $const . '-' . $trxCode;
-	} 
+	}
+	
+	public function print(Request $request, $id)
+	{
+		$orientation = 'Portrait';
+		$delivery = App\DeliveryHeader::with('supplies')->find($id);
+		$data = [
+			'delivery' => $delivery
+		];
+
+		$filename = "SupplyMasterList-".Carbon\Carbon::now()->format('mdYHm').".pdf";
+		$view = "delivery.supplies.reports.accepted_delivery";
+		return $this->printPreview($view,$data,$filename,$orientation);
+	}
+
+	public function printAllItems(Request $request, $id)
+	{
+		$orientation = 'Portrait';
+		$delivery = App\DeliveryHeader::with('supplies')->find($id);
+		$data = [
+			'delivery' => $delivery
+		];
+
+		$filename = "SupplyMasterList-".Carbon\Carbon::now()->format('mdYHm').".pdf";
+		$view = "delivery.supplies.reports.accepted_delivery";
+		return $this->printPreview($view,$data,$filename,$orientation);
+	}
 }

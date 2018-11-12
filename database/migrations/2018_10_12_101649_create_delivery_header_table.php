@@ -28,7 +28,10 @@ class CreateDeliveryHeaderTable extends Migration
             $table->datetime('invoice_date');
             $table->string('delrcpt_no');
             $table->datetime('delivery_date');
-            $table->string('received_by')->nullable();
+            $table->integer('received_by')->unsigned();
+            $table->foreign('received_by')
+                    ->references('id')
+                    ->on('users');
             $table->softDeletes();
             $table->timestamps();
         });

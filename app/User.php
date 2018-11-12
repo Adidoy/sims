@@ -32,7 +32,7 @@ class User extends \Eloquent implements Authenticatable, Auditable, UserResolver
 
 	public $timestamps = true;
 
-	protected $fillable = ['lastname','firstname','middlename','username','password','email','status','access' ,' position' ];
+	protected $fillable = ['lastname','firstname','middlename','username','password','email','status','access' ,'position' ];
 
 	protected $hidden = ['password','remember_token'];
 	//Validation rules!
@@ -168,4 +168,5 @@ class User extends \Eloquent implements Authenticatable, Auditable, UserResolver
     {
     	$query->where('email', '=', $value);
 	}
+
 }

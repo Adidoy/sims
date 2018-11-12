@@ -14,18 +14,19 @@ class InspectionController extends Controller
 
     public function index(Request $request) 
     {
+        $deliveries = App\Inspection::findAllDeliveries();
         if($request->ajax()) {
-            $deliveries = App\Inspection::findAllDeliveries();
+            
 			return datatables($deliveries)->toJson();
 		}
-        return view('inspection.supplies.index')
+        return view('inspection.supplies.forms.index')
             ->with('title', 'Inspection');
     }
 
     public function show(Request $request, $id) 
     {
         $delivery = App\DeliveryHeader::with('supplies')->find($id);
-        return view('inspection.supplies.inspect')
+        return view('inspection.supplies.forms.inspect')
             ->with('delivery', $delivery);
     }
 
@@ -36,7 +37,7 @@ class InspectionController extends Controller
                 $inspection = App\Inspection::get();
                 return datatables($inspection)->toJson();
             }
-            return view('inspection.supplies.show-inspected')
+            return view('inspection.supplies.forms.show-inspected')
                 ->with('title', 'Inspection');
         } else {
             $inspection = App\Inspection::with('supplies')->find($id);
@@ -46,7 +47,7 @@ class InspectionController extends Controller
                     'data' => $supplies
                ]);
             }
-            return view('inspection.supplies.show-approval')
+            return view('inspection.supplies.forms.show-approval')
                 ->with('inspection', $inspection)
                 ->with('title', 'Inspection');
         }   

@@ -80,8 +80,9 @@ class Inspection extends Model {
         return DB::table('deliveries_header')
 			->join('suppliers','suppliers.id','=','deliveries_header.supplier_id')
 			->leftJoin('inspections', 'inspections.delivery_id', '=', 'deliveries_header.id')
+			->leftJoin('users', 'deliveries_header.received_by', '=', 'users.id')
             ->whereNull('inspections.delivery_id')
-            ->select('deliveries_header.id','deliveries_header.local', 'suppliers.name', 'deliveries_header.purchaseorder_no', 'deliveries_header.invoice_no', 'deliveries_header.delrcpt_no', 'deliveries_header.received_by', DB::raw("DATE_FORMAT(deliveries_header.created_at, '%d %M %Y %I:%i %p') AS date_processed"))
+            ->select('deliveries_header.id','deliveries_header.local', 'suppliers.name', 'deliveries_header.purchaseorder_no', 'deliveries_header.invoice_no', 'deliveries_header.delrcpt_no', DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) AS user_name"), 'deliveries_header.received_by', DB::raw("DATE_FORMAT(deliveries_header.created_at, '%d %M %Y %I:%i %p') AS date_processed"))
 			->get();
     }
 
