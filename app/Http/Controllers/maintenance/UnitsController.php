@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Maintenance;
 
 use App;
 use Session;
 use Validator;
 use Illuminate\Http\Request;
 
-class UnitsController extends Controller
+class UnitsController
 {
     /**
      * Display a listing of the resource.
@@ -46,9 +46,9 @@ class UnitsController extends Controller
     public function store(Request $request)
     {
 
-        $name = $this->sanitizeString($request->get('name'));
-        $description = $this->sanitizeString($request->get("description"));
-        $abbreviation = $this->sanitizeString($request->get("abbreviation"));
+        $name = $request->get('name');
+        $description = $request->get("description");
+        $abbreviation = $request->get("abbreviation");
 
         $validator = Validator::make([
             'Name' => $name,
@@ -114,10 +114,10 @@ class UnitsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $id = $this->sanitizeString($id); 
-        $name = $this->sanitizeString($request->get('name'));
-        $description = $this->sanitizeString($request->get("description"));
-        $abbreviation = $this->sanitizeString($request->get("abbreviation"));
+        $id = $id; 
+        $name = $request->get('name');
+        $description = $request->get("description");
+        $abbreviation = $request->get("abbreviation");
 
         $unit = App\Unit::find($id);
 
@@ -150,7 +150,6 @@ class UnitsController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $id = $this->sanitizeString($id);
 
         if($request->ajax())
         {
