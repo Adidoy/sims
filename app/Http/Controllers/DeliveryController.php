@@ -122,20 +122,7 @@ class DeliveryController extends Controller {
 			'delivery' => $delivery
 		];
 
-		$filename = "SupplyMasterList-".Carbon\Carbon::now()->format('mdYHm').".pdf";
-		$view = "delivery.supplies.reports.accepted_delivery";
-		return $this->printPreview($view,$data,$filename,$orientation);
-	}
-
-	public function printAllItems(Request $request, $id)
-	{
-		$orientation = 'Portrait';
-		$delivery = App\DeliveryHeader::with('supplies')->find($id);
-		$data = [
-			'delivery' => $delivery
-		];
-
-		$filename = "SupplyMasterList-".Carbon\Carbon::now()->format('mdYHm').".pdf";
+		$filename = "Delivery Acceptance - ".$delivery->local." - ".Carbon\Carbon::now()->format('mdYHm').".pdf";
 		$view = "delivery.supplies.reports.accepted_delivery";
 		return $this->printPreview($view,$data,$filename,$orientation);
 	}

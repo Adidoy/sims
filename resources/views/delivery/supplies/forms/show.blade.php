@@ -34,7 +34,10 @@
                         <tr >
 							<th>Delivery Receipt No.:  <span style="font-weight:normal">{{ isset($delivery->delrcpt_no) ? $delivery->delrcpt_no : 'None' }}</span> </th>
 							<th>Delivery Date:  <span style="font-weight:normal">{{ isset($delivery->date_delivered) ? $delivery->date_delivered : 'None' }}</span> </th>
-                        </tr>						
+                        </tr>
+                        <tr >
+							<th>Supplier:  <span style="font-weight:normal">{{ isset($delivery->supplier_name) ? $delivery->supplier_name : 'None' }}</span> </th>
+                        </tr>												
 				    </thead>
 			    </table>
 				<hr style="color: black; background-color :black;" />
