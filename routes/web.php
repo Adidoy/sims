@@ -12,6 +12,7 @@
 */
 
 App\Http\Modules\Maintenance\Routes::all();
+App\Http\Modules\Requests\Client\Routes::all();
 
 
 Route::get('faqs','FaqsController@index');
@@ -293,7 +294,7 @@ Route::middleware(['auth'])->group(function(){
 			'as' => 'request.cancel',
 			'uses' => 'RequestController@cancel'
 		]);
-		Route::resource('request','RequestController');
+		//Route::resource('request','RequestController');
 	});
 
 	Route::get('get/supply/stocknumber','SupplyInventoryController@show');

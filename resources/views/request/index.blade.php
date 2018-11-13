@@ -1,13 +1,15 @@
 @extends('backpack::layout')
 
 @section('header')
-  <section class="content-header">
-    <h1>Request</h1>
+	<section class="content-header">
+	  <h1>
+	    Request
+	  </h1>
 	  <ol class="breadcrumb">
 	    <li>Request</li>
 	    <li class="active">Home</li>
 	  </ol>
-  </section>
+	</section>
 @endsection
 
 @section('content')
@@ -17,84 +19,91 @@
       <table class="table table-hover table-striped" id="requestTable" width=100%>
         <thead>
           <tr>
-            <th class="col-sm-1 no-sort">Request No.</th>
-            <th class="col-sm-1 no-sort ">Request Date</th>
+            <th class="col-sm-1">Request No.</th>
+            <th class="col-sm-1">Request Date</th>
             @if(Auth::user()->access == 1 || Auth::user()->access == 6)
-              <th class="col-sm-1">Requestor</th>
+            <th class="col-sm-1">Requestor</th>
             @endif
             <th class="col-sm-1">Remarks</th>
-            <!-- <th class="col-sm-1">Purpose</th> -->
+            <th class="col-sm-1">Purpose</th>
             @if(Auth::user()->access == 1 || Auth::user()->access == 6)
-              <<th class="col-sm-1">Date Released</th>
-              <th class="col-sm-1">Remaining Days</th>
+            <th class="col-sm-1">Remaining Days</th>
             @endif
             <th class="col-sm-1">Status</th>
             <th class="col-sm-1 no-sort"></th>
           </tr>
         </thead>
+        <tbody>
+        </tbody>
       </table>
+
     </div><!-- /.box-body -->
   </div><!-- /.box -->
+
 @endsection
 
 @section('after_scripts')
-  <script>
-    jQuery(document).ready(function($) {
-      table = $('#requestTable').DataTable({
-        pageLength: 25,
-        serverSide: true,
-        stateSave: true,
-        "processing": true,
-        language: {
+<script>
+  jQuery(document).ready(function($) {
+
+    table = $('#requestTable').DataTable({
+      pageLength: 25,
+      serverSide: true,
+      stateSave: true,
+      "processing": true,
+      language: {
               searchPlaceholder: "Search..."
-        },
-        columnDefs:[{ 
-              targets: 'no-sort', orderable: false },
-        ],
-        "order": [
-              [0, 'asc']
-        ],
-        "dom": "<'row'<'col-sm-3'l><'col-sm-6'<'toolbar'>><'col-sm-3'f>>" +
+      },
+      columnDefs:[
+          { targets: 'no-sort', orderable: false },
+      ],
+      "order": [
+        [0, 'asc']
+      ],
+      "dom": "<'row'<'col-sm-3'l><'col-sm-6'<'toolbar'>><'col-sm-3'f>>" +
                       "<'row'<'col-sm-12'tr>>" +
                       "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-        ajax: "{{ url('request') }}",
-        columns: [
-            { data: "code" },
-            { data: 'date_requested' },
+      ajax: "{{ url('request') }}",
+      columns: [
+        { data: "code" },
+        { data: 'date_requested' },
         @if(Auth::user()->access == 1 || Auth::user()->access == 6)
-            { data: function(callback){
-              if(callback.office) return callback.office.code
-              if(callback.requestor) callback.requestor.username
-                return null
-              }},
+        { data: function(callback){
+          if(callback.office) return callback.office.code
+
+          if(callback.requestor) callback.requestor.username
+          return null
+        } },
         @endif
         { data: "remarks" },
-        // { data: "purpose" },
+        { data: "purpose" },
         @if(Auth::user()->access == 1 || Auth::user()->access == 6)
-          { data: "date_released" },
-          { data: "remaining_days" },
+        { data: "remaining_days" },
         @endif
-        { data: "status" }, 
+        { data: "status" },
         { data: function(callback){
           ret_val = "";
+
           @if(Auth::user()->access == 1 || Auth::user()->access == 6)
           if(!callback.status)
-            {
-              ret_val += `
-                <a type="button" href="{{ url('request') }}/`+callback.id+`/approve" data-id="`+callback.id+`" class="approve btn btn-success btn-sm">
+          {
+            ret_val += `
+              <a type="button" href="{{ url('request') }}/`+callback.id+`/approve" data-id="`+callback.id+`" class="approve btn btn-success btn-sm">
                   <i class="fa fa-thumbs-up" aria-hidden="true"></i>
-                </a>
-                <button type="button" data-id="`+callback.id+`" class="disapprove btn btn-danger btn-sm">
-                  <i class="fa fa-thumbs-down" aria-hidden="true"></i>
-                </button>
-              `
-            }
+              </a>
+              <button type="button" data-id="`+callback.id+`" class="disapprove btn btn-danger btn-sm">
+                <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+              </button>
+            `
+          }
           @endif
+
           ret_val +=  `
             <a href="{{ url('request') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i> View</a>
           `
-          return ret_val;
-          }}
+
+            return ret_val;
+        } }
       ],
     });
 
@@ -149,50 +158,6 @@
                 }
             })
         })
-    });
-    // $("div.toolbar").html(`
- 		// 	<button id="delete" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span>Set all requests to EXPIRED</button>
-		// `);
-    $('#delete').on('click',function(){
-      swal({
-        title: "Are you sure?",
-        text: "This will cancel all requests EXCEEDING the prescribed claiming time. Continue?",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, do it!",
-        cancelButtonText: "No, retain requests!",
-        closeOnConfirm: false,
-        closeOnCancel: false
-    },
-    function(isConfirm){
-      if (isConfirm) {
-    $.ajax({
-      headers:
-      {
-          'X-CSRF-Token': $('input[name="_token"]').val()
-      },
-    async: false, 
-    type: 'post',
-    url: '{{ url("account/password/reset") }}',
-    data: {
-      'id': table.row('.selected').data().id
-    },
-    dataType: 'json',
-    success: function(response){
-      if(response == 'success'){
-        swal('Operation Successful','Password has been reset','success')
-      }else{
-        swal('Operation Unsuccessful','Error occurred while resetting the password','error')
-      }
-    },
-    error: function(){
-      swal('Operation Unsuccessful','Error occurred while resetting the password','error')
-    }
-    });
-      } else {
-        swal("Cancelled", "Operation Cancelled", "error");
-      }
-    })
     });
 
     @endif

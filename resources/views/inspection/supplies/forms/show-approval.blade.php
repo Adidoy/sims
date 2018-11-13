@@ -16,14 +16,14 @@
     <div class="box">
         <div class="box-body">
 		    <div class="panel panel-body table-responsive">
-                <div style="text-align:center;">
-                @if( isset($inspection->property_custodian_acknowledgement_date) && isset($inspection->inspection_approval_date) )
-                    <a href="{{ url('inspection/supply/'.$inspection->id.'/print') }}" target="_blank" id="print" style="font-size:12pt;" class="print btn btn-sm btn-default ladda-button" data-style="zoom-in">
-                        <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
-                        <span id="nav-text"> Print</span>
-                    </a>
-                    <br/><br/>
-                @endif
+                <div >
+                    @if( isset($inspection->property_custodian_acknowledgement_date) && isset($inspection->inspection_approval_date) )
+                        <a href="{{ url('inspection/supply/'.$inspection->id.'/print') }}" style="text-align:justify; margin:left: 15em; font-size:11pt;" target="_blank" id="print" class="print btn btn-sm btn-default ladda-button" data-style="zoom-in">
+                            <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+                            <span id="nav-text"> Print Inspection Report</span>
+                        </a>
+                        <br/><br/>
+                    @endif
                 </div>
 			    <table class="table table-hover table-striped table-bordered table-condensed" id="headerTable" cellspacing="0" width="100%">
                     <tr>
