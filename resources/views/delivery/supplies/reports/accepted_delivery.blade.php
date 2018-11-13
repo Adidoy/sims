@@ -45,7 +45,7 @@
     </head>
     <body>
         <div id="content" class="col-sm-12">
-            <table class="table table-striped table-bordered table-condensed" id="inventoryTable" width="100%" cellspacing="0">
+            <table class="table table-striped table-bordered table-condensed" id="headerTable" width="100%" cellspacing="0">
                 <thead>
                     <tr><th colspan="16" style="color: #800000;">
                         <div style="margin-left: 5em;">
@@ -55,19 +55,31 @@
                             <div style="font-size:10pt; text-align: justify;">Date Printed: <span class="pull-right" > {{ Carbon\Carbon::now()->format('d F Y h:m A') }} </span></div>
                         </div>
                     </th></tr>
-                    <tr style="padding:0;">
-                        <th colspan="16"><h2 class="text-center">DELIVERY ACCEPTANCE REPORT</h2></th>
+                    <tr>
+                        <th colspan="20"><div style="text-align: center;"><h2>DELIVERY ACCEPTANCE REPORT</h2></div></th>
                     </tr>
-                    <tr >
-                        <th colspan="16"><h4 class="pull-right" style="text-align: right;">Delivery Acceptance No.: {{ $delivery->local }}</h4></th>
+                    <tr rowspan="2">
+                        <th class="text-right" style="font-size:10pt; text-align: justify;" colspan="16">
+                        </th>
+                        <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="8">Delivery Acceptance No.: 
+                            <u><span style="font-weight:normal">{{ $delivery->local }}</span></u>
+                        </th>
                     </tr>
+                    <tr rowspan="2">
+                        <th class="text-right" style="font-size:10pt; text-align: justify;" colspan="16">
+                            <br/>
+                        </th>
+                        <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="8">
+                            <br/>
+                        </th>
+                    </tr>                    
                     <tr rowspan="2">
                         <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="16">Supplier: 
                             <u><span style="font-weight:normal">{{ isset($delivery->supplier_name) ? $delivery->supplier_name : 'None' }}</span></u>
                         </th>
                     </tr>                    
                     <tr rowspan="2">
-                        <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="8">Purchase Order No.: 
+                        <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="16">Purchase Order No.: 
                             <u><span style="font-weight:normal">{{ isset($delivery->purchaseorder_no) ? $delivery->purchaseorder_no : 'None' }}</span></u>
                         </th>
                         <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="8">Purchase Order Date: 
@@ -75,7 +87,7 @@
                         </th>
                     </tr>
                     <tr rowspan="2">
-                        <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="8">Invoice No.: 
+                        <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="16">Invoice No.: 
                             <u><span style="font-weight:normal">{{ isset($delivery->invoice_no) ? $delivery->invoice_no : 'None' }}</span></u>
                         </th>
                         <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="8">Invoice Date: 
@@ -83,7 +95,7 @@
                         </th>
                     </tr>
                     <tr rowspan="2">
-                        <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="8">Delivery Receipt No.: 
+                        <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="16">Delivery Receipt No.: 
                             <u><span style="font-weight:normal">{{ isset($delivery->delrcpt_no) ? $delivery->delrcpt_no : 'None' }}</span></u>
                         </th>
                         <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="8">Delivery Date: 
