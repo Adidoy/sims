@@ -55,8 +55,11 @@
                             <div style="font-size:10pt; text-align: justify;">Date Printed: <span class="pull-right" > {{ Carbon\Carbon::now()->format('d F Y h:m A') }} </span></div>
                         </div>
                     </th></tr>
+                    <tr style="padding:0;">
+                        <th colspan="16"><h2 class="text-center">DELIVERY ACCEPTANCE REPORT</h2></th>
+                    </tr>
                     <tr >
-                        <th colspan="16"><h2 class="text-center">DELIVERY ACCEPTANCE REPORT  <small class="pull-right" style="text-align: right;">{{ $delivery->local }}</small></h2></th>
+                        <th colspan="16"><h4 class="pull-right" style="text-align: right;">Delivery Acceptance No.: {{ $delivery->local }}</h4></th>
                     </tr>
                     <tr rowspan="2">
                         <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="16">Supplier: 
