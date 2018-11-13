@@ -58,15 +58,17 @@ class RequestClient extends Model implements Auditable, UserResolver
     public static $cancelRules = array(
       'Details' => 'required',
     );
-
-    public function commentsRules(){
-      return [
-        'Details' => 'required|max:100'
-      ];
-    }
     
+    /**
+    * {@inheritdoc}
+    */
+    public static function resolveId()
+    {
+        return Auth::check() ? Auth::user()->getAuthIdentifier() : null;
+    }
+
     public $appends = [
-      'code', 'date_requested', 'date_released',  'remaining_days', 'expire_on', 'office_code'
+      'code', 'date_requested', 'date_released',  'remaining_days', 'expire_on'
     ];
   
     public function scopeFindOfficeRequest($query, $value)
@@ -75,9 +77,58 @@ class RequestClient extends Model implements Auditable, UserResolver
       return $query->where('office_id','=',$officeID);
     }
 
-    public function getOfficeCodeAttribute()
+    public function getCodeAttribute($value)
     {
-      return $this->office->code;
+      $date = Carbon\Carbon::parse($this->created_at);
+      if(isset($this->local))
+        $requestcode = $this->local;
+      else{
+      if (strlen($this->id) == 1) 
+        $requestcode =  '000'.$this->id;
+      elseif (strlen($this->id) == 2) 
+        $requestcode =  '00'.$this->id;
+      elseif (strlen($this->id) == 3) 
+        $requestcode =  '0'.$this->id;
+      elseif (strlen($this->id) == 4) 
+        $requestcode =  $this->id;
+      else
+        $requestcode =  $this->id;
+      }
+      if(isset($this->local))
+      return $requestcode;
+      else
+      return $date->format('y') . '-' .  $date->format('m') . '-' .  $requestcode;
+
     }
-     
+
+    public function getDateRequestedAttribute($value)
+    {
+      return Carbon\Carbon::parse($this->created_at)->format("F d Y h:m A");
+    }
+
+    public function getDateReleasedAttribute($value)
+    {
+      return isset($this->released_at) ? Carbon\Carbon::parse($this->released_at)->format("F d Y h:m A") : "N/A";  
+    }
+
+    public function getRemainingDaysAttribute()
+    {
+      if($this->approved_at == null)  return 'No Approval';
+      if($this->approved_at != null && $this->released_at != null)  return 'Released';
+      if(ucfirst($this->status) == 'Cancelled')  return 'Cancelled';
+      if(ucfirst($this->status) == 'Disapproved')  return 'Disapproved';
+      
+      $approved_date = Carbon\Carbon::parse($this->approved_at);
+      $date = Carbon\Carbon::now();
+      
+      return $approved_date->diffInDays($date);
+
+    }
+
+    public function getExpireOnAttribute()
+    {
+      if( $this->approved_at == null ) return 'No Approval';
+
+      return Carbon\Carbon::parse($this->approved_at)->toFormattedDateString();
+    }
 }

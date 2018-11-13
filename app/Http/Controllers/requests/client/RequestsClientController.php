@@ -17,7 +17,8 @@ use App\Models\Requests\Client\RequestClient;
 
 class RequestsClientController extends Controller
 {
-    public function index(Request $request) {
+    public function index(Request $request) 
+    {
         $requests = RequestClient::findOfficeRequest(Auth::user()->office)->get();
         if($request->ajax()) {
           return datatables($requests)->toJson();
@@ -50,36 +51,70 @@ class RequestsClientController extends Controller
 		elseif (strlen($id) == 4) 
 		  $requestCode =  $id;
 		else
-		  $requestCode =  $id;
-
-        // $requests = App\Request::orderBy('created_at','desc')->first();
-        // $id = 1;
-        // $now = Carbon\Carbon::now();
-        // $const = $now->format('y') . '-' . $now->format('m');
-    
-        // if(count($requests) > 0) {
-        //   $id = $requests->id + 1;
-        // }
-        // else {
-        //   $id = count(App\StockCard::filterByIssued()->get()) + 1;
-        // }
-    
-        // if($request->ajax()) {
-        //   return json_encode( $const . '-' . $id ); 
-        // }
-    
-        // if (strlen($id) == 1) 
-        //   $requestcode =  '000'.$id;
-        // elseif (strlen($id) == 2) 
-        //   $requestcode =  '00'.$id;
-        // elseif (strlen($id) == 3) 
-        //   $requestcode =  '0'.$id;
-        // elseif (strlen($id) == 4) 
-        //   $requestcode =  $id;
-        // else
-        //   $requestcode =  $id;
-        
+          $requestCode =  $id;
+          
         return $const . '-' . $requestCode;
-    
+    }
+
+    public function store(Request $request)
+    {
+        $code = $this->generate($request);
+        $stocknumbers = $request->get("stocknumber");
+        $quantity = $request->get("quantity");
+        $quantity_issued = null;
+        $array = [];
+        $office = App\Office::findByCode(Auth::user()->office)->id;
+        $status = null;
+        $purpose = $request->get("purpose");
+        $requestor = Auth::user()->id;
+
+        if(count($stocknumbers) <= 0 ) return back()->withInput()->withErrors(['Invalid Stock List Requested']);
+
+        foreach(array_flatten($stocknumbers) as $stocknumber) {
+            if($stocknumber == '' || $stocknumber == null || !isset($stocknumber)) {
+                \Alert::error('Encountered an invalid stock! Resetting table')->flash();
+                return redirect("request/create");
+            }   
+
+            $validator = Validator::make([
+                'Purpose' => $purpose,
+                'Stock Number' => $stocknumber,
+                'Quantity' => $quantity["$stocknumber"]
+            ],App\Request::$issueRules);
+
+            if($validator->fails()) {
+                return redirect("request/create")
+                    ->with('total',count($stocknumbers))
+                    ->with('stocknumber',$stocknumbers)
+                    ->with('quantity',$quantity)
+                    ->withInput()
+                    ->withErrors($validator);
+            }
+
+            array_push($array,[
+                'quantity_requested' => $quantity["$stocknumber"],
+                'supply_id' => App\Supply::findByStockNumber($stocknumber)->id,
+                'quantity_issued' => $quantity_issued
+            ]);
+        }
+        DB::beginTransaction();
+
+        $request = App\Request::create([
+            'local' => $code,
+            'requestor_id' => $requestor,
+            'issued_by' => null,
+            'office_id' => $office,
+            'remarks' => null,
+            'purpose' => $purpose,
+            'status' => $status
+        ]);
+
+        $request->supplies()->sync($array);
+
+        $office = App\Office::find($office);
+        $requestor = App\User::find($requestor);
+        DB::commit();
+        \Alert::success('Request Sent')->flash();
+        return redirect('request');
     }
 }
