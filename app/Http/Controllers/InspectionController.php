@@ -189,7 +189,6 @@ class InspectionController extends Controller
 	{
 		$orientation = 'Portrait';
         $inspection = App\Inspection::with('delivery')->with('supplies')->find($id);
-        //return $inspection;
 		$data = [
 			'inspection' => $inspection
 		];
