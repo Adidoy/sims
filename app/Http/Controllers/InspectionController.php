@@ -55,6 +55,8 @@ class InspectionController extends Controller
 
     public function store(Request $request) 
     {
+        $remarks = "Complete";
+
         $inspectionHeader = new App\Inspection;
         $inspector = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
         $delivery = App\DeliveryHeader::findByLocal($request->get("deliveryLocal"));
@@ -65,16 +67,6 @@ class InspectionController extends Controller
         $comment = $request->get("passed_comment");
         
         DB::beginTransaction();
-        $validator = Validator::make([
-            'Remarks' => $request->get('remarks')
-        ], $inspectionHeader->rules(), $inspectionHeader->messages());
-
-        if($validator->fails()) {
-            DB::rollback();
-            return redirect('inspection/supply/'.$delivery->id.'/')
-                ->withInput()
-                ->withErrors($validator);
-        }
 
         foreach($stocknumbers as $stocknumber) {
             if($quantity_passed["$stocknumber"] > $quantity["$stocknumber"]) {
@@ -97,12 +89,19 @@ class InspectionController extends Controller
             }
         }
 
+        foreach($stocknumbers as $stocknumber) {
+            if($quantity_passed["$stocknumber"] <> $quantity["$stocknumber"]) {
+                $remarks = "Partial";
+                break;
+            }
+        }
+
         $inspectionHeader = App\Inspection::create([
             'local' => $this->generateLocalCode($request),
             'delivery_id' => $delivery->id,
             'inspection_personnel' => $inspector,
             'inspection_date' => Carbon\Carbon::now(),
-            'remarks' => $request->get('remarks')
+            'remarks' => $remarks
         ]);
         foreach($stocknumbers as $stocknumber) {
             $supply = App\Supply::StockNumber($stocknumber)->first();
@@ -184,5 +183,19 @@ class InspectionController extends Controller
 		  $trxCode =  $id;
 		
 		return 'IAR-' . $const . '-' . $trxCode;
-	} 
+    }
+    
+    public function print(Request $request, $id)
+	{
+		$orientation = 'Portrait';
+        $inspection = App\Inspection::with('delivery')->with('supplies')->find($id);
+        //return $inspection;
+		$data = [
+			'inspection' => $inspection
+		];
+
+		$filename = "Inspection and Acceptance Report - ".$inspection->local." - ".Carbon\Carbon::now()->format('mdYHm').".pdf";
+		$view = "inspection.supplies.reports.inspection_report";
+		return $this->printPreview($view,$data,$filename,$orientation);
+	}
 }

@@ -88,7 +88,7 @@ class Inspection extends Model {
 
 	public function delivery() 
 	{
-        return $this->hasOne('App\DeliveryHeader');
+        return $this->hasOne('App\DeliveryHeader', 'id', 'delivery_id');
 	}
 	
 	public function supplies()

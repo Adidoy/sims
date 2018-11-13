@@ -71,6 +71,7 @@ Route::middleware(['auth'])->group(function(){
 			'as' => 'inspection.approve',
 			'uses'=>'InspectionController@approveInspection'
 		]);
+		Route::get('inspection/supply/{id}/print', 'InspectionController@print');
 
 		//====================== old codes ===========================
 		Route::get('rsmi', [
