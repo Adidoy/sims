@@ -19,7 +19,13 @@ class RequestsClientController extends Controller
 {
     public function index(Request $request) 
     {
-        $requests = RequestClient::findOfficeRequest(Auth::user()->office)->get();
+        if ($request->url() == url('request/pending')) {
+            $requests = RequestClient::findOfficeRequest(Auth::user()->office)->whereNull('status')->get();
+        } else if ($request->url() == url('request/approved')) {
+            $requests = RequestClient::findOfficeRequest(Auth::user()->office)->where('status','=','approved')->get();
+        }  else if ($request->url() == url('request/released')) {
+            $requests = RequestClient::findOfficeRequest(Auth::user()->office)->where('status','=','released')->get();
+        }
         if($request->ajax()) {
           return datatables($requests)->toJson();
         }
@@ -29,9 +35,7 @@ class RequestsClientController extends Controller
 
     public function create(Request $request) 
     {
-        $code = $this->generate($request);
         return view('requests.client.forms.create')
-          ->with('code',$code)
           ->with('title','Request');
     }
 
@@ -39,7 +43,7 @@ class RequestsClientController extends Controller
     {
         $now = Carbon\Carbon::now();
         $const = $now->format('y') . '-' . $now->format('m');
-        $requests = App\Request::orderBy('created_at','desc')->first();
+        $requests = App\RequestClient::orderBy('created_at','desc')->first();
 		$id = $requests->id + 1;
 	
 		if (strlen($id) == 1) 
@@ -58,63 +62,36 @@ class RequestsClientController extends Controller
 
     public function store(Request $request)
     {
-        $code = $this->generate($request);
         $stocknumbers = $request->get("stocknumber");
         $quantity = $request->get("quantity");
-        $quantity_issued = null;
-        $array = [];
-        $office = App\Office::findByCode(Auth::user()->office)->id;
-        $status = null;
         $purpose = $request->get("purpose");
-        $requestor = Auth::user()->id;
+        $newRequest = new RequestClient;
 
-        if(count($stocknumbers) <= 0 ) return back()->withInput()->withErrors(['Invalid Stock List Requested']);
-
-        foreach(array_flatten($stocknumbers) as $stocknumber) {
-            if($stocknumber == '' || $stocknumber == null || !isset($stocknumber)) {
-                \Alert::error('Encountered an invalid stock! Resetting table')->flash();
-                return redirect("request/create");
-            }   
-
-            $validator = Validator::make([
-                'Purpose' => $purpose,
-                'Stock Number' => $stocknumber,
-                'Quantity' => $quantity["$stocknumber"]
-            ],App\Request::$issueRules);
-
-            if($validator->fails()) {
-                return redirect("request/create")
-                    ->with('total',count($stocknumbers))
-                    ->with('stocknumber',$stocknumbers)
-                    ->with('quantity',$quantity)
-                    ->withInput()
-                    ->withErrors($validator);
-            }
-
-            array_push($array,[
-                'quantity_requested' => $quantity["$stocknumber"],
-                'supply_id' => App\Supply::findByStockNumber($stocknumber)->id,
-                'quantity_issued' => $quantity_issued
-            ]);
+        $quantity_issued = null;
+        
+        $validator = Validator::make([
+            'Purpose' => $purpose
+        ], $newRequest->rules(), $newRequest->messages());
+        
+        if($validator->fails()) {
+            return redirect("request/create")
+                ->withInput()
+                ->withErrors($validator);
         }
-        DB::beginTransaction();
+        
+    }
 
-        $request = App\Request::create([
-            'local' => $code,
-            'requestor_id' => $requestor,
-            'issued_by' => null,
-            'office_id' => $office,
-            'remarks' => null,
-            'purpose' => $purpose,
-            'status' => $status
-        ]);
-
-        $request->supplies()->sync($array);
-
-        $office = App\Office::find($office);
-        $requestor = App\User::find($requestor);
-        DB::commit();
-        \Alert::success('Request Sent')->flash();
-        return redirect('request');
+    public function show(Request $request,$id) 
+    {
+        $requests = App\Request::find($id);
+        if($request->ajax()) {
+          $supplies = $requests->supplies;
+          return json_encode([
+            'data' => $supplies
+          ]);
+        }
+        return view('request.show')
+          ->with('request',$requests)
+          ->with('title','Request');
     }
 }

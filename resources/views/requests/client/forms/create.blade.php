@@ -3,10 +3,10 @@
 @section('header')
 	<section class="content-header">
 	  <h1>
-	    Request No. {{ $code }}
+	    New Request
 	  </h1>
 	  <ol class="breadcrumb">
-	    <li><a href="{{ url('request') }}">Request</a></li>
+	    <li><a href="{{ url('request/create') }}">Request</a></li>
 	    <li class="active">Create</li>
 	  </ol>
 	</section>

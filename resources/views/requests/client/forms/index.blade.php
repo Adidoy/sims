@@ -2,11 +2,28 @@
 
 @section('header')
   <section class="content-header">
-    <h1>Request</h1>
-	  <ol class="breadcrumb">
-	    <li>Request</li>
-	    <li class="active">Home</li>
-	  </ol>
+    @if(Request::url() == url('request/pending'))
+      <h1>Pending Requests</h1>
+      <ol class="breadcrumb">
+        <li>Requests</li>
+        <li>Pending</li>
+        <li class="active">Home</li>
+      </ol>
+    @elseif(Request::url() == url('request/approved'))
+      <h1>Approved Requests</h1>
+      <ol class="breadcrumb">
+        <li>Requests</li>
+        <li>Approved</li>
+        <li class="active">Home</li>
+      </ol>
+      @elseif(Request::url() == url('request/released'))
+      <h1>Released Requests</h1>
+      <ol class="breadcrumb">
+        <li>Requests</li>
+        <li>Released</li>
+        <li class="active">Home</li>
+      </ol>               
+    @endif
   </section>
 @endsection
 
@@ -19,9 +36,14 @@
           <tr>
             <th class="col-sm-1 no-sort">Request No.</th>
             <th class="col-sm-1 no-sort ">Request Date</th>
-            <th class="col-sm-1">Remarks</th>
             <th class="col-sm-1">Purpose</th>
-            <th class="col-sm-1">Status</th>
+            @if(Request::url() == url('request/approved'))
+              <th class="col-sm-1">Remarks</th>
+              <th class="col-sm-1">Date Approved</th>
+            @elseif(Request::url() == url('request/released'))
+              <th class="col-sm-1">Date Released</th>
+            @endif
+
             <th class="col-sm-1 no-sort"></th>
           </tr>
         </thead>
@@ -52,19 +74,34 @@
         "dom": "<'row'<'col-sm-3'l><'col-sm-6'<'toolbar'>><'col-sm-3'f>>" +
                       "<'row'<'col-sm-12'tr>>" +
                       "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-        ajax: "{{ url('request') }}",
+        ajax: getURL(),
         columns: [
-          { data: "code" },
+          { data: "local" },
           { data: 'date_requested' },
-          { data: "remarks" },
           { data: "purpose" },
-          { data: "status" }, 
+          @if(Request::url() == url('request/approved'))
+          { data: "remarks" },
+          { data: "approved_at" },
+          @elseif(Request::url() == url('request/released'))
+          { data: "released_at" },
+          @endif
+           
           { data: function(callback){
-            return `<a href="{{ url('request') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i> View</a>`;
+            return `<a href="{{ url('request/') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i> View</a>`;
           }}
         ],
       });
-      $('div.toolbar').html(`<a id="create" href="{{ url('request/create') }}" class="btn btn-primary ladda-button" data-style="zoom-in"><span class="ladda-label"><i class="fa fa-plus"></i> Create a Request</span></a>`);
+
+      function getURL()
+      {
+        if("{{Request::url()}}" == "{{url('request/pending')}}") {
+          return "{{url('request/pending')}}";
+        } else if("{{Request::url()}}" == "{{url('request/approved')}}") {
+          return "{{url('request/approved')}}";
+        } else if("{{Request::url()}}" == "{{url('request/released')}}") {
+          return "{{url('request/released')}}";
+        }        
+      }
     });
 
 </script> 

@@ -1,5 +1,3 @@
-
-
 <!-- custom styles -->
 <style>
   .border-shadow {
@@ -16,11 +14,6 @@
 
 <!-- Display Errors -->
 @include('errors.alert')
-<div class="alert alert-danger alert-dismissible is-required" id="warningAlert" role="alert">
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  <strong>Warning!</strong> The fields in <em>red</em> are required. Please input the corresponding data in the fields.
-</div>
-
 <!-- Stock Card Form -->
 <div class="col-sm-4" style="margin-top:20px;">
   <div class="form-group" id="stocknumber-form">
@@ -39,6 +32,7 @@
 
   <!-- shows the details for the stocknumber -->
   <input type="hidden" id="supply-item" />
+  <input type="hidden" id="unit-item" />
   <div id="stocknumber-details"></div>
   <!-- end details display -->
 
@@ -61,13 +55,14 @@
       <tr>
         <th class="col-sm-1 text-center">Stock Number</th>
         <th class="col-sm-1 text-center">Information</th>
+        <th class="col-sm-1 text-center">Unit of Measure</th>
         <th class="col-sm-1 text-center">Quantity</th>
         <th class="col-sm-1 text-center"></th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td colspan=4 class="text-muted text-center"> ** Nothing Follows **</td>
+        <td colspan=4 class="text-muted text-center">******************* Nothing Follows *******************</td>
       </tr>
     </tbody>
   </table>
@@ -78,7 +73,7 @@
   <!-- Request Purpose -->
   <div class="col-sm-12">
     <div class="form-group">
-      <label for="purpose">Purpose</label> <div class="text-danger is-required">Field Required</div>
+      <label for="purpose">Purpose</label>
         <input type="text" id="purpose" class="form-control" placeholder="Enter Details here.... " rows="2" name="purpose" value="{{ isset($request->purpose) ? $request->purpose : old('purpose') }}">
     </div>
   </div> <!-- end of Request Purpose -->
@@ -110,28 +105,23 @@
       }
       else
       {
-
-        purpose = $('#purpose')
-        if(hasNoErrors(purpose))
-        {
-            swal({
-              title: "Are you sure?",
-              text: "This will no longer be editable once submitted. Do you want to continue?",
-              type: "warning",
-              showCancelButton: true,
-              confirmButtonText: "Yes, submit it!",
-              cancelButtonText: "No, cancel it!",
-              closeOnConfirm: false,
-              closeOnCancel: false
-            },
-            function(isConfirm){
-              if (isConfirm) {
-                $('#requestForm').submit();
-              } else {
-                swal("Cancelled", "Operation Cancelled", "error");
-              }
-            })
-        }
+        swal({
+          title: "Are you sure?",
+          text: "This will no longer be editable once submitted. Do you want to continue?",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Yes, submit it!",
+          cancelButtonText: "No, cancel it!",
+          closeOnConfirm: false,
+          closeOnCancel: false
+        },
+        function(isConfirm){
+          if (isConfirm) {
+            $('#requestForm').submit();
+          } else {
+            swal("Cancelled", "Operation Cancelled", "error");
+          }
+        })
       }
     })
 
@@ -153,19 +143,17 @@
             details = response.data.details
             unit = data.unit.name
             $('#supply-item').val(details.toString())
+            $('#unit-item').val(unit.toString())
             $('#stocknumber-details').html(`
               <div class="alert alert-info">
                 <ul class="list-unstyled">
                   <li><strong>Item:</strong> ` + details + ` </li>
                   <li><strong>Unit:</strong> ` + unit + ` </li>
-                  @if(Auth::user()->access == 1)
-                  <li><strong>Remaining Balance:</strong> ` + response.data.stock_balance + ` </li>
-                  @endif
                 </ul>
               </div>
             `)
 
-            $('#add').prop("disabled", false)
+          $('#add').prop("disabled", false)
           } catch (e) {
             console.log(e)
             $('#stocknumber-details').html(`
@@ -185,11 +173,12 @@
     $('#add').on('click',function(){
       stocknumber = $('#stocknumber')
       quantity = $('#quantity')
+      unit = $('#unit-item')
       details = $('#supply-item')
 
       if(hasNoErrors(stocknumber) && hasNoErrors(quantity) && invalidDetails(details))
       {
-        addForm(stocknumber.val(), details.val(), quantity.val() )
+        addForm(stocknumber.val(), details.val(), unit.val(), quantity.val() )
       }
     })
 
@@ -227,7 +216,7 @@
       return true;
     }
 
-    function addForm(_stocknumber = "",_info ="" ,_quantity = "")
+    function addForm(_stocknumber = "",_info ="", _unit="" ,_quantity = "")
     {
       error = false
       $('.stocknumber-list').each(function() {
@@ -248,6 +237,7 @@
         <tr>
           <td><input type="text" class="stocknumber-list form-control text-center" value="` + _stocknumber + `" name="stocknumber[` + _stocknumber + `]" style="border:none;" readonly /></td>
           <td><input type="hidden" class="form-control text-center" value="` + _info + `" name="info[` + _stocknumber + `]" style="border:none;" />` + _info + `</td>
+          <td><input type="hidden" class="form-control text-center" value="` + _unit + `" name="unit[` + _stocknumber + `]" style="border:none;" />` + _unit + `</td>
           <td><input type="number" class="form-control text-center" value="` + _quantity + `" name="quantity[` + _stocknumber + `]" style="border:none;"  /></td>
           <td><button type="button" class="remove btn btn-md btn-danger text-center"><span class="glyphicon glyphicon-remove"></span> Remove</button></td>
         </tr>
@@ -294,5 +284,5 @@
   });
 </script>
 
-@yield('additional_scripts')
+
 @endsection

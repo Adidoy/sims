@@ -13,11 +13,20 @@ class RequestClient extends Model implements Auditable, UserResolver
 {
     use \OwenIt\Auditing\Auditable; 
 
+    /**
+    * {@inheritdoc}
+    */
+    public static function resolveId()
+    {
+        return Auth::check() ? Auth::user()->getAuthIdentifier() : null;
+    }
+
     protected $table = 'requests';
     protected $primaryKey = 'id';
     public $incrementing = true;
     public $timestamps = true;
     public $expire_before = 3;
+    
     protected $fillable = [ 
       'local' , 
       'requestor_id' , 
@@ -47,28 +56,21 @@ class RequestClient extends Model implements Auditable, UserResolver
       5 => 'released'
     ];
 
-    public function updateRules() {
+    public function rules() {
       return [
-        'Stock Number' => 'required|exists:supplies,stocknumber',
-        'Quantity' => 'required|integer|min:1',
-        'Purpose' => 'required',
+        'Purpose' => 'required|max:150',
       ];
     }
 
-    public static $cancelRules = array(
-      'Details' => 'required',
-    );
-    
-    /**
-    * {@inheritdoc}
-    */
-    public static function resolveId()
-    {
-        return Auth::check() ? Auth::user()->getAuthIdentifier() : null;
+    public function messages() {
+      return [
+        'Purpose.required' => 'Please indicate the purpose of this supplies request.',
+        'Purpose.max' => 'Purpose field is up to 150 characters only.'
+      ];
     }
-
+    
     public $appends = [
-      'code', 'date_requested', 'date_released',  'remaining_days', 'expire_on'
+      'date_requested', 'date_released',  'remaining_days', 'expire_on', 'date_approved'
     ];
   
     public function scopeFindOfficeRequest($query, $value)
@@ -77,38 +79,19 @@ class RequestClient extends Model implements Auditable, UserResolver
       return $query->where('office_id','=',$officeID);
     }
 
-    public function getCodeAttribute($value)
-    {
-      $date = Carbon\Carbon::parse($this->created_at);
-      if(isset($this->local))
-        $requestcode = $this->local;
-      else{
-      if (strlen($this->id) == 1) 
-        $requestcode =  '000'.$this->id;
-      elseif (strlen($this->id) == 2) 
-        $requestcode =  '00'.$this->id;
-      elseif (strlen($this->id) == 3) 
-        $requestcode =  '0'.$this->id;
-      elseif (strlen($this->id) == 4) 
-        $requestcode =  $this->id;
-      else
-        $requestcode =  $this->id;
-      }
-      if(isset($this->local))
-      return $requestcode;
-      else
-      return $date->format('y') . '-' .  $date->format('m') . '-' .  $requestcode;
-
-    }
-
     public function getDateRequestedAttribute($value)
     {
-      return Carbon\Carbon::parse($this->created_at)->format("F d Y h:m A");
+      return Carbon\Carbon::parse($this->created_at)->format(" d F Y h:m A");
     }
 
     public function getDateReleasedAttribute($value)
     {
-      return isset($this->released_at) ? Carbon\Carbon::parse($this->released_at)->format("F d Y h:m A") : "N/A";  
+      return isset($this->released_at) ? Carbon\Carbon::parse($this->released_at)->format(" d F Y h:m A") : "N/A";  
+    }
+
+    public function getDateApprovedAttribute($value)
+    {
+      return isset($this->released_at) ? Carbon\Carbon::parse($this->approved_at)->format(" d F Y h:m A") : "N/A";  
     }
 
     public function getRemainingDaysAttribute()
@@ -122,7 +105,6 @@ class RequestClient extends Model implements Auditable, UserResolver
       $date = Carbon\Carbon::now();
       
       return $approved_date->diffInDays($date);
-
     }
 
     public function getExpireOnAttribute()
