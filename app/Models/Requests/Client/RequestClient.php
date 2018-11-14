@@ -56,13 +56,13 @@ class RequestClient extends Model implements Auditable, UserResolver
       5 => 'released'
     ];
 
-    public function rules() {
+    public function requestRules() {
       return [
         'Purpose' => 'required|max:150',
       ];
     }
 
-    public function messages() {
+    public function requestMessages() {
       return [
         'Purpose.required' => 'Please indicate the purpose of this supplies request.',
         'Purpose.max' => 'Purpose field is up to 150 characters only.'

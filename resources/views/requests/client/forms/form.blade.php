@@ -78,6 +78,9 @@
     </div>
   </div> <!-- end of Request Purpose -->
   <div class="pull-right">
+  <div class="btn-group">
+      <button type="button" id="save" class="btn btn-md btn-success btn-block">&emsp;Save&emsp;</button>
+    </div>
     <div class="btn-group">
       <button type="button" id="request" class="btn btn-md btn-primary btn-block">Request</button>
     </div>

@@ -43,7 +43,7 @@ class RequestsClientController extends Controller
     {
         $now = Carbon\Carbon::now();
         $const = $now->format('y') . '-' . $now->format('m');
-        $requests = App\RequestClient::orderBy('created_at','desc')->first();
+        $requests = RequestClient::orderBy('created_at','desc')->first();
 		$id = $requests->id + 1;
 	
 		if (strlen($id) == 1) 
@@ -65,20 +65,42 @@ class RequestsClientController extends Controller
         $stocknumbers = $request->get("stocknumber");
         $quantity = $request->get("quantity");
         $purpose = $request->get("purpose");
+        $requestor = Auth::user()->id;
+        $office = App\Office::findByCode(Auth::user()->office)->id;
         $newRequest = new RequestClient;
-
-        $quantity_issued = null;
+        $code = $this->generate($request);
         
         $validator = Validator::make([
             'Purpose' => $purpose
-        ], $newRequest->rules(), $newRequest->messages());
+        ], $newRequest->requestRules(), $newRequest->requestMessages());
         
         if($validator->fails()) {
             return redirect("request/create")
                 ->withInput()
                 ->withErrors($validator);
         }
-        
+
+        if(count($stocknumbers) <= 0 ) 
+            return back()
+                ->withInput()
+                ->withErrors(['Invalid Stock List Requested']);
+
+        try{
+            DB::beginTransaction();
+            $newRequest::create([
+                'local' => $code,
+                'requestor_id' => $requestor,
+                'issued_by' => null,
+                'office_id' => $office,
+                'remarks' => null,
+                'purpose' => $purpose
+            ]);
+            DB::commit();
+        } catch(\Exception $e) {
+            DB::rollback();
+            \Alert::error('An error occured! Please try again. Message: '.$e->getMessage())->flash();
+            return redirect('/inspection/view/supply'); 
+        }
     }
 
     public function show(Request $request,$id) 
