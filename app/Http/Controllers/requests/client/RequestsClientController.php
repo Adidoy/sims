@@ -20,18 +20,27 @@ class RequestsClientController extends Controller
 {
     public function index(Request $request) 
     {
-        if ($request->url() == url('request/client/pending')) {
-            $requests = RequestClient::findOfficeRequest(Auth::user()->office)->whereNull('status')->get();
-        } else if ($request->url() == url('request/client/approved')) {
-            $requests = RequestClient::findOfficeRequest(Auth::user()->office)->where('status','=','approved')->get();
-        }  else if ($request->url() == url('request/client/released')) {
-            $requests = RequestClient::findOfficeRequest(Auth::user()->office)->where('status','=','released')->get();
+        if(isset($request->type)) {
+            if($request->type == 'pending') {
+                $requests = RequestClient::findOfficeRequest(Auth::user()->office)->whereNull('status')->get();    
+            } elseif ($request->type == 'approved') {
+                $requests = RequestClient::findOfficeRequest(Auth::user()->office)->where('status','=','approved')->get();
+            } elseif ($request->type == 'released') {
+                $requests = RequestClient::findOfficeRequest(Auth::user()->office)->where('status','=','released')->get();
+            }
         }
+        $type = $request->type;
+        // if ($request->url() == url('request/client/pending')) {
+        //     $requests = RequestClient::findOfficeRequest(Auth::user()->office)->whereNull('status')->get();
+        // } else if ($request->url() == url('request/client/approved')) {
+        //     $requests = RequestClient::findOfficeRequest(Auth::user()->office)->where('status','=','approved')->get();
+        // }  else if ($request->url() == url('request/client/released')) {
+        //     $requests = RequestClient::findOfficeRequest(Auth::user()->office)->where('status','=','released')->get();
+        // }
         if($request->ajax()) {
           return datatables($requests)->toJson();
         }
-        return view('requests.client.forms.index')
-          ->with('title','Request');
+        return view('requests.client.forms.index', compact('type', 'requests'));
     }
 
     public function create(Request $request) 
@@ -140,5 +149,43 @@ class RequestsClientController extends Controller
         return view('requests.client.forms.show')
           ->with('request',$requests)
           ->with('title','Request');
+    }
+
+    public function getCancelRequest($id)
+    {
+        $request = App\Request::find($id);
+        return view('requests.client.forms.cancel')
+            ->with('request',$request)
+            ->with('title',$request->id);
+    }
+
+    public function cancelRequest(Request $request, $id)
+    {
+        $updateRequest = RequestClient::find($id);
+        try{
+            DB::beginTransaction();
+            $validator = Validator::make([
+                'Remarks' => $request->get("details"),
+            ],$updateRequest->requestRules(),$updateRequest->requestMessages());
+            
+            if($validator->fails()) {
+                return redirect("request/client/$id/cancel")
+                  ->withInput()
+                  ->withErrors($validator);
+            }
+
+            $updateRequest->status = "cancelled";
+            $updateRequest->cancelled_by = Auth::user()->id;
+            $updateRequest->cancelled_at = Carbon\Carbon::now();
+            $updateRequest->remarks = $details;
+            $updateRequest->save();
+            DB::commit();
+            \Alert::success('Request Sent')->flash();
+            return redirect('request/client/');
+        } catch(\Exception $e) {
+          DB::rollback();
+          \Alert::error('An error occured! Please try again. Message: '.$e->getMessage())->flash();
+          return redirect('request/client/'); 
+        }
     }
 }

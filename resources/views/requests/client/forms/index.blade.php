@@ -2,21 +2,21 @@
 
 @section('header')
   <section class="content-header">
-    @if(Request::url() == url('request/client/pending'))
+    @if($type=='pending')
       <h1>Pending Requests</h1>
       <ol class="breadcrumb">
         <li>Requests</li>
         <li>Pending</li>
         <li class="active">Home</li>
       </ol>
-    @elseif(Request::url() == url('request/client/approved'))
+    @elseif($type== 'approved')
       <h1>Approved Requests</h1>
       <ol class="breadcrumb">
         <li>Requests</li>
         <li>Approved</li>
         <li class="active">Home</li>
       </ol>
-      @elseif(Request::url() == url('request/client/released'))
+      @elseif($type == 'released')
       <h1>Released Requests</h1>
       <ol class="breadcrumb">
         <li>Requests</li>
@@ -37,10 +37,10 @@
             <th class="col-sm-1 no-sort">Request No.</th>
             <th class="col-sm-1 no-sort ">Request Date</th>
             <th class="col-sm-1">Purpose</th>
-            @if(Request::url() == url('request/client/approved'))
+            @if($type == 'approved')
               <th class="col-sm-1">Remarks</th>
               <th class="col-sm-1">Date Approved</th>
-            @elseif(Request::url() == url('request/client/released'))
+            @elseif($type == 'released')
               <th class="col-sm-1">Date Released</th>
             @endif
 
@@ -74,15 +74,15 @@
         "dom": "<'row'<'col-sm-3'l><'col-sm-6'<'toolbar'>><'col-sm-3'f>>" +
                       "<'row'<'col-sm-12'tr>>" +
                       "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-        ajax: getURL(),
+        ajax: "{{ url('request/client/?type=' . $type) }}",
         columns: [
           { data: "local" },
           { data: 'date_requested' },
           { data: "purpose" },
-          @if(Request::url() == url('request/client/approved'))
+          @if($type == 'approved')
           { data: "remarks" },
           { data: "approved_at" },
-          @elseif(Request::url() == url('request/client/released'))
+          @elseif($type == 'released')
           { data: "released_at" },
           @endif
            
@@ -91,17 +91,6 @@
           }}
         ],
       });
-
-      function getURL()
-      {
-        if("{{Request::url()}}" == "{{url('request/client/pending')}}") {
-          return "{{url('request/client/pending')}}";
-        } else if("{{Request::url()}}" == "{{url('request/client/approved')}}") {
-          return "{{url('request/client/approved')}}";
-        } else if("{{Request::url()}}" == "{{url('request/client/released')}}") {
-          return "{{url('request/client/released')}}";
-        }        
-      }
     });
 
 </script> 
