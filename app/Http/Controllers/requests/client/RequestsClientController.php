@@ -27,6 +27,12 @@ class RequestsClientController extends Controller
                 $requests = RequestClient::findOfficeRequest(Auth::user()->office)->where('status','=','approved')->get();
             } elseif ($request->type == 'released') {
                 $requests = RequestClient::findOfficeRequest(Auth::user()->office)->where('status','=','released')->get();
+            } elseif ($request->type == 'disapproved') {
+                $requests = RequestClient::findOfficeRequest(Auth::user()->office)
+                    ->where('status','=','cancelled')
+                    ->orWhere('status','=','expired')
+                    ->orWhere('status','=','disapproved')
+                    ->get();
             }
         }
         $type = $request->type;
@@ -173,19 +179,18 @@ class RequestsClientController extends Controller
                   ->withInput()
                   ->withErrors($validator);
             }
-
             $updateRequest->status = "cancelled";
             $updateRequest->cancelled_by = Auth::user()->id;
             $updateRequest->cancelled_at = Carbon\Carbon::now();
             $updateRequest->remarks = $details;
             $updateRequest->save();
             DB::commit();
-            \Alert::success('Request Sent')->flash();
-            return redirect('request/client/');
+            \Alert::success('Request cancelled')->flash();
+            return redirect('/');
         } catch(\Exception $e) {
           DB::rollback();
           \Alert::error('An error occured! Please try again. Message: '.$e->getMessage())->flash();
-          return redirect('request/client/'); 
+          return redirect('/'); 
         }
     }
 }

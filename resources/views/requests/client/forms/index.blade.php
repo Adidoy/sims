@@ -22,6 +22,13 @@
         <li>Requests</li>
         <li>Released</li>
         <li class="active">Home</li>
+      </ol>
+      @elseif($type == 'disapproved')
+      <h1>Disapproved Requests</h1>
+      <ol class="breadcrumb">
+        <li>Requests</li>
+        <li>Disapproved</li>
+        <li class="active">Home</li>
       </ol>               
     @endif
   </section>
