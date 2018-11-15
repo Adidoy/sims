@@ -18,7 +18,7 @@
 <!-- Default box -->
   <div class="box">
     <div class="box-body" style="padding: 15px;">
-      <form method="post" action="{{ route('request.store') }}" class="form-horizontal" id="requestForm">
+      <form method="post" action="{{ url('request/client/create') }}" class="form-horizontal" id="requestForm">
         
         {{ csrf_field() }}
 

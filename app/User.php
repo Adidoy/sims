@@ -99,7 +99,7 @@ class User extends \Eloquent implements Authenticatable, Auditable, UserResolver
 
 	public function getFullnameAttribute()
 	{
-		return $this->firstname . " " . $this->middlename . " " . $this->lastname;
+		return $this->firstname . " " . $this->lastname;
 	}
 
 	public function getAccessNameAttribute($value)

@@ -107,10 +107,33 @@ class RequestClient extends Model implements Auditable, UserResolver
       return $approved_date->diffInDays($date);
     }
 
+    public function getStatusAttribute($value) 
+    {
+      if($value == null) return 'Pending';
+      return ucfirst($value);
+    }
+
     public function getExpireOnAttribute()
     {
       if( $this->approved_at == null ) return 'No Approval';
 
       return Carbon\Carbon::parse($this->approved_at)->toFormattedDateString();
+    }
+
+    public function supplies()
+  	{
+  		return $this->belongsToMany('App\Supply','requests_supplies', 'request_id', 'supply_id')
+        ->withPivot('quantity_requested', 'quantity_issued', 'quantity_released', 'comments')
+        ->withTimestamps();
+    }
+    
+    public function office()
+    {
+      return $this->belongsTo('App\Office','office_id','id');
+    }
+
+    public function requestor()
+    {
+      return $this->belongsTo('App\User','requestor_id','id');
     }
 }

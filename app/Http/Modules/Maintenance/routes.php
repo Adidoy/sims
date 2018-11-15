@@ -25,7 +25,7 @@ class Routes
                 Route::get('supply/print','SupplyController@print');
                 Route::resource('supply','SupplyController');
                 Route::resource('office','OfficeController');
-                Route::resource('unit','UnitsController');
+                Route::resource('unit','UnitController');
                 Route::resource('supplier','SuppliersController');
                 Route::resource('department','DepartmentController');
                 Route::resource('category','CategoryController');

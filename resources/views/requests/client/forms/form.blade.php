@@ -85,7 +85,7 @@
       <button type="button" id="request" class="btn btn-md btn-primary btn-block">Request</button>
     </div>
     <div class="btn-group">
-      <a type="button" id="cancel" class="btn btn-md btn-default" href="{{ isset($request->id) ? url("request/$request->id") : url("request") }}">Cancel</a>
+      <a type="button" id="cancel" class="btn btn-md btn-default" href="{{ isset($request->id) ? url("request/client/$request->id") : url("/") }}">Cancel</a>
     </div>
   </div>
 </div> <!-- end of additional forms -->
@@ -274,7 +274,7 @@
 
 @if(null !== old('stocknumber'))
   @foreach(old('stocknumber') as $stocknumber)
-    addForm("{{ $stocknumber }}","{{ old("info.$stocknumber") }}", "{{ old("quantity.$stocknumber") }}")
+    addForm("{{ $stocknumber }}","{{ old("info.$stocknumber") }}", "{{ old("unit.$stocknumber") }}", "{{ old("quantity.$stocknumber") }}")
   @endforeach
 @endif
 

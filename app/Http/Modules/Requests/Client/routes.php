@@ -15,13 +15,9 @@ class Routes
     public static function all()
     {
         Route::middleware(['offices'])->namespace('requests\client')->group(function() {
-            //Route::resource('request','RequestsClientController');
-            Route::prefix('request')->group(function() {
+            Route::prefix('request/client')->group(function() {
                 Route::get('create', 'RequestsClientController@create');
-                Route::post('create', [
-                    'as'=> 'request.store',
-                    'uses' => 'RequestsClientController@store'
-                ]);
+                Route::post('create', 'RequestsClientController@store');
                 Route::get('pending', 'RequestsClientController@index');
                 Route::get('approved', 'RequestsClientController@index');
                 Route::get('released', 'RequestsClientController@index');

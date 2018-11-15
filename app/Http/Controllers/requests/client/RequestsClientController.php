@@ -14,16 +14,17 @@ use Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Requests\Client\RequestClient;
+use App\Models\Requests\Client\RequestDetailsClient;
 
 class RequestsClientController extends Controller
 {
     public function index(Request $request) 
     {
-        if ($request->url() == url('request/pending')) {
+        if ($request->url() == url('request/client/pending')) {
             $requests = RequestClient::findOfficeRequest(Auth::user()->office)->whereNull('status')->get();
-        } else if ($request->url() == url('request/approved')) {
+        } else if ($request->url() == url('request/client/approved')) {
             $requests = RequestClient::findOfficeRequest(Auth::user()->office)->where('status','=','approved')->get();
-        }  else if ($request->url() == url('request/released')) {
+        }  else if ($request->url() == url('request/client/released')) {
             $requests = RequestClient::findOfficeRequest(Auth::user()->office)->where('status','=','released')->get();
         }
         if($request->ajax()) {
@@ -68,16 +69,31 @@ class RequestsClientController extends Controller
         $requestor = Auth::user()->id;
         $office = App\Office::findByCode(Auth::user()->office)->id;
         $newRequest = new RequestClient;
+        $newRequestDetails = new RequestDetailsClient;        
         $code = $this->generate($request);
-        
+
         $validator = Validator::make([
-            'Purpose' => $purpose
+            'Purpose' => $request->get("purpose")
         ], $newRequest->requestRules(), $newRequest->requestMessages());
+
         
         if($validator->fails()) {
-            return redirect("request/create")
+            return redirect("request/client/create")
                 ->withInput()
                 ->withErrors($validator);
+        }
+
+        foreach($stocknumbers as $stocknumber) {
+            $validator = Validator::make([
+                'Stock Number' => $stocknumber,
+                'Quantity' => $quantity["$stocknumber"]
+            ],$newRequestDetails->requestDetailsRules(), $newRequestDetails->requestDetailsMessages());
+            
+            if($validator->fails()) {
+                return redirect("request/client/create")
+                    ->withInput()
+                    ->withErrors($validator);
+            }
         }
 
         if(count($stocknumbers) <= 0 ) 
@@ -87,7 +103,7 @@ class RequestsClientController extends Controller
 
         try{
             DB::beginTransaction();
-            $newRequest::create([
+            $newRequest = RequestClient::create([
                 'local' => $code,
                 'requestor_id' => $requestor,
                 'issued_by' => null,
@@ -95,24 +111,33 @@ class RequestsClientController extends Controller
                 'remarks' => null,
                 'purpose' => $purpose
             ]);
+            foreach($stocknumbers as $stocknumber) {
+                $newRequestDetails = RequestDetailsClient::create([
+                    'supply_id' => App\Supply::stockNumber($stocknumber)->first()->id, 
+                    'request_id' => $newRequest->id, 
+                    'quantity_requested' => $quantity["$stocknumber"]
+                ]);
+            }
             DB::commit();
+            \Alert::success('Request Sent')->flash();
+            return redirect('request/pending');
         } catch(\Exception $e) {
-            DB::rollback();
-            \Alert::error('An error occured! Please try again. Message: '.$e->getMessage())->flash();
-            return redirect('/inspection/view/supply'); 
+          DB::rollback();
+          \Alert::error('An error occured! Please try again. Message: '.$e->getMessage())->flash();
+          return redirect('request/client/create'); 
         }
     }
 
     public function show(Request $request,$id) 
     {
-        $requests = App\Request::find($id);
+        $requests = RequestClient::find($id);
         if($request->ajax()) {
           $supplies = $requests->supplies;
           return json_encode([
             'data' => $supplies
           ]);
         }
-        return view('request.show')
+        return view('requests.client.forms.show')
           ->with('request',$requests)
           ->with('title','Request');
     }

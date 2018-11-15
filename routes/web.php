@@ -294,7 +294,7 @@ Route::middleware(['auth'])->group(function(){
 			'as' => 'request.cancel',
 			'uses' => 'RequestController@cancel'
 		]);
-		//Route::resource('request','RequestController');
+		Route::resource('request','RequestController');
 	});
 
 	Route::get('get/supply/stocknumber','SupplyInventoryController@show');
