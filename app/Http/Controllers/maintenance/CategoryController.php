@@ -2,11 +2,6 @@
 
 namespace App\Http\Controllers\Maintenance;
 
-// use DB;
-// use App;
-// use Carbon;
-// use Session;
-// use Validator;
 use App\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;

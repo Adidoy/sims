@@ -16,6 +16,7 @@ class AddSupply
 	public function handle()
 	{
 		$request = $this->request;
+		
 		Supply::create([
 			'stocknumber' => $request->get('stocknumber'),
 			'details' => $request->get('details'),

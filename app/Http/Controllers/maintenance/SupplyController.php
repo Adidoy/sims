@@ -15,9 +15,6 @@ use App\Http\Requests\SupplyRequest\SupplyUpdateRequest;
 class SupplyController extends Controller 
 {
 
-	protected $printOrientation = 'Portrait';
-	protected $printBladeTemplate = "maintenance.supply.print_index";
-
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -124,16 +121,5 @@ class SupplyController extends Controller
 		\Alert::success( __('supplies.successful_remove') )->flash();
 		return redirect('maintenance/supply');
 	}
-
-	public function print()
-	{
-		$filename = "StockMasterlist-" . Carbon::now()->format('mdYHm') . ".pdf";
-		$data = [
-			'supplies' => Supply::all()
-		];
-
-		return $this->printPreview($this->printBladeTemplate, $data, $filename, $this->printOrientation);
-	}
-
 
 }
