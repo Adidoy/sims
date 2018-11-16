@@ -20,6 +20,8 @@ return [
 
     'socket_port' => env('SOCKET_PORT', 3000),
 
+    'default_users_password' => config('APP_DEFAULT_PASSWORD', 123456789),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
