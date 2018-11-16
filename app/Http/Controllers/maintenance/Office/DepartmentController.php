@@ -1,172 +1,103 @@
 <?php
 
-namespace App\Http\Controllers\Maintenance;
+namespace App\Http\Controllers\Maintenance\Office;
 
-use App;
-use Carbon;
-use Session;
-use Validator;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Input;
+use App\Http\Controllers\Controller;
+use App\Commands\Office\RemoveOffice;
+use App\Models\Office\Office as Department;
+use App\Commands\Department\CreateDepartment;
+use App\Commands\Department\UpdateDepartment;
+use App\Http\Requests\DepartmentRequest\DepartmentStoreRequest;
+use App\Http\Requests\DepartmentRequest\DepartmentUpdateRequest;
 
 class DepartmentController extends Controller 
 {
+
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
     public function index(Request $request)
 	{
 		if($request->ajax())
 		{
-			return datatables(App\Office::All())->toJson();
+			return datatables(App\Department::All())->toJson();
 		}
 		return view('maintenance.department.index');
 	}
 
+	/**
+	 * Show the form for creating a new resource.
+	 *
+	 * @return Response
+	 */
 	public function create()
 	{
-
-		$office = App\Office::where('code','NOT LIKE','%-A%')->orderBy('name')->pluck('name','id');
-		return view('maintenance.department.create')
-					->with('title','Department')
-					->with('office',$office);
+		$department = Department::where('code','NOT LIKE','%-A%')->orderBy('name')->pluck('name','id');
+		return view('maintenance.department.create', compact('department'));
 	}
 
-	public function store()
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @return Response
+	 */
+	public function store(DepartmentStoreRequest $request)
 	{
-		$name = Input::get('name');
-		$abbreviation = Input::get('abbreviation');
-		$office = Input::get('office');
-		$head = Input::get('head');
-		$designation = Input::get('designation');
-
-		$department = new App\Department;
-
-		$validator = Validator::make([
-			'Name' => $name,
-			'Abbreviation' => $abbreviation,
-			'Head' => $head,
-			'Designation' => $designation
-		],$department->rules());
-
-		if($validator->fails())
-		{
-			return redirect('maintenance/department/create')
-				->withInput()
-				->withErrors($validator);
-		}
-
-		$department = new App\Office;
-		$department->code = $abbreviation;
-		$department->name = $name;
-		$department->head_office = $office;
-		$department->head = $head;
-		$department->head_title = $designation;
-		$department->save();
-
-		\Alert::success('Department Added')->flash();
-		return redirect("maintenance/office/$office");
+		$this->dispatch(new CreateDepartment($request));
+		return redirect('maintenance/office/' . $office);
 	}
 
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
 	public function show(Request $request, $id = null)
 	{
-		$office = App\Office::find($id);
-		if($request->ajax())
-		{
-
-			if(Input::has('term'))
-			{
-				$code = Input::get('term');
-				return json_encode( App\Office::where('code','like','%'.$code.'%')->pluck('code')->toArray());
-			}
-
-			if(count($office) > 0 )
-			{
-				return datatables($office->departments)->toJson();
-			}
-
-			return json_encode([
-				'data' => App\Office::findByCode($id)
-			]);
-		}
-
-		if(count($office) <= 0 )
-		{
-			 return view('errors.404');
-		}
-
-		return view('maintenance.department.show')
-				->with('title', "$office->code")
-				->with('office', $office);
+		$department = Department::find($id);
+		return view('maintenance.department.show', compact('department'));
 	}
 
+	/**
+	 * Show the form for editing the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
 	public function edit($id)
 	{
-		$department = App\Department::find($id);
-		$office = App\Office::where('code','NOT LIKE','%-A%')->orderBy('name')->pluck('name','id');
-		if(count($department) <= 0)
-		{
-			return view('errors.404');
-		}
-		return view("maintenance.department.edit")
-				->with('department',$department)
-				->with('office', $office);
+		$department = Department::findOrFail($id);
+		$departments = Department::where('code', 'NOT LIKE', '%-A%')->orderBy('name')->pluck('name', 'id');
+
+		return view('maintenance.department.edit', compact('department', 'departments'));
 	}
 
-	public function update($id)
+	/**
+		 * Update the specified resource in storage.
+		 *
+		 * @param  int  $id
+		 * @return Response
+	 */
+	public function update(DepartmentUpdateRequest $request, $id)
 	{
-		$name = Input::get('name');
-		$abbreviation = Input::get('abbreviation');
-		$office = Input::get('office');
-		$head = Input::get('head');
-		$designation = Input::get('designation');
-
-		$department = new App\Department;
-
-		$validator = Validator::make([
-			'Name' => $name,
-			'Abbreviation' => $abbreviation,
-			'Head' => $head,
-			'Designation' => $designation
-		],$department->updateRules());
-		
-		$department = App\Office::find($id);
-
-		if($validator->fails())
-		{
-			return redirect("maintenance/department/$department->head_office/edit")
-				->withInput()
-				->withErrors($validator);
-		}
-
-		$department->code = $abbreviation;
-		$department->name = $name;
-		$department->head_office = $office;
-		$department->head = $head;
-		$department->head_title = $designation;
-		$department->save();
-
-		\Alert::success('Department Updated')->flash();
-		return redirect("maintenance/office/$department->head_office");
+		$this->dispatch(new UpdateDepartment($request, $id));
+		return redirect('maintenance/office/' . $id);
 	}
 
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
 	public function destroy(Request $request, $id)
 	{
-		if($request->ajax())
-		{
-			$department = App\Office::find($id);
-			$department->delete();
-			return json_encode('success');
-		}
-
-		try
-		{
-			$department = App\Office::find($id);
-			$department->delete();
-			\Alert::success('department Removed')->flash();
-		} catch (Exception $e) {
-			\Alert::error('Problem Encountered While Processing Your Data')->flash();
-		}
-
-		return redirect("maintenance/office/$id");
+		$this->dispatch(new RemoveOffice($request, $id));
+		return redirect('maintenance/office');
 	}
 
 }

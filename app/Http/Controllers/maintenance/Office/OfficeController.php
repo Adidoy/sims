@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Maintenance;
+namespace App\Http\Controllers\Maintenance\Office;
 
 use Illuminate\Http\Request;
 use App\Models\Office\Office;
@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Commands\Office\CreateOffice;
 use App\Commands\Office\UpdateOffice;
 use App\Commands\Office\RemoveOffice;
+use App\Http\Requests\OfficeRequest\OfficeStoreRequest;
+use App\Http\Requests\OfficeRequest\OfficeUpdateRequest;
 
 class OfficeController extends Controller 
 {
@@ -42,12 +44,11 @@ class OfficeController extends Controller
 	 *
 	 * @return Response
 	 */
-	public function store(Request $request)
+	public function store(OfficeStoreRequest $request)
 	{
 		$this->dispatch(new CreateOffice($request));
 		return redirect('maintenance/office');
 	}
-
 
 	/**
 	 * Display the specified resource.
@@ -61,7 +62,6 @@ class OfficeController extends Controller
 		return view('maintenance.office.show', compact('office'));
 	}
 
-
 	/**
 	 * Show the form for editing the specified resource.
 	 *
@@ -74,19 +74,17 @@ class OfficeController extends Controller
 		return view('maintenance.office.edit', compact('office'));
 	}
 
-
 	/**
 	 * Update the specified resource in storage.
 	 *
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update(Request $request, $id)
+	public function update(OfficeUpdateRequest $request, $id)
 	{
 		$this->dispatch(new UpdateOffice($request, $id));
 		return redirect('maintenance/office');
 	}
-
 
 	/**
 	 * Remove the specified resource from storage.
@@ -96,7 +94,7 @@ class OfficeController extends Controller
 	 */
 	public function destroy(Request $request, $id)
 	{
-		$this->dispatch(new RemoveOffice($request));
+		$this->dispatch(new RemoveOffice($request, $id));
 		return redirect('maintenance/office');
 	}
 

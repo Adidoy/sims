@@ -9,32 +9,10 @@ class Office extends Model
 
 	protected $table = 'offices';
 	protected $primaryKey = 'id';
-	protected $fillable = [
-		'code',
-		'name',
-		'description', 
-		'head',
-		'head_title',
-		'head_office'
-	];
 	public $timestamps = true;
-
-	public function rules(){
-		return array(
-			'Code' => 'required|max:20|unique:offices,code',
-			'Name' => 'required|max:200',
-			'Description' => 'max:200'
-		);
-	}
-
-	public function updateRules(){
-		$code = $this->code;
-		return array(
-			'Code' => 'required|max:20|unique:offices,code,'.$code.',code',
-			'Name' => 'required|max:200',
-			'Description' => 'max:200'
-		);
-	}
+	protected $fillable = [
+		'code', 'name', 'description',  'head', 'head_title', 'head_office'
+	];
 
 	/**
 	 * Returns the head of the office
