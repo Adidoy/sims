@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\printables\Supply;
+namespace App\Http\Controllers\printables\inventory\Supply;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
