@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Maintenance;
+namespace App\Http\Controllers\Maintenance\Category;
 
 use App\Category;
 use Illuminate\Http\Request;
