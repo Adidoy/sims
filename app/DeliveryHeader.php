@@ -24,7 +24,7 @@ class DeliveryHeader extends Model
         'received_by'
     ];
 
-    protected $appends = [ 'date_invoice', 'date_delivered', 'date_purchaseorder', 'date_processed', 'supplier_name' ];
+    protected $appends = [ 'date_invoice', 'date_delivered', 'date_purchaseorder', 'date_processed', 'supplier_name', 'user_name' ];
 
     public function rules() 
     {
@@ -48,17 +48,17 @@ class DeliveryHeader extends Model
     public function getDateInvoiceAttribute() 
     {
         if($this->invoice_date == null || $this->invoice_date == "") return "None";
-        return Carbon\Carbon::parse($this->invoice_date)->toFormattedDateString();
+        return Carbon\Carbon::parse($this->invoice_date)->format('d F Y');
     }
 
     public function getDateDeliveredAttribute($value) 
     {
-        return Carbon\Carbon::parse($this->delivery_date)->toFormattedDateString();
+        return Carbon\Carbon::parse($this->delivery_date)->format('d F Y');
     }
 
     public function getDatePurchaseorderAttribute($value) 
     {
-        return Carbon\Carbon::parse($this->purchaseorder_date)->toFormattedDateString();
+        return Carbon\Carbon::parse($this->purchaseorder_date)->format('d F Y');
     }
 
     public function getDateProcessedAttribute($value) 
@@ -73,6 +73,12 @@ class DeliveryHeader extends Model
                 return $this->supplier->name;
         endif;
         return 'None';
+    }
+
+    public function getUserNameAttribute()
+    {
+        $user = User::find($this->received_by);
+        return $user->full_name;
     }
 
     public function scopeFindByLocal($query, $value) 
@@ -100,4 +106,5 @@ class DeliveryHeader extends Model
     {
         return $this->hasOne('App\Inspection', 'delivery_id');
     }
+
 }

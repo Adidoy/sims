@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Maintenance;
+
 use App;
 use Carbon;
 use Session;
@@ -31,11 +32,11 @@ class DepartmentController extends Controller
 
 	public function store()
 	{
-		$name = $this->sanitizeString(Input::get('name'));
-		$abbreviation = $this->sanitizeString(Input::get('abbreviation'));
-		$office = $this->sanitizeString(Input::get('office'));
-		$head = $this->sanitizeString(Input::get('head'));
-		$designation = $this->sanitizeString(Input::get('designation'));
+		$name = Input::get('name');
+		$abbreviation = Input::get('abbreviation');
+		$office = Input::get('office');
+		$head = Input::get('head');
+		$designation = Input::get('designation');
 
 		$department = new App\Department;
 
@@ -67,15 +68,13 @@ class DepartmentController extends Controller
 
 	public function show(Request $request, $id = null)
 	{
-		$id = $this->sanitizeString($id);
 		$office = App\Office::find($id);
-
 		if($request->ajax())
 		{
 
 			if(Input::has('term'))
 			{
-				$code = $this->sanitizeString(Input::get('term'));
+				$code = Input::get('term');
 				return json_encode( App\Office::where('code','like','%'.$code.'%')->pluck('code')->toArray());
 			}
 
@@ -114,11 +113,11 @@ class DepartmentController extends Controller
 
 	public function update($id)
 	{
-		$name = $this->sanitizeString(Input::get('name'));
-		$abbreviation = $this->sanitizeString(Input::get('abbreviation'));
-		$office = $this->sanitizeString(Input::get('office'));
-		$head = $this->sanitizeString(Input::get('head'));
-		$designation = $this->sanitizeString(Input::get('designation'));
+		$name = Input::get('name');
+		$abbreviation = Input::get('abbreviation');
+		$office = Input::get('office');
+		$head = Input::get('head');
+		$designation = Input::get('designation');
 
 		$department = new App\Department;
 

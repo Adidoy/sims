@@ -30,7 +30,7 @@
           </div>
         </div>
         <!-- sidebar menu: : style can be found in sidebar.less -->
-        <ul class="sidebar-menu">
+        <ul class="sidebar-menu"  style="width=700px">
           <li class="header">Supplies Inventory</li>
           <!-- ================================================ -->
           <!-- ==== Recommended place for admin menu items ==== -->
@@ -71,7 +71,7 @@
           @endif
           
           @if(Auth::user()->access == 3)
-          <li><a href="{{ url('request') }}">                 <i class="fa fa-share" aria-hidden="true">        </i> <span> Request             </span></a></li>
+          @include('vendor.backpack.base.inc.sidebar.menu_offices')
           @endif
           
           @if(Auth::user()->access == 4)

@@ -1,5 +1,6 @@
 <?php
-namespace App\Http\Controllers;
+
+namespace App\Http\Controllers\Maintenance;
 
 use App;
 use Carbon;
@@ -50,11 +51,11 @@ class OfficeController extends Controller {
 	public function store()
 	{
 
-		$name = $this->sanitizeString(Input::get('name'));
-		$code = $this->sanitizeString(Input::get('code'));
-		$head = $this->sanitizeString(Input::get('head'));
-		$head_title = $this->sanitizeString(Input::get('head_title'));
-		$description = $this->sanitizeString(Input::get('description'));
+		$name = Input::get('name');
+		$code = Input::get('code');
+		$head = Input::get('head');
+		$head_title = Input::get('head_title');
+		$description = Input::get('description');
 
 		$office = new App\Office;
 
@@ -89,7 +90,6 @@ class OfficeController extends Controller {
 	 */
 	public function show(Request $request, $id = null)
 	{
-		$id = $this->sanitizeString($id);
 		$office = App\Office::find($id);
 
 		if($request->ajax())
@@ -97,7 +97,7 @@ class OfficeController extends Controller {
 
 			if(Input::has('term'))
 			{
-				$code = $this->sanitizeString(Input::get('term'));
+				$code = Input::get('term');
 				return json_encode( App\Office::where('code','like','%'.$code.'%')->pluck('code')->toArray());
 			}
 
@@ -150,11 +150,11 @@ class OfficeController extends Controller {
 	 */
 	public function update($id)
 	{
-		$name = $this->sanitizeString(Input::get('name'));
-		$code = $this->sanitizeString(Input::get('code'));
-		$head = $this->sanitizeString(Input::get('head'));
-		$head_title = $this->sanitizeString(Input::get('head_title'));
-		$description = $this->sanitizeString(Input::get('description'));
+		$name = Input::get('name');
+		$code = Input::get('code');
+		$head = Input::get('head');
+		$head_title = Input::get('head_title');
+		$description = Input::get('description');
 
 		$office = App\Office::find($id);
 

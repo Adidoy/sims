@@ -67,7 +67,7 @@
  			</a>
 		`);
 
-		$('#unitTable').on('click','button.remove',function(){
+		$('#unitTable').on('click','button.remove',function() {
 		  	var removeButton = $(this);
 			removeButton.button('loading');
 			$.ajax({

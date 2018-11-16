@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Maintenance;
 
 use App;
 use DB;
@@ -8,7 +8,7 @@ use Validator;
 use Session;
 use Illuminate\Http\Request;
 
-class SuppliersController extends Controller
+class SuppliersController
 {
     /**
      * Display a listing of the resource.
@@ -46,11 +46,11 @@ class SuppliersController extends Controller
      */
     public function store(Request $request)
     {
-        $name = $this->sanitizeString($request->get('name'));
-        $address = $this->sanitizeString($request->get('address'));
-        $contact = $this->sanitizeString($request->get('contact'));
-        $website = $this->sanitizeString($request->get('website'));
-        $email = $this->sanitizeString($request->get('email'));
+        $name = $request->get('name');
+        $address = $request->get('address');
+        $contact = $request->get('contact');
+        $website = $request->get('website');
+        $email = $request->get('email');
 
         $validator = Validator::make([
             'Name' => $name,
@@ -120,11 +120,11 @@ class SuppliersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $name = $this->sanitizeString($request->get('name'));
-        $address = $this->sanitizeString($request->get('address'));
-        $contact = $this->sanitizeString($request->get('contact'));
-        $website = $this->sanitizeString($request->get('website'));
-        $email = $this->sanitizeString($request->get('email'));
+        $name = $request->get('name');
+        $address = $request->get('address');
+        $contact = $request->get('contact');
+        $website = $request->get('website');
+        $email = $request->get('email');
 
         $validator = Validator::make([
             'Name' => $name,

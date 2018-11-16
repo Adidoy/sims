@@ -12,6 +12,7 @@
 */
 
 App\Http\Modules\Maintenance\Routes::all();
+App\Http\Modules\Requests\Client\Routes::all();
 
 
 Route::get('faqs','FaqsController@index');
@@ -71,6 +72,7 @@ Route::middleware(['auth'])->group(function(){
 			'as' => 'inspection.approve',
 			'uses'=>'InspectionController@approveInspection'
 		]);
+		Route::get('inspection/supply/{id}/print', 'InspectionController@print');
 
 		//====================== old codes ===========================
 		Route::get('rsmi', [
@@ -135,6 +137,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('delivery/supply/create','DeliveryController@create');
 		Route::resource('delivery/supply', 'DeliveryController');
 		Route::get('delivery/supply/{id}/', 'DeliveryController@show');
+		Route::get('delivery/supply/{id}/print', 'DeliveryController@print');
 
 		//========================== Old Code Starts Here ========================//
 

@@ -19,7 +19,7 @@
         {{ Form::open(array('class' => 'form-horizontal','method'=>'post','route'=>'unit.store','id'=>'unitForm')) }}
         <div class="col-md-offset-3 col-md-6" style="padding:10px;">
           @include('errors.alert')
-          @include('maintenance.unit.form')
+          @include('maintenance.unit.partials.form')
           <div class="pull-right">
             <div class="btn-group">
               <button id="submit" class="btn btn-md btn-primary" type="submit">

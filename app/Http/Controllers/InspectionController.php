@@ -14,18 +14,19 @@ class InspectionController extends Controller
 
     public function index(Request $request) 
     {
+        $deliveries = App\Inspection::findAllDeliveries();
         if($request->ajax()) {
-            $deliveries = App\Inspection::findAllDeliveries();
+            
 			return datatables($deliveries)->toJson();
 		}
-        return view('inspection.supplies.index')
+        return view('inspection.supplies.forms.index')
             ->with('title', 'Inspection');
     }
 
     public function show(Request $request, $id) 
     {
         $delivery = App\DeliveryHeader::with('supplies')->find($id);
-        return view('inspection.supplies.inspect')
+        return view('inspection.supplies.forms.inspect')
             ->with('delivery', $delivery);
     }
 
@@ -36,7 +37,7 @@ class InspectionController extends Controller
                 $inspection = App\Inspection::get();
                 return datatables($inspection)->toJson();
             }
-            return view('inspection.supplies.show-inspected')
+            return view('inspection.supplies.forms.show-inspected')
                 ->with('title', 'Inspection');
         } else {
             $inspection = App\Inspection::with('supplies')->find($id);
@@ -46,7 +47,7 @@ class InspectionController extends Controller
                     'data' => $supplies
                ]);
             }
-            return view('inspection.supplies.show-approval')
+            return view('inspection.supplies.forms.show-approval')
                 ->with('inspection', $inspection)
                 ->with('title', 'Inspection');
         }   
@@ -54,6 +55,8 @@ class InspectionController extends Controller
 
     public function store(Request $request) 
     {
+        $remarks = "Complete";
+
         $inspectionHeader = new App\Inspection;
         $inspector = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
         $delivery = App\DeliveryHeader::findByLocal($request->get("deliveryLocal"));
@@ -64,16 +67,6 @@ class InspectionController extends Controller
         $comment = $request->get("passed_comment");
         
         DB::beginTransaction();
-        $validator = Validator::make([
-            'Remarks' => $request->get('remarks')
-        ], $inspectionHeader->rules(), $inspectionHeader->messages());
-
-        if($validator->fails()) {
-            DB::rollback();
-            return redirect('inspection/supply/'.$delivery->id.'/')
-                ->withInput()
-                ->withErrors($validator);
-        }
 
         foreach($stocknumbers as $stocknumber) {
             if($quantity_passed["$stocknumber"] > $quantity["$stocknumber"]) {
@@ -96,12 +89,19 @@ class InspectionController extends Controller
             }
         }
 
+        foreach($stocknumbers as $stocknumber) {
+            if($quantity_passed["$stocknumber"] <> $quantity["$stocknumber"]) {
+                $remarks = "Partial";
+                break;
+            }
+        }
+
         $inspectionHeader = App\Inspection::create([
             'local' => $this->generateLocalCode($request),
             'delivery_id' => $delivery->id,
             'inspection_personnel' => $inspector,
             'inspection_date' => Carbon\Carbon::now(),
-            'remarks' => $request->get('remarks')
+            'remarks' => $remarks
         ]);
         foreach($stocknumbers as $stocknumber) {
             $supply = App\Supply::StockNumber($stocknumber)->first();
@@ -183,5 +183,18 @@ class InspectionController extends Controller
 		  $trxCode =  $id;
 		
 		return 'IAR-' . $const . '-' . $trxCode;
-	} 
+    }
+    
+    public function print(Request $request, $id)
+	{
+		$orientation = 'Portrait';
+        $inspection = App\Inspection::with('delivery')->with('supplies')->find($id);
+		$data = [
+			'inspection' => $inspection
+		];
+
+		$filename = "Inspection and Acceptance Report - ".$inspection->local." - ".Carbon\Carbon::now()->format('mdYHm').".pdf";
+		$view = "inspection.supplies.reports.inspection_report";
+		return $this->printPreview($view,$data,$filename,$orientation);
+	}
 }

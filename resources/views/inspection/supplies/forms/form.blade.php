@@ -29,16 +29,6 @@
                     @endforeach
                 </tbody>
             </table>
-            <div class="form-group">
-                <div class="col-md-12 ">
-                    {{ Form::label('remarks','Remarks') }}<br>
-                    {{ Form::text('remarks', '',[
-                        'class'=>'form-control',
-                        'id' => 'purpose',
-                        'placeholder'=>'Provide overall remarks for this inspection...' ])
-                    }}
-                </div>
-            </div>
             <div class="pull-right">
                 <br />
                 <div class="btn-group">

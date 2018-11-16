@@ -59,10 +59,13 @@
 				{ data: "invoice_no" },
 				{ data: "delrcpt_no" },
 				{ data: "date_processed" },
-				{ data: "received_by" },
+				{ data: "user_name" },
 				{ data: function(callback){
 	            	return `
-						<a href="{{ url('delivery/supply') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i> View</a>
+						<a href="{{ url('delivery/supply') }}/`+ callback.id +`" class="btn btn-default ladda-button" data-style="zoom-in"><i class="fa fa-list-ul" aria-hidden="true"></i> View</a>
+						<a href="{{ url("delivery/supply") }}` + '/' + callback.id  + '/print' +`" target="_blank" id="print" class="print btn btn-default ladda-button" data-style="zoom-in">
+									<span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+									<span id="nav-text"> Download</span>
 	            	`;
 	            } }
 			],
@@ -70,7 +73,7 @@
 
 		$("div.toolbar").html(`
 				<a href="{{ url('delivery/supply/create') }}" class="btn btn-sm btn-primary">
-					<span class="glyphicon glyphicon-tag" aria-hidden="true"></span>
+					<span class="glyphicon glyphicon-tag ladda-button" aria-hidden="true"></span>
 					<span id="nav-text">Create New Delivery Record</span>
 				</a>
 		`);
