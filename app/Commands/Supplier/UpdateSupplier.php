@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Commands\Unit;
+namespace App\Commands\Supplier;
 
-use App\Models\Supply\Unit;
+use App\Models\Supply\Supplier;
 
-class UpdateUnit
+class UpdateSupplier
 {
     protected $request;
     protected $id;
@@ -20,14 +20,16 @@ class UpdateUnit
         $request = $this->request;
 
         // create a new record in the
-        // units table
-        Unit::findOrFail($this->id)->update([
+        // suppliers table
+        Supplier::findOrFail($this->id)->update([
             'name' => $request->name,
-            'description' => $request->description,
-            'abbreviation' => $request->abbreviation,
+            'address' => $request->address,
+            'contact' => $request->contact,
+            'email' => $request->email,
+            'website' => $request->website,
         ]);
 
-        // create an alert stating that a new unit
+        // create an alert stating that a new supplier
         // has been created
 		\Alert::success(__('tasks.completed'))->flash();
 

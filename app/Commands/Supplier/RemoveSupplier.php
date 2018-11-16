@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Commands\Unit;
+namespace App\Commands\Supplier;
 
-use App\Models\Supply\Unit;
+use App\Models\Supply\Supplier;
 
-class RemoveUnit
+class RemoveSupplier
 {
     protected $request;
     protected $id;
@@ -19,10 +19,10 @@ class RemoveUnit
 	{
         $request = $this->request;
 
-        // removes the copy of the category
-        Unit::findOrFail($this->id)->delete();
+        // removes the copy of the supplier
+        Supplier::findOrFail($this->id)->delete();
 
-        // create an alert stating that a new category
+        // create an alert stating that a new supplier
         // has been created
 		\Alert::success(__('tasks.completed'))->flash();
 
