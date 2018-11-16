@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Maintenance;
 
-use App;
-use Carbon;
-use Session;
-use Validator;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Input;
-class OfficeController extends Controller {
+use App\Models\Office\Office;
+use App\Http\Controllers\Controller;
+use App\Commands\Office\CreateOffice;
+use App\Commands\Office\UpdateOffice;
+use App\Commands\Office\RemoveOffice;
+
+class OfficeController extends Controller 
+{
 
 	/**
 	 * Display a listing of the resource.
@@ -18,18 +19,13 @@ class OfficeController extends Controller {
 	 */
 	public function index(Request $request)
 	{
-	  $office = App\Office::All();
-      /*
-      $issuedby = App\User::where('id','=',$request->issued_by)->first();*/
-		if($request->ajax())
-		{
-			return datatables($office)->toJson();
+		if($request->ajax()) {
+			$offices = Office::All();
+			return datatables($offices)->toJson();
 		}
 
-		return view('maintenance.office.index')
-					->with('title','Office');
+		return view('maintenance.office.index');
 	}
-
 
 	/**
 	 * Show the form for creating a new resource.
@@ -38,46 +34,17 @@ class OfficeController extends Controller {
 	 */
 	public function create()
 	{
-		return view('maintenance.office.create')
-					->with('title','Office');
+		return view('maintenance.office.create');
 	}
-
 
 	/**
 	 * Store a newly created resource in storage.
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function store(Request $request)
 	{
-
-		$name = Input::get('name');
-		$code = Input::get('code');
-		$head = Input::get('head');
-		$head_title = Input::get('head_title');
-		$description = Input::get('description');
-
-		$office = new App\Office;
-
-		$validator = Validator::make([
-			'Name' => $name,
-			'Code' => $code
-		],$office->rules());
-
-		if($validator->fails())
-		{
-			return redirect('maintenance/office/create')
-				->withInput()
-				->withErrors($validator);
-		}
-		$office->code = $code;
-		$office->name = $name;
-		$office->description = $description;
-		$office->head = $head;
-		$office->head_title = $head_title;
-		$office->save();
-
-		\Alert::success('Office added')->flash();
+		$this->dispatch(new CreateOffice($request));
 		return redirect('maintenance/office');
 	}
 
@@ -90,35 +57,8 @@ class OfficeController extends Controller {
 	 */
 	public function show(Request $request, $id = null)
 	{
-		$office = App\Office::find($id);
-
-		if($request->ajax())
-		{
-
-			if(Input::has('term'))
-			{
-				$code = Input::get('term');
-				return json_encode( App\Office::where('code','like','%'.$code.'%')->pluck('code')->toArray());
-			}
-
-			if(count($office) > 0 )
-			{
-				return datatables($office->departments)->toJson();
-			}
-
-			return json_encode([
-				'data' => App\Office::findByCode($id)
-			]);
-		}
-
-		if(count($office) <= 0 )
-		{
-			 return view('errors.404');
-		}
-
-		return view('maintenance.office.show')
-				->with('title', "$office->code")
-				->with('office', $office);
+		$office = Office::findOrFail($id);
+		return view('maintenance.office.show', compact('office'));
 	}
 
 
@@ -130,15 +70,8 @@ class OfficeController extends Controller {
 	 */
 	public function edit($id)
 	{
-		$office = App\Office::find($id);
-
-		if(count($office) <= 0)
-		{
-			return view('errors.404');
-		}
-		return view("maintenance.office.edit")
-				->with('office',$office)
-				->with('title','Office');
+		$office = Office::findOrFail($id);
+		return view('maintenance.office.edit', compact('office'));
 	}
 
 
@@ -148,35 +81,9 @@ class OfficeController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(Request $request, $id)
 	{
-		$name = Input::get('name');
-		$code = Input::get('code');
-		$head = Input::get('head');
-		$head_title = Input::get('head_title');
-		$description = Input::get('description');
-
-		$office = App\Office::find($id);
-
-		$validator = Validator::make([
-			'Name' => $name,
-			'Code' => $code
-		],$office->updateRules());
-
-		if($validator->fails())
-		{
-			return redirect("maintenance/office/$id/edit")
-				->withInput()
-				->withErrors($validator);
-		}
-		$office->code = $code;
-		$office->name = $name;
-		$office->description = $description;
-		$office->head = $head;
-		$office->head_title = $head_title;
-		$office->save();
-
-		\Alert::success('Office Information Updated')->flash();
+		$this->dispatch(new UpdateOffice($request, $id));
 		return redirect('maintenance/office');
 	}
 
@@ -189,31 +96,8 @@ class OfficeController extends Controller {
 	 */
 	public function destroy(Request $request, $id)
 	{
-		if($request->ajax())
-		{
-			$office = App\Office::find($id);
-			$office->delete();
-			return json_encode('success');
-		}
-
-		try
-		{
-			$office = App\Office::find($id);
-			$office->delete();
-			\Alert::success('Office Removed')->flash();
-		} catch (Exception $e) {
-			\Alert::error('Problem Encountered While Processing Your Data')->flash();
-		}
+		$this->dispatch(new RemoveOffice($request));
 		return redirect('maintenance/office');
 	}
-
-	public function getAllCodes()
-	{
-		if($request->ajax())
-		{
-			return json_encode( App\Office::pluck('code')->toArray());
-		}
-	}
-
 
 }
