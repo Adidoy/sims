@@ -1,0 +1,112 @@
+@extends('backpack::layout')
+
+@section('header')
+  <section class="content-header">
+    @if($type =='pending')
+      <h1>Pending Requests</h1>
+      <ol class="breadcrumb">
+        <li>Requests</li>
+        <li>For Approval</li>
+        <li class="active">Home</li>
+      </ol>
+    @elseif($type == 'approved')
+      <h1>Approved Requests</h1>
+      <ol class="breadcrumb">
+        <li>Requests</li>
+        <li>For Issuance</li>
+        <li class="active">Home</li>
+      </ol>
+      @elseif($type == 'released')
+      <h1>Released Requests</h1>
+      <ol class="breadcrumb">
+        <li>Requests</li>
+        <li>For Release</li>
+        <li class="active">Home</li>
+      </ol>
+      @elseif($type == 'disapproved')
+      <h1>Disapproved Requests</h1>
+      <ol class="breadcrumb">
+        <li>Requests</li>
+        <li>Disapproved</li>
+        <li class="active">Home</li>
+      </ol>               
+    @endif
+  </section>
+@endsection
+
+@section('content')
+<!-- Default box -->
+  <div class="box" style="padding:10px">
+    <div class="box-body">
+      <table class="table table-hover table-striped" id="requestTable" width=100%>
+        <thead>
+          <tr>
+            <th class="col-sm-1 no-sort">Request No.</th>
+            <th class="col-sm-1 no-sort ">Request Date</th>
+            <th class="col-sm-1 no-sort ">Requestor</th>
+            @if($type == 'pending')
+            <th class="col-sm-1">Purpose</th>
+            @elseif($type == 'approved')
+              <th class="col-sm-1">Remarks</th>
+              <th class="col-sm-1">Date Approved</th>
+            @elseif($type == 'released')
+              <th class="col-sm-1">Date Released</th>
+              @elseif($type == 'disapproved')
+              <th class="col-sm-1">Status</th>
+            @endif
+
+            <th class="col-sm-1 no-sort"></th>
+          </tr>
+        </thead>
+      </table>
+    </div><!-- /.box-body -->
+  </div><!-- /.box -->
+@endsection
+
+@section('after_scripts')
+  <script>
+    jQuery(document).ready(function($) 
+    {
+      table = $('#requestTable').DataTable(
+      {
+        pageLength: 25,
+        serverSide: true,
+        stateSave: true,
+        "processing": true,
+        language: {
+              searchPlaceholder: "Search..."
+        },
+        columnDefs:[{ 
+              targets: 'no-sort', orderable: false 
+        }],
+        "order": [
+              [0, 'asc']
+        ],
+        "dom": "<'row'<'col-sm-3'l><'col-sm-6'<'toolbar'>><'col-sm-3'f>>" +
+                      "<'row'<'col-sm-12'tr>>" +
+                      "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        ajax: "{{ url('request/custodian/?type=' . $type) }}",
+        columns: [
+          { data: "local" },
+          { data: 'date_requested' },
+          { data: "office_name" },
+          @if($type == 'pending')
+          { data: "purpose" },
+          @elseif($type == 'approved')
+          { data: "remarks" },
+          { data: "approved_at" },
+          @elseif($type == 'released')
+          { data: "released_at" },
+          @elseif($type == 'disapproved')
+          { data: "status" },
+          @endif
+           
+          { data: function(callback){
+            return `<a href="{{ url('request/custodian/') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i> View</a>`;
+          }}
+        ],
+      });
+    });
+
+</script> 
+@endsection

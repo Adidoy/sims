@@ -256,5 +256,5 @@ class RequestsClientController extends Controller
         $filename = "Request-".Carbon\Carbon::now()->format('mdYHm')."-"."$request->code".".pdf";
         $view = "requests.client.reports.print_ris";
         return $this->printPreview($view,$data,$filename,$orientation);
-      }
+    }
 }

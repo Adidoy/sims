@@ -17,24 +17,26 @@
     <div class="box">
         <div class="box-body">
 		    <div class="panel panel-body table-responsive">
-                @if(isset($request->status))
-                    @if($request->status == 'Approved' || $request->status == 'Pending')
-                        <a href="{{ url("request/client/$request->id/cancel") }}" style="text-align:justify; margin:left: 15em; font-size:11pt;" class="btn btn-danger btn-sm">
-                            <i class="fa fa-hand-stop-o" aria-hidden="true"></i> Cancel Request
-                        </a>
-                        <br /><br />
-                    @elseif (($request->status == 'Released'))
-                        <a href="{{ url("request/client/$request->id/print") }}" style="text-align:justify; margin:left: 15em; font-size:11pt;" target="_blank" id="print" class="print btn btn-sm btn-default ladda-button" data-style="zoom-in">
-                            <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
-                            <span id="nav-text"> Download Requisition and Issuance Slip</span>
-                        </a>
-                        <br /><br />
+                <div class="text-center">
+                    @if(isset($request->status))
+                        @if($request->status == 'Approved' || $request->status == 'Pending')
+                            <a href="{{ url("request/client/$request->id/cancel") }}" style="text-align:justify; margin:left: 15em; font-size:11pt;" class="btn btn-danger btn-sm">
+                                <i class="fa fa-hand-stop-o" aria-hidden="true"></i> Cancel Request
+                            </a>
+                            <br /><br />
+                        @elseif (($request->status == 'Released'))
+                            <a href="{{ url("request/client/$request->id/print") }}" style="text-align:justify; margin:left: 15em; font-size:11pt;" target="_blank" id="print" class="print btn btn-sm btn-default ladda-button" data-style="zoom-in">
+                                <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+                                <span id="nav-text"> Download Requisition and Issuance Slip</span>
+                            </a>
+                            <br /><br />
+                        @endif
                     @endif
-                @endif
-			    <table class="table table-hover table-striped table-bordered table-condensed" id="requestTable" cellspacing="0" width="100%"	>
+                </div>
+			    <table class="table table-hover table-striped table-bordered table-condensed" id="requestTable" cellspacing="0" width="100%">
 				    <thead>
                         <tr rowspan="2">
-                            <th class="text-left" colspan="3">Request Slip:  <span style="font-weight:normal">{{ $request->local }}</span> </th>
+                            <th class="text-left" colspan="3">Request Slip:  <span style="font-weight:normal">{{ $request->local }}</span></th>
                             <th class="text-left" colspan="3">Office:  <span style="font-weight:normal">{{ isset($request->office) ? $request->office->code : 'None' }}</span> </th>
                         </tr>
                         <tr rowspan="2">
