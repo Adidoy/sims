@@ -81,7 +81,7 @@ class RequestClient extends Model implements Auditable, UserResolver
 
     public function getDateRequestedAttribute($value)
     {
-      return Carbon\Carbon::parse($this->created_at)->format(" d F Y h:m A");
+      return $this->created_at->format("d F Y h:m A");
     }
 
     public function getDateReleasedAttribute($value)

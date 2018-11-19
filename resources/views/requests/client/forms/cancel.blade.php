@@ -86,7 +86,7 @@
     })
 
     $('#back').on('click',function(){
-      window.location.href = "{{ url('request') }}"
+      window.location.href = "{{ url('/') }}"
     })
 
   });

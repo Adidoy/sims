@@ -49,6 +49,8 @@
               <th class="col-sm-1">Date Approved</th>
             @elseif($type == 'released')
               <th class="col-sm-1">Date Released</th>
+              @elseif($type == 'disapproved')
+              <th class="col-sm-1">Status</th>
             @endif
 
             <th class="col-sm-1 no-sort"></th>
@@ -91,6 +93,8 @@
           { data: "approved_at" },
           @elseif($type == 'released')
           { data: "released_at" },
+          @elseif($type == 'disapproved')
+          { data: "status" },
           @endif
            
           { data: function(callback){

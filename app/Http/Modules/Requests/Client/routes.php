@@ -25,6 +25,7 @@ class Routes
                     'as' => 'request.cancel',
                     'uses' => 'RequestClientController@cancelRequest'
                 ]);
+                Route::get('{id}/print', 'RequestsClientController@printRIS');
             });
         });
     }
