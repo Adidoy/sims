@@ -47,4 +47,20 @@ class RequestDetailsClient extends Model implements Auditable, UserResolver
         'Quantity.integer' => 'Quantity must be specified in whole numbers.'
       ];
     }
+
+    public function approveRules() {
+      return [
+        'Stock Number' => 'required|exists:supplies,stocknumber',
+        'Quantity' => 'required|integer|min:0',
+      ];
+    }
+
+    public function approveMessages() {
+      return [
+        'Stock Number.required' => 'Stock number is required. Please check your request.',
+        'Stock Number.exists' => 'Invalid stock number found. Please check your request.',
+        'Quantity.min' => 'Minimum quantity is 0.',
+        'Quantity.integer' => 'Quantity must be specified in whole numbers.'
+      ];
+    }
 }

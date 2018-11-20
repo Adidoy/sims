@@ -24,6 +24,11 @@ class Routes
                     'uses' => 'RequestsCustodianController@cancelRequest'
                 ]);
                 Route::get('{id}/print', 'RequestsCustodianController@printRIS');
+                Route::get('{id}/approve', 'RequestsCustodianController@getApprovalForm');
+                Route::post('{id}/approve', [
+                    'as' => 'request.approve',
+                    'uses' => 'RequestsCustodianController@approveRIS'
+                ]);
             });
         });
     }

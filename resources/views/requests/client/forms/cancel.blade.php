@@ -3,7 +3,7 @@
 @section('header')
 	<section class="content-header">
 	  <h1>
-	    {{ $request->code }}
+	    {{ $request->local }}
 	  </h1>
 	  <ol class="breadcrumb">
 	    <li><a href="{{ url('request') }}">Request</a></li>
@@ -16,11 +16,11 @@
 <!-- Default box -->
   <div class="box" style="padding:10px;">
     <div class="box-body">
-    {{ Form::open(['method'=>'post','route'=>array('request.cancel',$request->id),'class'=>'form-horizontal','id'=>'requestForm']) }}
+    {{ Form::open(['method'=>'post','route'=>array('cancel.request',$request->id),'class'=>'form-horizontal','id'=>'requestForm']) }}
       
       @include('errors.alert')
 
-      <legend><h4 class="">Cancel Request No. {{ $request->code }} ? </h4></legend>
+      <legend><h4 class="">Cancel Request No. {{ $request->local }} ? </h4></legend>
       <table class="table table-hover table-bordered table-condensed" id="supplyTable">
         <thead>
           <tr>

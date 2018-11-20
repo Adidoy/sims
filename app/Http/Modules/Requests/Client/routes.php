@@ -22,8 +22,8 @@ class Routes
                 Route::get('{id}', 'RequestsClientController@show');
                 Route::get('{id}/cancel', 'RequestsClientController@getCancelRequest');
                 Route::post('{id}/cancel', [
-                    'as' => 'request.cancel',
-                    'uses' => 'RequestClientController@cancelRequest'
+                    'as' => 'cancel.request',
+                    'uses' => 'RequestsClientController@cancelRequest'
                 ]);
                 Route::get('{id}/print', 'RequestsClientController@printRIS');
             });

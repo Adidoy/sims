@@ -64,13 +64,26 @@ class RequestClient extends Model implements Auditable, UserResolver
 
     public function requestMessages() {
       return [
-        'Purpose.required' => 'Please indicate the purpose of this supplies request.',
+        'Remarks.required' => 'Please indicate the purpose of this supplies request.',
         'Purpose.max' => 'Purpose field is up to 150 characters only.'
+      ];
+    }
+
+    public function updateRules() {
+      return [
+        'Remarks' => 'required|max:150',
+      ];
+    }
+
+    public function updateMessages() {
+      return [
+        'Remarks.required' => 'Please indicate additional remarks for this action.',
+        'Remarks.max' => 'Remarks field is up to 150 characters only.'
       ];
     }
     
     public $appends = [
-      'date_requested', 'date_released',  'remaining_days', 'expire_on', 'date_approved'
+      'date_requested', 'date_released',  'remaining_days', 'expire_on', 'date_approved', 'date_cancelled'
     ];
   
     public function scopeFindOfficeRequest($query, $value)
@@ -91,7 +104,12 @@ class RequestClient extends Model implements Auditable, UserResolver
 
     public function getDateApprovedAttribute($value)
     {
-      return isset($this->released_at) ? Carbon\Carbon::parse($this->approved_at)->format(" d F Y h:m A") : "N/A";  
+      return isset($this->approved_at) ? Carbon\Carbon::parse($this->approved_at)->format(" d F Y h:m A") : "N/A";  
+    }
+
+    public function getDateCancelledAttribute($value)
+    {
+      return isset($this->cancelled_at) ? Carbon\Carbon::parse($this->cancelled_at)->format(" d F Y h:m A") : "N/A";  
     }
 
     public function getRemainingDaysAttribute()

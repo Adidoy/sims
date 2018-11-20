@@ -56,16 +56,16 @@ class RequestCustodian extends Model implements Auditable, UserResolver
       5 => 'released'
     ];
 
-    public function requestRules() {
+    public function approveRules() {
         return [
-          'Purpose' => 'required|max:150',
+          'Remarks' => 'required|max:150',
         ];
       }
   
-      public function requestMessages() {
+      public function approveMessages() {
         return [
-          'Purpose.required' => 'Please indicate the purpose of this supplies request.',
-          'Purpose.max' => 'Purpose field is up to 150 characters only.'
+          'Remarks.required' => 'Please put additional details for this supplies request.',
+          'Remarks.max' => 'Remarks field is up to 150 characters only.'
         ];
       }
       

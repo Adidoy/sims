@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Print :: RIS No.: {{ $request->code }}</title>
+    <title>Print :: RIS No.: {{ $request->local }}</title>
 
 
     <!-- Bootstrap 3.3.5 -->
@@ -82,7 +82,7 @@
                 <span style="font-weight:normal">{{ isset($request->office) ? $request->office->name : $request->office }}</span> 
                 @endif
               </th>
-              <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="10">RIS No.:  <span style="font-weight:normal">{{ $request->code }}</span> </th>
+              <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="10">RIS No.:  <span style="font-weight:normal">{{ $request->local }}</span> </th>
           </tr>
         </thead>
       </table>
@@ -132,9 +132,10 @@
           <td colspan="2" style="white-space: nowrap; text-align: right; padding-left: 5px; padding-right: 5px;">{{ $supply->pivot->comments }}</td>
         </tr>
         @endforeach
-          <tr>
-            <td colspan=16 class="col-sm-12"><p style="font-weight:bold; text-align: center;">  ******************* Nothing Follows ******************* </p></td>
-          </tr>
+        <tr>
+          <td colspan=16 class="col-sm-12"><p style="font-weight:bold; text-align: center;">  ******************* Nothing Follows ******************* </p></td>
+        </tr>
+
       
       <!-- Purpose -->
       <tfoot>
@@ -224,6 +225,19 @@
         </tr>
       </tfoot>
     </table>
+    @if($request->status == 'Released')
+        <table>
+          <tr>
+            <td colspan=16 class="col-sm-12">
+              <p style="color:red; font-weight:bold; text-align: justified; font-size:12pt;">
+                NOTE: Supplies and materials for this Requisition and Issuance Slip are tagged as RELEASED. <br/>
+                Processed By: {{ App\User::find($request->released_by)->fullname }}  <br />
+                Date Processed: {{ $request->date_released }}
+              </p>
+            </td>
+          </tr>
+        </table>
+    @endif
   </div>  
 </body>
 </html>

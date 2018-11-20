@@ -287,14 +287,14 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::middleware(['offices'])->group(function(){
 		Route::get('request/{id}/print','RequestController@print');
-		Route::get('request/{id}/cancel','RequestController@getCancelForm');
+		// Route::get('request/{id}/cancel','RequestController@getCancelForm');
 		Route::get('request/{id}/comments','RequestController@getComments');
 
 		Route::post('request/{id}/comments','RequestController@postComments');
-		Route::post('request/{id}/cancel',[
-			'as' => 'request.cancel',
-			'uses' => 'RequestController@cancel'
-		]);
+		// Route::post('request/{id}/cancel',[
+		// 	'as' => 'request.cancel',
+		// 	'uses' => 'RequestController@cancel'
+		// ]);
 		Route::resource('request','RequestController');
 	});
 

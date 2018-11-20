@@ -2,14 +2,14 @@
   <legend><h3 class="text-center text-muted">REQUEST DETAILS</h3></legend>
   <table class="table table-hover table-condensed table-striped table-bordered" id="supplyTable" style="padding:20px;margin-right: 10px;">
     <thead>
-      <tr>
-        <th class="col-sm-1">Stock Number</th>
-        <th class="col-sm-1">Information</th>
-        <th class="col-sm-1">Unit</th>
-        <th class="col-sm-1">Remaining Balance</th>
-        <th class="col-sm-1">Requested Quantity</th>
-        <th class="col-sm-1">Issued Quantity</th>
-        <th class="col-sm-1">Comments</th>
+      <tr class="text-center">
+        <th class="col-sm-1 text-center">Stock Number</th>
+        <th class="col-sm-1 text-center">Information</th>
+        <th class="col-sm-1 text-center">Unit</th>
+        <th class="col-sm-1 text-center">Remaining Balance</th>
+        <th class="col-sm-1 text-center">Requested Quantity</th>
+        <th class="col-sm-1 text-center">Issued Quantity</th>
+        <th class="col-sm-1 text-center">Comments</th>
       </tr>
     </thead>
     @if(isset($request->supplies))
@@ -18,8 +18,8 @@
           <td class="text-center">{{ $supply->stocknumber }}<input type="hidden" name="stocknumber[]" value="{{ $supply->stocknumber }}" /></td>
           <td class="text-left">{{ $supply->details }}</td>
           <td class="text-center">{{ $supply->unit->name }}</td>
-          <td class="supply-balance">{{ $supply->temp_balance }}</td>
-          <td>
+          <td class="supply-balance text-center">{{ $supply->temp_balance }}</td>
+          <td class="text-center">
             {{ $supply->pivot->quantity_requested }}
             <input type="hidden" name="requested[{{ $supply->stocknumber }}]" class="form-control" value="{{ $supply->pivot->quantity_requested }}" disabled />
           </td>
