@@ -55,6 +55,8 @@ class RequestsCustodianController extends Controller
     }
     if ($requests->status == 'Pending') {
         return redirect('request/custodian/'.$id.'/approve');
+    } else if($requests->status == 'Approved') {
+      return redirect('request/custodian/'.$id.'/release');
     } else {
         return view('requests.custodian.forms.show')
         ->with('request',$requests)
@@ -69,6 +71,15 @@ class RequestsCustodianController extends Controller
       ->with('request', $requests)
       ->with('action', 'request')
       ->with('title', "Approval :: RIS-".$requests->local);
+  }
+
+  public function getReleaseForm(Request $request, $id)
+  {
+    $requests = RequestCustodian::find($id);
+    return view('requests.custodian.forms.release')
+      ->with('request', $requests)
+      ->with('action', 'request')
+      ->with('title', "Release :: RIS-".$requests->local);
   }
 
   public function printRIS($id) 
