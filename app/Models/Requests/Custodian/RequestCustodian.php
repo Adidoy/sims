@@ -70,7 +70,17 @@ class RequestCustodian extends Model implements Auditable, UserResolver
       }
       
       public $appends = [
-        'date_requested', 'date_released',  'remaining_days', 'expire_on', 'date_approved', 'office_name'
+        'office_name', 
+        'date_approved', 
+        'date_requested', 
+        'date_released', 
+        'date_updated', 
+        'remaining_days', 
+        'expire_on', 
+        'request_person',  
+        'issue_person', 
+        'release_person', 
+        'cancel_person'
       ];
     
       public function scopeFindOfficeRequest($query, $value)
@@ -91,7 +101,12 @@ class RequestCustodian extends Model implements Auditable, UserResolver
   
       public function getDateApprovedAttribute($value)
       {
-        return isset($this->released_at) ? Carbon\Carbon::parse($this->approved_at)->format(" d F Y h:m A") : "N/A";  
+        return isset($this->approved_at) ? Carbon\Carbon::parse($this->approved_at)->format(" d F Y h:m A") : "N/A";  
+      }
+
+      public function getDateUpdatedAttribute($value)
+      {
+        return isset($this->updated_at) ? Carbon\Carbon::parse($this->updated_at)->format(" d F Y h:m A") : "N/A";  
       }
   
       public function getRemainingDaysAttribute()
@@ -109,7 +124,27 @@ class RequestCustodian extends Model implements Auditable, UserResolver
 
       public function getOfficeNameAttribute() 
       {
-        return isset($this->office_id) ? App\Office::find($this->office_id)->name : "None";
+        return isset($this->office_id) ? strtoupper(App\Office::find($this->office_id)->name) : "None";
+      }
+
+      public function getRequestPersonAttribute() 
+      {
+        return isset($this->requestor_id) ? strtoupper(App\User::find($this->requestor_id)->fullname) : "None";
+      }
+
+      public function getIssuePersonAttribute() 
+      {
+        return isset($this->issued_by) ? strtoupper(App\User::find($this->issued_by)->fullname) : "None";
+      }
+
+      public function getReleasePersonAttribute() 
+      {
+        return isset($this->released_by) ? strtoupper(App\User::find($this->released_by)->fullname) : "None";
+      }
+
+      public function getCancelPersonAttribute() 
+      {
+        return isset($this->cancelled_by) ? strtoupper(App\User::find($this->cancelled_by)->fullname) : "None";
       }
   
       public function getStatusAttribute($value) 

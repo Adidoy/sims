@@ -22,16 +22,23 @@ class RequestsCustodianController extends Controller
   {
     if(isset($request->type)) {
       if($request->type == 'pending') {
-          $requests = RequestCustodian::whereNull('status')->get();
+          $requests = RequestCustodian::whereNull('status')
+            ->orderBy('created_at', 'desc')
+            ->get();
       } elseif ($request->type == 'approved') {
-          $requests = RequestCustodian::where('status','=','approved')->get();
+          $requests = RequestCustodian::where('status','=','approved')
+            ->orderBy('approved_at', 'desc')
+            ->get();
       } elseif ($request->type == 'released') {
-          $requests = RequestCustodian::where('status','=','released')->get();
+          $requests = RequestCustodian::where('status','=','released')
+            ->orderBy('released_at', 'desc')
+            ->get();
       } elseif ($request->type == 'disapproved') {
           $requests = RequestCustodian::where(function($query) {
                   $query->where('status','=','cancelled')
                           ->orWhere('status','=','disapproved');
               })
+              ->orderBy('updated_at', 'desc')
               ->get();
       }
     } else {
@@ -198,8 +205,16 @@ class RequestsCustodianController extends Controller
             ->withInput()
             ->withErrors($validator);
         }
+
+        $supply = App\Supply::findByStockNumber($stocknumber);
+        return $supply;
+        if(($requested["$stocknumber"] < $quantity["$stocknumber"])||($quantity["$stocknumber"]$supply->temp_balance)) {
+          return back()
+            ->withInput()
+            ->withErrors(['Quantity to be issued MUST NOT BE GREATER THAN quantity requested.']);
+        }
       }
-      //return $quantity;
+
       foreach($stocknumbers as $stocknumber) {
         $supply = App\Supply::findByStockNumber($stocknumber);
         $array [ $supply->id ] = [

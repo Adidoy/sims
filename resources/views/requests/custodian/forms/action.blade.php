@@ -21,7 +21,7 @@
           <td class="supply-balance text-center">{{ $supply->temp_balance }}</td>
           <td class="text-center">
             {{ $supply->pivot->quantity_requested }}
-            <input type="hidden" name="requested[{{ $supply->stocknumber }}]" class="form-control" value="{{ $supply->pivot->quantity_requested }}" disabled />
+            <input type="hidden" name="requested[{{ $supply->stocknumber }}]" class="form-control" value="{{ $supply->pivot->quantity_requested }}"/>
           </td>
           <td>
             <input type="number" name="quantity[{{ $supply->stocknumber }}]" class="form-control" value="{{ ($supply->pivot->quantity_requested <= $supply->temp_balance) ? $supply->pivot->quantity_requested : 0 }}" />

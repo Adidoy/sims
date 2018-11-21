@@ -39,23 +39,33 @@
   <div class="box" style="padding:10px">
     <div class="box-body">
       <table class="table table-hover table-striped" id="requestTable" width=100%>
-        <thead>
+        <thead width="100%">
           <tr>
-            <th class="col-sm-1 no-sort">Request No.</th>
-            <th class="col-sm-1 no-sort ">Request Date</th>
-            <th class="col-sm-1 no-sort ">Requestor</th>
+            <th class="col-md-1 no-sort">Request No.</th>
             @if($type == 'pending')
-            <th class="col-sm-1">Purpose</th>
+              <th class="col-md-1 no-sort ">Request Date</th>
+              <th class="col-md-1 no-sort ">Requestor</th>
+              <th class="col-md-1 no-sort ">Office</th>
+              <th class="col-md-1">Purpose</th>
             @elseif($type == 'approved')
-              <th class="col-sm-1">Remarks</th>
-              <th class="col-sm-1">Date Approved</th>
+              <th class="col-md-1">Date Approved</th>
+              <th class="col-md-1 no-sort ">Requestor</th>
+              <th class="col-md-1 no-sort ">Office</th>
+              <th class="col-md-1 no-sort ">Approved and Issued By</th>
+              <th class="col-md-1">Remarks</th>
             @elseif($type == 'released')
-              <th class="col-sm-1">Date Released</th>
+              <th class="col-md-1">Date Released</th>
+              <th class="col-md-1 no-sort ">Requestor</th>
+              <th class="col-md-1 no-sort ">Office</th>
+              <th class="col-md-1 no-sort ">Released By</th>
               @elseif($type == 'disapproved')
-              <th class="col-sm-1">Status</th>
+              <th class="col-md-1">Date Updated</th>
+              <th class="col-md-1 no-sort ">Requestor</th>
+              <th class="col-md-1 no-sort ">Office</th>
+              <th class="col-md-1">Status</th>
             @endif
 
-            <th class="col-sm-1 no-sort"></th>
+            <th class="col-md-1 no-sort"></th>
           </tr>
         </thead>
       </table>
@@ -73,12 +83,11 @@
         serverSide: true,
         stateSave: true,
         "processing": true,
+        "autoWidth": true,
         language: {
               searchPlaceholder: "Search..."
         },
-        columnDefs:[{ 
-              targets: 'no-sort', orderable: false 
-        }],
+        columnDefs:[{ targets: 'no-sort', orderable: false }],
         "order": [
               [0, 'asc']
         ],
@@ -88,19 +97,29 @@
         ajax: "{{ url('request/custodian/?type=' . $type) }}",
         columns: [
           { data: "local" },
-          { data: 'date_requested' },
-          { data: "office_name" },
           @if($type == 'pending')
-          { data: "purpose" },
+            { data: 'date_requested' },
+            { data: 'request_person'},
+            { data: "office_name" },
+            { data: "purpose" },
           @elseif($type == 'approved')
-          { data: "remarks" },
-          { data: "approved_at" },
+            { data: "date_approved" },
+            { data: 'request_person'},
+            { data: "office_name" },
+            { data: "issue_person" },
+            { data: "remarks" },
           @elseif($type == 'released')
-          { data: "released_at" },
+            { data: "date_released" },
+            { data: 'request_person'},
+            { data: "office_name" },
+            { data: 'release_person'},
           @elseif($type == 'disapproved')
-          { data: "status" },
+            { data: "date_updated" },
+            { data: 'request_person'},
+            { data: "office_name" },
+            { data: "status" },
           @endif
-           
+
           { data: function(callback){
             return `<a href="{{ url('request/custodian/') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i> View</a>`;
           }}
