@@ -29,7 +29,11 @@ class Routes
                     'as' => 'request.approve',
                     'uses' => 'RequestsCustodianController@approveRIS'
                 ]);
-                Route::get('{id}/release', 'RequestsCustodianController@getReleaseForm');
+                Route::get('{id}/release', 'RequestsCustodianController@getReleaseForm');                
+                Route::post('{id}/release', [
+                    'as' => 'request.release',
+                    'uses' => 'RequestsCustodianController@releaseRIS'
+                ]);
             });
         });
     }

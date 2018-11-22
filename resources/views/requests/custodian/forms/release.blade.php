@@ -25,7 +25,7 @@
 <!-- Default box -->
   <div class="box">
     <div class="box-body">
-    {{ Form::open(['method'=>'delete','route'=>array('request.destroy',$request->id),'class'=>'form-horizontal','id'=>'requestForm']) }}
+    {{ Form::open(['method'=>'post','route'=>array('request.release',$request->id),'class'=>'form-horizontal','id'=>'requestForm']) }}
      
       @include('errors.alert')
 
@@ -62,7 +62,7 @@
             <td>{{ $supply->stocknumber }}<input type="hidden" name="stocknumber[]" value="{{ $supply->stocknumber }}"</td>
             <td class="text-justified">{{ $supply->details }}</td>
             <td>{{ $supply->stock_balance }}</td>
-            <td>{{ $supply->pivot->quantity_issued }}</td>
+            <td><input type="hidden" name="quantity[{{ $supply->stocknumber }}]" class="form-control" value="{{ $supply->pivot->quantity_issued }}"  />{{ $supply->pivot->quantity_issued }}</td>
           </tr>
 
           @endif

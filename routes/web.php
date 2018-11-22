@@ -183,10 +183,10 @@ Route::middleware(['auth'])->group(function(){
 			'uses' => 'RequestController@accept'
 		]);
 
-		Route::get('request/{id}/release',[
-			'as' => 'request.release',
-			'uses' => 'RequestController@releaseView'
-		]);
+		// Route::get('request/{id}/release',[
+		// 	'as' => 'request.release',
+		// 	'uses' => 'RequestController@releaseView'
+		// ]);
 
 		Route::get('adjustment/{id}/print', 'AdjustmentsController@print');
 		Route::get('adjustment/dispose', 'AdjustmentsController@dispose');

@@ -68,6 +68,19 @@ class RequestCustodian extends Model implements Auditable, UserResolver
           'Remarks.max' => 'Remarks field is up to 150 characters only.'
         ];
       }
+
+      public function releaseRules() {
+        return [
+          'Remarks' => 'required|max:150',
+        ];
+      }
+  
+      public function releaseMessages() {
+        return [
+          'Remarks.required' => 'Please indicate the name of the person whom the supplies are released to.',
+          'Remarks.max' => 'Remarks field is up to 150 characters only.'
+        ];
+      }
       
       public $appends = [
         'office_name', 
