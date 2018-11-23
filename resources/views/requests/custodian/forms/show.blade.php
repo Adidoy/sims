@@ -48,7 +48,7 @@
 				    <thead>
                         <tr rowspan="2">
                             <th class="text-left" colspan="8">Request Slip:  <span style="font-weight:normal">{{ $request->local }}</span></th>
-                            <th class="text-left" colspan="8">Office:  <span style="font-weight:normal">{{ isset($request->office) ? $request->office->code : 'None' }}</span> </th>
+                            <th class="text-left" colspan="8">Office:  <span style="font-weight:normal">{{ isset($request->office) ? $request->office->name : 'None' }}</span> </th>
                         </tr>
                         <tr rowspan="2">
                             <th class="text-left" colspan="8">Status:  <span style="font-weight:normal">{{ ($request->status == '') ? ucfirst(config('app.default_status')) : $request->status }}</span> </th>

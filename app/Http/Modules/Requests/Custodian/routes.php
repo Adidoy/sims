@@ -27,7 +27,7 @@ class Routes
                 Route::get('{id}/approve', 'RequestsCustodianController@getApprovalForm');
                 Route::post('{id}/approve', [
                     'as' => 'request.approve',
-                    'uses' => 'RequestsCustodianController@approveRIS'
+                    'uses' => 'RequestsCustodianController@approval'
                 ]);
                 Route::get('{id}/release', 'RequestsCustodianController@getReleaseForm');                
                 Route::post('{id}/release', [

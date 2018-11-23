@@ -173,13 +173,21 @@
           <td width="105px" style="white-space: nowrap; text-align:left; font-weight:bold;" class="text-left">  Printed Name:</td>
           <td width="250px" style="text-align:center; font-weight:bold; font-size: 12px;" width=50px>
             <span> 
-              {{ isset($signatory->id) ? strtoupper($signatory->requestor_name) : isset($office->name) ? $office->head != "None" ? strtoupper($office->head) : "" : "" }}
+              @if( isset($signatory->requestor_name) )
+                {{ strtoupper($signatory->requestor_name) }}
+              @elseif( $officeSignatory <> 'NONE' )
+                {{ strtoupper($officeSignatory->head) }}
+              @endif
             </span>
             
           </td>
           <td width="250px" style="text-align:center; font-weight:bold; font-size: 12px;" width=50px>
             <span>
-              {{isset($signatory->id) ? $signatory->approver_name : isset($sector->name) ? strtoupper($sector->head) : strtoupper($request->office->head) }}
+              @if( isset($signatory->approver_name) )
+                {{ strtoupper($signatory->approver_name) }}
+              @elseif( $headOffice <> 'NONE' )
+                {{ strtoupper($headOffice->head) }}
+              @endif
             </span>  
           </td>
           <td class="text-center">  </td>
@@ -190,12 +198,21 @@
           <td width="105px" style="white-space: nowrap; text-align:left; font-weight:bold;" class="text-left">Designation:</td>
           <td width="250px" style="white-space: nowrap; text-align:center; font-weight:bold;font-size:10px; word-wrap: break-word;">
             <span> 
-              {{  isset($signatory->id) ? $signatory->requestor_designation: isset($office->name) ? $office->head_title != "None" ? $office->head_title : "" : "" }}
+              @if( isset($signatory->requestor_designation) )
+                {{ $signatory->requestor_designation }}
+              @elseif( $officeSignatory <> 'NONE' )
+                {{ $officeSignatory->head_title }}
+              @endif
             </span>
           </td>
           <td width="250px" style="white-space: nowrap; text-align:center; font-weight:bold;font-size:10px; word-wrap: break-word;">
             <span>
-              {{ isset($signatory->id) ? $signatory->approver_designation : isset($sector->head) ? $sector->head_title : $request->office->head_title }}</span>
+              @if( isset($signatory->approver_designation) )
+                {{ $signatory->approver_designation }}
+              @elseif( $headOffice <> 'NONE' )
+                {{ $headOffice->head_title }}
+              @endif
+            </span>
           </td>
           <td class="text-center">          </td>
           <td class="text-center">          </td>

@@ -58,11 +58,13 @@
               <th class="col-md-1 no-sort ">Requestor</th>
               <th class="col-md-1 no-sort ">Office</th>
               <th class="col-md-1 no-sort ">Released By</th>
+              <th class="col-md-1 no-sort ">Remarks</th>
               @elseif($type == 'disapproved')
               <th class="col-md-1">Date Updated</th>
               <th class="col-md-1 no-sort ">Requestor</th>
               <th class="col-md-1 no-sort ">Office</th>
               <th class="col-md-1">Status</th>
+              <th class="col-md-1">Remarks</th>
             @endif
 
             <th class="col-md-1 no-sort"></th>
@@ -88,9 +90,6 @@
               searchPlaceholder: "Search..."
         },
         columnDefs:[{ targets: 'no-sort', orderable: false }],
-        "order": [
-              [0, 'asc']
-        ],
         "dom": "<'row'<'col-sm-3'l><'col-sm-6'<'toolbar'>><'col-sm-3'f>>" +
                       "<'row'<'col-sm-12'tr>>" +
                       "<'row'<'col-sm-5'i><'col-sm-7'p>>",
@@ -107,17 +106,19 @@
             { data: 'request_person'},
             { data: "office_name" },
             { data: "issue_person" },
-            { data: "remarks" },
+            { data: "request_remarks" },
           @elseif($type == 'released')
             { data: "date_released" },
             { data: 'request_person'},
             { data: "office_name" },
             { data: 'release_person'},
+            { data: "request_remarks" },
           @elseif($type == 'disapproved')
             { data: "date_updated" },
             { data: 'request_person'},
             { data: "office_name" },
             { data: "status" },
+            { data: "request_remarks" },
           @endif
 
           { data: function(callback){

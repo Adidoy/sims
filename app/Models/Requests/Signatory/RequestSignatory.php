@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Requests\Custodian;
+namespace App\Models\Requests\Signatory;
 
 use Illuminate\Database\Eloquent\Model;
 

@@ -14,6 +14,7 @@ use Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Requests\Client\RequestClient;
+use App\Models\Requests\Signatory\RequestSignatory;
 use App\Models\Requests\Client\RequestDetailsClient;
 
 class RequestsClientController extends Controller
@@ -199,7 +200,8 @@ class RequestsClientController extends Controller
         }
     }
 
-    public function printRIS($id) {
+    public function printRIS($id) 
+    {
         $orientation = 'Portrait';
         $id = $this->sanitizeString($id);
         $request = RequestClient::find($id);
@@ -224,39 +226,32 @@ class RequestsClientController extends Controller
         $office = App\Office::where('code','=',$user->office)->first();
         $sector = App\Office::where('id','=',$office->head_office)->first();
         $issuedby = App\User::where('id','=',$request->issued_by)->first();
+
+        $office = $request->office;
+        $signatory = RequestSignatory::where('request_id', '=', $id)->first();
         
-        //checks if the sector has a head_office
-        //for lvl 2 offices
-        if(isset($sector->head_office)): 
-          $office = App\Office::where('id','=',$office->head_office)->first(); 
-          $sector = App\Office::where('id','=',$sector->head_office)->first(); 
-        elseif($office->head_office == NULL): 
-            if(App\Office::where('code','like',$office->code.'-A'.$office->code)->first() !== NULL):
-              $office = App\Office::where('code','like',$office->code.'-A'.$office->code)->first();
-            endif;
-        endif; 
+        if(isset($signatory)) {
+            $headOffice = new App\Office;
+            $officeSignatory = new App\Office;
+        } else {
+            $officeSignatory = App\Office::where('id','=',$office->id)->first();
+            if(!isset($officeSignatory->head_office)) {
+                $headOffice = $officeSignatory;
+                $officeSignatory = App\Office::where('code','=',$officeSignatory->code.'-A'.$officeSignatory->code)->first();
+            } else {
+                $headOffice = App\Office::where('id','=',$officeSignatory->head_office)->first();
+                while(isset($headOffice->head_office)) {
+                    $officeSignatory = $headOffice;
+                    $headOffice = App\Office::where('id','=',$headOffice->head_office)->first();
+                }
+            }
+        }
         
-        //checks if the sector has a head_office
-        //for lvl 3 offices
-        if(isset($sector->head_office)):
-          $office = App\Office::where('id','=',$office->head_office)->first();
-          $sector = App\Office::where('id','=',$sector->head_office)->first();
-        endif;
-        
-        //checks if the sector has a head_office
-        //for lvl 4 offices
-        if(isset($sector->head_office)):
-            $office = App\Office::where('id','=',$office->head_office)->first();
-            $sector = App\Office::where('id','=',$sector->head_office)->first();
-        endif;
-    
-        if($request->status == 'Released' || $request->status == 'released'):
-          $signatory = App\RequestSignatory::where('request_id','=',$request->id)->get();
-        endif;
         $data = [
           'request' => $request, 
           'office' => $office,
-          'sector' => $sector,
+          'officeSignatory' => $officeSignatory,
+          'headOffice' => $headOffice,
           'signatory' => $signatory,
           'issuedby' => $issuedby,
           'row_count' => $row_count,

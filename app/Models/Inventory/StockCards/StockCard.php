@@ -30,7 +30,7 @@ class StockCard extends Model implements Auditable, UserResolver
 	public $fundcluster = null;
 	public $timestamps = true;
 
-	protected $fillable = [ 'date','stocknumber','reference','receipt', 'received','issued','organization','daystoconsume']; 
+	//protected $fillable = [ 'date','supply_id','reference','receipt', 'received_quantity','issued_quantity', 'organization','daystoconsume']; 
 
 	public function rules() {
 		return [
@@ -38,8 +38,7 @@ class StockCard extends Model implements Auditable, UserResolver
 			'Stock Number' => 'required',
 			'Reference' => 'required',
 			'Office' => '',
-			'Issued Quantity' => 'required|integer',
-			'Days To Consume' => 'max:100'
+			'Issued Quantity' => 'required|integer'
 		];
 	}
 
@@ -50,8 +49,7 @@ class StockCard extends Model implements Auditable, UserResolver
 			'Reference.required' => 'Reference is a required field.',
 			'Office.required' => 'Office is a required field.',
 			'Issued Quantity.required' => 'Issued Quantity is a required field.',
-			'Issued Quantity.integer' => 'Issued Quantity must be represented in whole numbers only.',
-			'Days To Consume.max' => 'Maximum days to consume is up to 100 only.'
+			'Issued Quantity.integer' => 'Issued Quantity must be represented in whole numbers only.'
 		];
 	}
 

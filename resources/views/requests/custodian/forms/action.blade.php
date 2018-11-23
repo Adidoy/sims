@@ -49,10 +49,11 @@
     </div>
   </div>
   <div class="pull-right">
-      <button type="submit" name="disapprove" id="disapprove" style="text-align:justify; font-size:11pt;" class="btn btn-md btn-danger" value="disapprove">
+      <input type="hidden" name="action" id="action" />
+      <button type="submit" name="disapprove" id="disapprove" style="text-align:justify; font-size:11pt;" class="btn btn-md btn-danger" value="disapproved">
         <i class="fa fa-thumbs-down" aria-hidden="true"> Disapprove Request </i>
       </button>
-      <button type="submit" name="approve" id="approve" style="text-align:justify; font-size:11pt;" class="btn btn-md btn-success" value="approve">
+      <button type="submit" name="approve" id="approve" style="text-align:justify; font-size:11pt;" class="btn btn-md btn-success" value="approved">
         <i class="fa fa-thumbs-up" aria-hidden="true"> Approve Request</i>
       </button>
       <a type="button" id="cancel" style="text-align:justify; font-size:11pt;" class="btn btn-md btn-default" href="{{ url("request/custodian?type=pending") }}">
@@ -79,7 +80,6 @@
 
       if( trigger == 0 )
       {
-
         swal({
           title: "Warning!",
           text: "You have no items to release for this request. Do you want to disapprove it?",
@@ -102,8 +102,8 @@
       }
     })
 
-    $('#approve, #disapprove, #resubmission').on('click',function(event){
-
+    $('#approve, #disapprove, #resubmission').on('click',function(event)
+    {
       action = $(this).val();
       event.preventDefault()
 

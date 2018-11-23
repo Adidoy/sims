@@ -6,7 +6,7 @@
 	    Approval and Issuance :: RIS No.: {{ $request->local }}
 	  </h1>
 	  <ol class="breadcrumb">
-	    <li><a href="{{ url('request') }}">RIS {{ $request->local }}</a></li>
+	    <li><a href="{{ url('request') }}">RIS No: {{ $request->local }}</a></li>
 	    <li class="active">Approval</li>
 	  </ol>
 	</section>

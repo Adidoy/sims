@@ -93,7 +93,8 @@ class RequestCustodian extends Model implements Auditable, UserResolver
         'request_person',  
         'issue_person', 
         'release_person', 
-        'cancel_person'
+        'cancel_person',
+        'request_remarks'
       ];
     
       public function scopeFindOfficeRequest($query, $value)
@@ -158,6 +159,19 @@ class RequestCustodian extends Model implements Auditable, UserResolver
       public function getCancelPersonAttribute() 
       {
         return isset($this->cancelled_by) ? strtoupper(App\User::find($this->cancelled_by)->fullname) : "None";
+      }
+
+      public function getRequestRemarksAttribute() 
+      {
+        $remarks = $this->remarks;
+        if (isset($remarks)) {
+          if($remarks == "") {
+            $remarks = "No Remarks";
+          }
+        } else {
+          $remarks = "No Remarks";
+        }
+        return $remarks;
       }
   
       public function getStatusAttribute($value) 

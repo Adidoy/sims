@@ -13,7 +13,7 @@ use Session;
 use Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Requests\Custodian\RequestSignatory;
+use App\Models\Requests\Signatory\RequestSignatory;
 use App\Models\Requests\Custodian\RequestCustodian;
 use App\Models\Requests\Client\RequestDetailsClient;
 use App\Http\Controllers\Inventory\Stockcards\StockCardController;
@@ -91,6 +91,16 @@ class RequestsCustodianController extends Controller
       ->with('title', "Release :: RIS-".$requests->local);
   }
 
+  public function approval(Request $request, $id)
+  {
+    $action = $request->get('action');
+    if ($action == 'approved') {
+      return $this->approveRIS($request, $id);
+    } else if($action == 'disapproved') {
+      return $this->disapproveRIS($request, $id);
+    }
+  }
+
   public function approveRIS(Request $request, $id) 
   {
     $quantity = $request->get('quantity');
@@ -164,7 +174,7 @@ class RequestsCustodianController extends Controller
       $updateRequest->supplies()->sync($array);
       $updateRequest->remarks = $remarks;
       $updateRequest->issued_by = $issued_by;
-      $updateRequest->status = 'approved'; 
+      $updateRequest->status = $action;
       $updateRequest->approved_at = Carbon\Carbon::now();
       $updateRequest->save();
 
@@ -180,31 +190,29 @@ class RequestsCustodianController extends Controller
 
   public function releaseRIS(Request $request, $id) 
   {
-    // $remarks = $request->get('remarks');
-    // $date = Carbon\Carbon::now();
+    $remarks = $request->get('remarks');
+    $date = Carbon\Carbon::now();
     
-    // $releaseRequest = new RequestCustodian;
-    // $validator = Validator::make([
-    //   'Remarks' => $remarks,
-    // ],$releaseRequest->releaseRules(), $releaseRequest->releaseMessages());
+    $releaseRequest = new RequestCustodian;
+    $validator = Validator::make([
+      'Remarks' => $remarks,
+    ],$releaseRequest->releaseRules(), $releaseRequest->releaseMessages());
 
-    // if($validator->fails()) {
-    //   return redirect("request/custodian/$id/release")
-    //     ->withInput()
-    //     ->withErrors($validator);
-    // }
+    if($validator->fails()) {
+      return redirect("request/custodian/$id/release")
+        ->withInput()
+        ->withErrors($validator);
+    }
 
-    //try {
+    try {
       $updateRequest = RequestCustodian::find($id);
-      // return $updateRequest->office->id;
-      // DB::beginTransaction();
-      // if( count($updateRequest) <= 0 || !in_array($updateRequest->status, [ 'Approved', 'approved']) || Auth::user()->access != 1 && Auth::user()->access != 6) {
-      //   return view('errors.404');
-      // }
+      DB::beginTransaction();
+      if( count($updateRequest) <= 0 || !in_array($updateRequest->status, [ 'Approved', 'approved']) || Auth::user()->access != 1 && Auth::user()->access != 6) {
+        return view('errors.404');
+      }
       $office = App\Office::where('id','=',$updateRequest->office->id)->first();
-      // return $office->head_office;
       if(!isset($office->head_office)) {
-        $sector = $office;
+        $headOffice = $office;
         $office = App\Office::where('code','=',$office->code.'-A'.$office->code)->first();
       } else {
         $headOffice = App\Office::where('id','=',$office->head_office)->first();
@@ -214,42 +222,90 @@ class RequestsCustodianController extends Controller
         }
       }
 
-      //return $office;
-      // $updateRequest->status = 'released';
-      // $updateRequest->remarks = 'Received by: '.$remarks;
-      // $updateRequest->released_at = $date;
-      // $updateRequest->released_by = Auth::user()->id;
-      // $updateRequest->save();
+      $updateRequest->status = 'released';
+      $updateRequest->remarks = 'Received by: '.$remarks;
+      $updateRequest->released_at = $date;
+      $updateRequest->released_by = Auth::user()->id;
+      $updateRequest->save();
 
-      // $sector = $headOffice;
-      // $signatory = new RequestSignatory;
-      // $signatory->request_id = $updateRequest->id;
-      // $signatory->requestor_name = isset($office->name) ? $office->head != "None" ?$office->head : "" : "";
-      // $signatory->requestor_designation = isset($office->name) ? $office->head_title != "None" ? $office->head_title : "" : "";
-      // $signatory->approver_name = isset($sector->name) ? $sector->head : $updateRequest->office->head;
-      // $signatory->approver_designation = isset($sector->head) ? $sector->head_title : $updateRequest->office->head_title;
-      // $signatory->save();
-      // DB::commit();
+      $sector = $headOffice;
+      $signatory = new RequestSignatory;
+      $signatory->request_id = $updateRequest->id;
+      $signatory->requestor_name = isset($office->name) ? $office->head != "None" ?$office->head : "" : "";
+      $signatory->requestor_designation = isset($office->name) ? $office->head_title != "None" ? $office->head_title : "" : "";
+      $signatory->approver_name = isset($sector->name) ? $sector->head : $updateRequest->office->head;
+      $signatory->approver_designation = isset($sector->head) ? $sector->head_title : $updateRequest->office->head_title;
+      $signatory->save();
+      DB::commit();
 
-      // $stockCardController = new StockCardController;
-      // $stockCardController->releaseSupplies($request, $id);
-      // $quantity = $request->get('quantity');
-      // $stocknumber = $request->get('stocknumber');
-      // foreach($stocknumber as $stocknumber) {
-      //   $_quantity = $quantity["$stocknumber"];
-			// 	$supply = App\Supply::findByStockNumber($stocknumber);
-      //   $updateRequest->supplies()->updateExistingPivot($supply->id, [
-      //     'quantity_released' => $_quantity
-      //   ]);
-			// }
+      $stockCardController = new StockCardController;
+      $stockCardController->releaseSupplies($request, $id);
+      $quantity = $request->get('quantity');
+      $stocknumber = $request->get('stocknumber');
+      foreach($stocknumber as $stocknumber) {
+        $_quantity = $quantity["$stocknumber"];
+				$supply = App\Supply::findByStockNumber($stocknumber);
+        $updateRequest->supplies()->updateExistingPivot($supply->id, [
+          'quantity_released' => $_quantity
+        ]);
+			}
 
       \Alert::success('Items for RIS No.:'.$updateRequest->local.' are now released.')->flash();
       return redirect('request/custodian?type=approved');
-    // } catch(\Exception $e) {
-    //   DB::rollback();
-    //   \Alert::error('An error occured! Please try again. Message: '.$e->getMessage())->flash();
-    //   return redirect("request/custodian/$id/release"); 
-    // }  
+    } catch(\Exception $e) {
+      DB::rollback();
+      \Alert::error('An error occured! Please try again. Message: '.$e->getMessage())->flash();
+      return redirect("request/custodian/$id/release"); 
+    }  
+  }
+
+  public function disapproveRIS(Request $request, $id)
+  {
+    $quantity = $request->get('quantity');
+    $comment = $request->get('comment');
+    $stocknumbers = $request->get('stocknumber');
+    $requested = $request->get('requested');
+    $array = [];
+    $remarks = $request->get('remarks');
+    $action = $request->get('action');
+    $issued_by = Auth::user()->id;
+
+    try {
+
+      DB::beginTransaction();
+
+      $updateRequestDetails = new RequestDetailsClient;
+      $updateRequest = new RequestCustodian;
+
+      $validator = Validator::make([
+        'Remarks' => $remarks
+      ], $updateRequest->approveRules(), $updateRequest->approveMessages());
+
+      if($validator->fails()) {
+        return redirect("request/custodian/$id/approve")
+          ->with('total',count($stocknumbers))
+          ->with('stocknumber',$stocknumbers)
+          ->with('quantity',$quantity)
+          ->with('comment', $comment)
+          ->withInput()
+          ->withErrors($validator);
+      }
+      
+      $updateRequest = RequestCustodian::find($id);
+      $updateRequest->remarks = $remarks;
+      $updateRequest->issued_by = $issued_by;
+      $updateRequest->status = $action; 
+      $updateRequest->approved_at = Carbon\Carbon::now();
+      $updateRequest->save();
+
+      DB::commit();
+      \Alert::error('Request Disapproved.')->flash();
+      return redirect('request/custodian?type=pending');
+    } catch(\Exception $e) {
+      DB::rollback();
+      \Alert::error('An error occured! Please try again. Message: '.$e->getMessage())->flash();
+      return redirect("request/custodian/$id/approve"); 
+    }
   }
 
   public function printRIS($id) 
@@ -321,4 +377,5 @@ class RequestsCustodianController extends Controller
     $view = "requests.client.reports.print_ris";
     return $this->printPreview($view,$data,$filename,$orientation);
   }
+  
 }

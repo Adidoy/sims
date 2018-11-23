@@ -30,7 +30,22 @@
       @include('errors.alert')
 
       <legend><h3 class="text-muted">Requisition and Issue Slip {{ $request->local }}</h3></legend>
-
+      <table class="table table-hover table-striped table-bordered table-condensed" id="requestTable" cellspacing="0" width="100%">
+        <thead>
+          <tr rowspan="2">
+            <th class="text-left" colspan="15">Request Slip:  <span style="font-weight:normal">{{ $request->local }}</span></th>
+            <th class="text-left" colspan="15">Office:  <span style="font-weight:normal">{{ isset($request->office) ? $request->office->name : 'None' }}</span> </th>
+          </tr>
+          <tr rowspan="2">
+            <th class="text-left" colspan="15">Status:  <span style="font-weight:normal">{{ ($request->status == '') ? ucfirst(config('app.default_status')) : $request->status }}</span> </th>
+            <th class="text-left" colspan="15">Request Processed by:  <span style="font-weight:normal">{{ $request->requestor->fullname }}, {{ $request->requestor->position }}</span> </th>
+          </tr>
+          <tr rowspan="2">
+            <th class="text-left" colspan="15">Purpose:  <span style="font-weight:normal">{{ $request->purpose }}</span> </th>
+            <th class="text-left" colspan="15">Remarks:  <span style="font-weight:normal">{{ $request->remarks }}</span> </th>
+          </tr>
+        </thead>
+      </table>
       <div class="col-sm-12">
           Rows in <span class="text-warning">Yellow</span> have issued quantity <em>greater than</em> requested quantity <br />
           Rows in <span class="text-danger">Red</span> have no more items to release
@@ -86,7 +101,7 @@
           <button type="button" id="approve" class="btn btn-md btn-danger btn-block">Release</button>
         </div>
         <div class="btn-group">
-          <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('request') }}"'>Cancel</button>
+          <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('request/custodian/').'?type=approved' }}"'>Cancel</button>
         </div>
       </div>
       {{ Form::close() }}
