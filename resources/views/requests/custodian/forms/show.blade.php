@@ -19,14 +19,7 @@
 		    <div class="panel panel-body table-responsive">
                 <div class="text-center">
                     @if(isset($request->status))
-                        @if($request->status == 'Pending')
-                            <a type="button" href="{{ url("request/$request->id/accept") }}" style="text-align:justify; font-size:11pt;" data-id="{{ $request->id }}" class="accept btn btn-success btn-sm">
-                                <i class="fa fa-thumbs-up" aria-hidden="true"> Accept Request</i>
-                            </a>
-                            <a href="{{ url("request/$request->id/cancel") }}" style="text-align:justify; font-size:11pt;" class="btn btn-danger btn-sm">
-                                <i class="fa fa-hand-stop-o" aria-hidden="true"></i> Cancel Request
-                            </a>
-                        @elseif($request->status == 'Approved')
+                        @if($request->status == 'Approved')
                             <a href="{{ url("request/custodian/$request->id/print") }}" style="text-align:justify; font-size:11pt;" target="_blank" id="print" class="print btn btn-sm btn-default ladda-button" data-style="zoom-in">
                                 <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
                                 <span id="nav-text"> Download Requisition and Issuance Slip</span>
@@ -36,7 +29,7 @@
                             </a>
                             <br /><br />
                         @elseif (($request->status == 'Released'))
-                            <a href="{{ url("request/client/$request->id/print") }}" style="text-align:justify; font-size:11pt;" target="_blank" id="print" class="print btn btn-sm btn-default ladda-button" data-style="zoom-in">
+                            <a href="{{ url("request/custodian/$request->id/print") }}" style="text-align:justify; font-size:11pt;" target="_blank" id="print" class="print btn btn-sm btn-default ladda-button" data-style="zoom-in">
                                 <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
                                 <span id="nav-text"> Download Requisition and Issuance Slip</span>
                             </a>
@@ -86,78 +79,73 @@
 @endsection
 
 @section('after_scripts')
-<script>
-    $(document).ready(function() {
-    var table = $('#requestDetailsTable').DataTable({
-		language: {
-			searchPlaceholder: "Search..."
-		},
-        "dom":  "<'row'<'col-sm-3'l><'col-sm-6'<'toolbar'>><'col-sm-3'f>>" +
-			    "<'row'<'col-sm-12'tr>>" +
-				"<'row'<'col-sm-5'i><'col-sm-7'p>>",
-		"processing": true,
-		ajax: "{{ url("request/custodian/$request->id") }}",
-		columns: [
-				{ data: "stocknumber" },
-				{ data: "details" },
-				{ data: "pivot.quantity_requested" },
-                @if($request->status == 'Approved')   
-                    { data: "pivot.quantity_issued" },
-                    { data: "pivot.comments" },
-                @elseif($request->status == 'Released')
-                    { data: "pivot.quantity_issued" },
-                    { data: "pivot.quantity_released" },
-                    { data: "pivot.comments" },
-                @endif       
-		],
-    });
+    <script>
+        $(document).ready(function() {
+            var table = $('#requestDetailsTable').DataTable({
+                language: {
+                    searchPlaceholder: "Search..."
+                },
+                "dom":  "<'row'<'col-sm-3'l><'col-sm-6'<'toolbar'>><'col-sm-3'f>>" +
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                "processing": true,
+                ajax: "{{ url("request/custodian/$request->id") }}",
+                columns: [
+                        { data: "stocknumber" },
+                        { data: "details" },
+                        { data: "pivot.quantity_requested" },
+                        @if($request->status == 'Approved')   
+                            { data: "pivot.quantity_issued" },
+                            { data: "pivot.comments" },
+                        @elseif($request->status == 'Released')
+                            { data: "pivot.quantity_issued" },
+                            { data: "pivot.quantity_released" },
+                            { data: "pivot.comments" },
+                        @endif       
+                ],
+            });
 
-    @if(Auth::user()->access == 1 || Auth::user()->access == 6)
-
-    @if($request->status != null && $request->status != 'released')
-
-    $('#expire').on('click',function(){
-      id = $(this).data('id');
-      swal({
-        title: 'Expire Request {{ $request->code }}?',
-        text: 'This will cancel the request. Do you want to continue?',
-        type: 'warning',
-        showLoaderOnConfirm: true,
-        showCancelButton: true,
-        closeOnConfirm: false,
-        disableButtonsOnConfirm: true,
-        confirmLoadingButtonColor: '#DD6B55'
-      }, function(){
-        $.ajax({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            type: 'post',
-            url: '{{ url("request/$request->id/expire/") }}',
-            data: {
-                'id': id
-            },
-            dataType: 'json',
-            success: function(response) {
-                if(response == 'success') {
-                    swal('Operation Successful','Operation Complete please reload the page!','success'),
-                    location.reload();
-                }
-                else {
-                    swal('Operation Unsuccessful','Error occurred while processing your request','error')
-                }
-            },
-            error: function(){
-                swal('Operation Unsuccessful','Error occurred while processing your request','error')
-            }
-        })
-      });
-    });
-
-    @endif
-
-    @endif
-
-	} );
-</script>
+            @if(Auth::user()->access == 1 || Auth::user()->access == 6)
+                @if($request->status != null && $request->status != 'released')
+                    $('#expire').on('click',function(){
+                    id = $(this).data('id');
+                    swal({
+                        title: 'Expire Request {{ $request->code }}?',
+                        text: 'This will cancel the request. Do you want to continue?',
+                        type: 'warning',
+                        showLoaderOnConfirm: true,
+                        showCancelButton: true,
+                        closeOnConfirm: false,
+                        disableButtonsOnConfirm: true,
+                        confirmLoadingButtonColor: '#DD6B55'
+                    }, function(){
+                        $.ajax({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            type: 'post',
+                            url: '{{ url("request/$request->id/expire/") }}',
+                            data: {
+                                'id': id
+                            },
+                            dataType: 'json',
+                            success: function(response) {
+                                if(response == 'success') {
+                                    swal('Operation Successful','Operation Complete please reload the page!','success'),
+                                    location.reload();
+                                }
+                                else {
+                                    swal('Operation Unsuccessful','Error occurred while processing your request','error')
+                                }
+                            },
+                            error: function(){
+                                swal('Operation Unsuccessful','Error occurred while processing your request','error')
+                            }
+                        })
+                    });
+                    });
+                @endif
+            @endif
+        });
+    </script>
 @endsection

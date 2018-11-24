@@ -52,5 +52,4 @@ class StockCard extends Model implements Auditable, UserResolver
 			'Issued Quantity.integer' => 'Issued Quantity must be represented in whole numbers only.'
 		];
 	}
-
 }

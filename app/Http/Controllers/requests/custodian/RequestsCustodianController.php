@@ -333,35 +333,27 @@ class RequestsCustodianController extends Controller
     $office = App\Office::where('code','=',$user->office)->first();
     $sector = App\Office::where('id','=',$office->head_office)->first();
     $issuedby = App\User::where('id','=',$request->issued_by)->first();
-    
-    //checks if the sector has a head_office
-    //for lvl 2 offices
-    if(isset($sector->head_office)): 
-      $office = App\Office::where('id','=',$office->head_office)->first(); 
-      $sector = App\Office::where('id','=',$sector->head_office)->first(); 
-    elseif($office->head_office == NULL): 
-        if(App\Office::where('code','like',$office->code.'-A'.$office->code)->first() !== NULL):
-          $office = App\Office::where('code','like',$office->code.'-A'.$office->code)->first();
-        endif;
-    endif; 
-    
-    //checks if the sector has a head_office
-    //for lvl 3 offices
-    if(isset($sector->head_office)):
-      $office = App\Office::where('id','=',$office->head_office)->first();
-      $sector = App\Office::where('id','=',$sector->head_office)->first();
-    endif;
-    
-    //checks if the sector has a head_office
-    //for lvl 4 offices
-    if(isset($sector->head_office)):
-        $office = App\Office::where('id','=',$office->head_office)->first();
-        $sector = App\Office::where('id','=',$sector->head_office)->first();
-    endif;
 
-    if($request->status == 'Released' || $request->status == 'released'):
-      $signatory = App\RequestSignatory::where('request_id','=',$request->id)->get();
-    endif;
+    $office = $request->office;
+    $signatory = RequestSignatory::where('request_id', '=', $id)->first();
+    
+    if(isset($signatory)) {
+        $headOffice = new App\Office;
+        $officeSignatory = new App\Office;
+    } else {
+        $officeSignatory = App\Office::where('id','=',$office->id)->first();
+        if(!isset($officeSignatory->head_office)) {
+            $headOffice = $officeSignatory;
+            $officeSignatory = App\Office::where('code','=',$officeSignatory->code.'-A'.$officeSignatory->code)->first();
+        } else {
+            $headOffice = App\Office::where('id','=',$officeSignatory->head_office)->first();
+            while(isset($headOffice->head_office)) {
+                $officeSignatory = $headOffice;
+                $headOffice = App\Office::where('id','=',$headOffice->head_office)->first();
+            }
+        }
+    }
+    
     $data = [
       'request' => $request, 
       'office' => $office,
