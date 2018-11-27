@@ -95,7 +95,7 @@
                       "<'row'<'col-sm-5'i><'col-sm-7'p>>",
         ajax: "{{ url('request/custodian/?type=' . $type) }}",
         columns: [
-          { data: "local" },
+          { data: "local_id" },
           @if($type == 'pending')
             { data: 'date_requested' },
             { data: 'request_person'},

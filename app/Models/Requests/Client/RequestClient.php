@@ -83,7 +83,7 @@ class RequestClient extends Model implements Auditable, UserResolver
     }
     
     public $appends = [
-      'date_requested', 'date_released',  'remaining_days', 'expire_on', 'date_approved', 'date_cancelled'
+      'date_requested', 'date_released',  'remaining_days', 'expire_on', 'date_approved', 'date_cancelled', 'local_id'
     ];
   
     public function scopeFindOfficeRequest($query, $value)
@@ -105,6 +105,11 @@ class RequestClient extends Model implements Auditable, UserResolver
     public function getDateApprovedAttribute($value)
     {
       return isset($this->approved_at) ? Carbon\Carbon::parse($this->approved_at)->format(" d F Y h:m A") : "N/A";  
+    }
+
+    public function getLocalIdAttribute($value)
+    {
+      return isset($this->local) ? $this->local : "New Request";  
     }
 
     public function getDateCancelledAttribute($value)

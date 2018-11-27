@@ -94,7 +94,8 @@ class RequestCustodian extends Model implements Auditable, UserResolver
         'issue_person', 
         'release_person', 
         'cancel_person',
-        'request_remarks'
+        'request_remarks',
+        'local_id'
       ];
     
       public function scopeFindOfficeRequest($query, $value)
@@ -123,6 +124,11 @@ class RequestCustodian extends Model implements Auditable, UserResolver
         return isset($this->updated_at) ? Carbon\Carbon::parse($this->updated_at)->format(" d F Y h:m A") : "N/A";  
       }
   
+      public function getLocalIdAttribute($value)
+      {
+        return isset($this->local) ? $this->local : "New Request";  
+      }
+
       public function getRemainingDaysAttribute()
       {
         if($this->approved_at == null)  return 'No Approval';

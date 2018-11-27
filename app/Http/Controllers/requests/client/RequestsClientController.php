@@ -41,7 +41,8 @@ class RequestsClientController extends Controller
                 $requests = RequestClient::findOfficeRequest(Auth::user()->office)
                     ->where(function($query) {
                         $query->where('status','=','cancelled')
-                                ->orWhere('status','=','disapproved');
+                                ->orWhere('status','=','disapproved')
+                                ->orWhere('status','=','request expired');
                     })
                     ->orderBy('cancelled_at', 'desc')
                     ->get();
@@ -60,27 +61,6 @@ class RequestsClientController extends Controller
           ->with('title','Request');
     }
 
-    public function generate(Request $request) 
-    {
-        $now = Carbon\Carbon::now();
-        $const = $now->format('y') . '-' . $now->format('m');
-        $requests = RequestClient::orderBy('created_at','desc')->first();
-		$id = $requests->id + 1;
-	
-		if (strlen($id) == 1) 
-		  $requestCode =  '000'.$id;
-		elseif (strlen($id) == 2) 
-		  $requestCode =  '00'.$id;
-		elseif (strlen($id) == 3) 
-		  $requestCode =  '0'.$id;
-		elseif (strlen($id) == 4) 
-		  $requestCode =  $id;
-		else
-          $requestCode =  $id;
-          
-        return $const . '-' . $requestCode;
-    }
-
     public function store(Request $request)
     {
         $stocknumbers = $request->get("stocknumber");
@@ -90,13 +70,11 @@ class RequestsClientController extends Controller
         $office = App\Office::findByCode(Auth::user()->office)->id;
         $newRequest = new RequestClient;
         $newRequestDetails = new RequestDetailsClient;        
-        $code = $this->generate($request);
 
         $validator = Validator::make([
             'Purpose' => $request->get("purpose")
         ], $newRequest->requestRules(), $newRequest->requestMessages());
 
-        
         if($validator->fails()) {
             return redirect("request/client/create")
                 ->withInput()
@@ -124,7 +102,7 @@ class RequestsClientController extends Controller
         try{
             DB::beginTransaction();
             $newRequest = RequestClient::create([
-                'local' => $code,
+                'local' => null,
                 'requestor_id' => $requestor,
                 'issued_by' => null,
                 'office_id' => $office,

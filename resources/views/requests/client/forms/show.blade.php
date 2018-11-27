@@ -3,7 +3,7 @@
 @section('header')
 	<section class="content-header">
 		<legend>
-            <h3 class="text-muted">Requisition and Issuance No.: RIS-{{ $request->local }}</h3>
+            <h3 class="text-muted">Requisition and Issuance No.: {{ $request->local_id }}</h3>
         </legend>
 		<ul class="breadcrumb">
 			<li><a href="{{ url('request') }}">Request</a></li>
@@ -36,7 +36,7 @@
 			    <table class="table table-hover table-striped table-bordered table-condensed" id="requestTable" cellspacing="0" width="100%">
 				    <thead>
                         <tr rowspan="2">
-                            <th class="text-left" colspan="3">Request Slip:  <span style="font-weight:normal">{{ $request->local }}</span></th>
+                            <th class="text-left" colspan="3">Request Slip:  <span style="font-weight:normal">{{ $request->local_id }}</span></th>
                             <th class="text-left" colspan="3">Office:  <span style="font-weight:normal">{{ isset($request->office) ? $request->office->code : 'None' }}</span> </th>
                         </tr>
                         <tr rowspan="2">

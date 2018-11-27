@@ -87,7 +87,7 @@
                       "<'row'<'col-sm-5'i><'col-sm-7'p>>",
         ajax: "{{ url('request/client/?type=' . $type) }}",
         columns: [
-          { data: "local" },
+          { data: "local_id" },
           { data: 'date_requested' },
           { data: "purpose" },
           @if($type == 'approved')

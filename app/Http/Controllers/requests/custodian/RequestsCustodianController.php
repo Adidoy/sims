@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Requests\Custodian;
 
-
 use DB;
 use App;
 use PDF;
@@ -16,6 +15,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Requests\Signatory\RequestSignatory;
 use App\Models\Requests\Custodian\RequestCustodian;
 use App\Models\Requests\Client\RequestDetailsClient;
+use App\Models\Requests\Expiration\RequestExpiration;
 use App\Http\Controllers\Inventory\Stockcards\StockCardController;
 
 class RequestsCustodianController extends Controller
@@ -38,7 +38,8 @@ class RequestsCustodianController extends Controller
       } elseif ($request->type == 'disapproved') {
           $requests = RequestCustodian::where(function($query) {
                   $query->where('status','=','cancelled')
-                          ->orWhere('status','=','disapproved');
+                          ->orWhere('status','=','disapproved')
+                          ->orWhere('status','=','request expired');
               })
               ->orderBy('updated_at', 'desc')
               ->get();
@@ -79,7 +80,7 @@ class RequestsCustodianController extends Controller
     return view('requests.custodian.forms.approval')
       ->with('request', $requests)
       ->with('action', 'request')
-      ->with('title', "Approval :: RIS-".$requests->local);
+      ->with('title', "Approval :: ".$requests->local_id);
   }
 
   public function getReleaseForm(Request $request, $id)
@@ -101,8 +102,34 @@ class RequestsCustodianController extends Controller
     }
   }
 
+  public function generateCode() 
+  {
+    $requests = RequestCustodian::whereNotNull('local')->orderBy('created_at','desc')->first();
+    $id = substr($requests->local,6,4) + 1;
+    $now = Carbon\Carbon::now();
+    $year = substr($requests->local,0,2);
+    if($year != $now->format('y')) {
+      $id = 1;
+    }
+    
+    $const = $now->format('y') . '-' . $now->format('m');
+    if (strlen($id) == 1) 
+      $requestCode =  '000'.$id;
+    elseif (strlen($id) == 2) 
+      $requestCode =  '00'.$id;
+    elseif (strlen($id) == 3) 
+      $requestCode =  '0'.$id;
+    elseif (strlen($id) == 4) 
+      $requestCode =  $id;
+    else
+      $requestCode =  $id;
+        
+      return $const . '-' . $requestCode;
+  }
+
   public function approveRIS(Request $request, $id) 
   {
+    
     $quantity = $request->get('quantity');
     $comment = $request->get('comment');
     $stocknumbers = $request->get('stocknumber');
@@ -171,12 +198,21 @@ class RequestsCustodianController extends Controller
       }
 
       $updateRequest = RequestCustodian::find($id);
+      if (!isset($updateRequest->local)) {
+        $updateRequest->local = $this->generateCode();
+      }
       $updateRequest->supplies()->sync($array);
       $updateRequest->remarks = $remarks;
       $updateRequest->issued_by = $issued_by;
       $updateRequest->status = $action;
       $updateRequest->approved_at = Carbon\Carbon::now();
       $updateRequest->save();
+
+      $requestExpiration = new RequestExpiration;
+      $requestExpiration->request_id = $updateRequest->id;
+      $requestExpiration->date_requested = Carbon\Carbon::now();
+      $requestExpiration->expiration_date = Carbon\Carbon::now()->addDays(3);
+      $requestExpiration->save();
 
       DB::commit();
       \Alert::success('Request Approved!')->flash();

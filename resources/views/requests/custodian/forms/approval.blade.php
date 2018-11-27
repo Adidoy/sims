@@ -3,10 +3,10 @@
 @section('header')
 	<section class="content-header">
 	  <h1>
-	    Approval and Issuance :: RIS No.: {{ $request->local }}
+	    Approval and Issuance :: {{ $request->local_id }}
 	  </h1>
 	  <ol class="breadcrumb">
-	    <li><a href="{{ url('request') }}">RIS No: {{ $request->local }}</a></li>
+	    <li><a href="{{ url('request') }}">{{ $request->local_id }}</a></li>
 	    <li class="active">Approval</li>
 	  </ol>
 	</section>
@@ -20,7 +20,7 @@
       <table class="table table-hover table-striped table-bordered table-condensed" id="requestTable" cellspacing="0" width="100%">
         <thead>
           <tr rowspan="2">
-            <th class="text-left" colspan="15">Request Slip:  <span style="font-weight:normal">{{ $request->local }}</span></th>
+            <th class="text-left" colspan="15">Request Slip:  <span style="font-weight:normal">{{ $request->local_id }}</span></th>
             <th class="text-left" colspan="15">Office:  <span style="font-weight:normal">{{ isset($request->office) ? $request->office->name : 'None' }}</span> </th>
           </tr>
           <tr rowspan="2">
