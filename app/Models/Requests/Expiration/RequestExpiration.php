@@ -16,4 +16,9 @@ class RequestExpiration extends Model {
         'date_requested' , 
         'expiration_date'
       ];
+    
+    public function scopeFindByRequestId($query, $value)
+    {
+        return $query->where('request_id','=',$value);
+    }
 }

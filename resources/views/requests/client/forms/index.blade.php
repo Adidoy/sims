@@ -42,17 +42,26 @@
         <thead>
           <tr>
             <th class="col-sm-1 no-sort">Request No.</th>
+            @if($type == 'pending')
             <th class="col-sm-1 no-sort ">Request Date</th>
-            <th class="col-sm-1">Purpose</th>
-            @if($type == 'approved')
-              <th class="col-sm-1">Remarks</th>
+            <th class="col-sm-1 no-sort ">Request Processed By</th>
+              <th class="col-sm-1">Purpose</th>
+            @elseif($type == 'approved')
+              <th class="col-sm-1 no-sort ">Request Processed By</th>
               <th class="col-sm-1">Date Approved</th>
-            @elseif($type == 'released')
-              <th class="col-sm-1">Date Released</th>
-              @elseif($type == 'disapproved')
+              <th class="col-sm-1">Approved by</th>
               <th class="col-sm-1">Remarks</th>
-              <th class="col-sm-1">Status</th>
+            @elseif($type == 'released')
+              <th class="col-sm-1 no-sort ">Request Processed By</th>
+              <th class="col-sm-1">Date Released</th>
+              <th class="col-sm-1">Released By</th>
+              <th class="col-sm-1">Remarks</th>
+            @elseif($type == 'disapproved')
+              <th class="col-sm-1 no-sort ">Request Processed By</th>
               <th class="col-sm-1">Date Updated</th>
+              <th class="col-sm-1">Updated By</th>
+              <th class="col-sm-1">Status</th>
+              <th class="col-sm-1">Remarks</th>
             @endif
 
             <th class="col-sm-1 no-sort"></th>
@@ -88,17 +97,26 @@
         ajax: "{{ url('request/client/?type=' . $type) }}",
         columns: [
           { data: "local_id" },
+          @if($type == 'pending')
+            { data: "purpose" },
           { data: 'date_requested' },
-          { data: "purpose" },
-          @if($type == 'approved')
-          { data: "remarks" },
-          { data: "date_approved" },
+          { data: 'request_person' },
+          @elseif($type == 'approved')
+          { data: 'request_person' },
+            { data: "date_approved" },
+            { data: "issue_person" },
+            { data: "remarks" },
           @elseif($type == 'released')
-          { data: "date_released" },
+          { data: 'request_person' },
+            { data: "date_released" },
+            { data: "release_person" },
+            { data: "remarks" },
           @elseif($type == 'disapproved')
-          { data: "remarks" },
-          { data: "status" },
-          { data: "date_cancelled" },
+          { data: 'request_person' },
+            { data: "date_cancelled" },
+            { data: "cancel_person" },
+            { data: "status" },
+            { data: "remarks" },
           @endif
            
           { data: function(callback){

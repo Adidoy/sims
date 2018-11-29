@@ -36,15 +36,15 @@
 			    <table class="table table-hover table-striped table-bordered table-condensed" id="requestTable" cellspacing="0" width="100%">
 				    <thead>
                         <tr rowspan="2">
-                            <th class="text-left" colspan="3">Request Slip:  <span style="font-weight:normal">{{ $request->local_id }}</span></th>
+                            <th class="text-left" colspan="2">Request Slip:  <span style="font-weight:normal">{{ $request->local_id }}</span></th>
                             <th class="text-left" colspan="3">Office:  <span style="font-weight:normal">{{ isset($request->office) ? $request->office->code : 'None' }}</span> </th>
                         </tr>
                         <tr rowspan="2">
-                            <th class="text-left" colspan="3">Status:  <span style="font-weight:normal">{{ ($request->status == '') ? ucfirst(config('app.default_status')) : $request->status }}</span> </th>
+                            <th class="text-left" colspan="2">Status:  <span style="font-weight:normal">{{ ($request->status == '') ? ucfirst(config('app.default_status')) : $request->status }}</span> </th>
                             <th class="text-left" colspan="3">Processed by:  <span style="font-weight:normal">{{ $request->requestor->fullname }}, {{ $request->requestor->position }}</span> </th>
                         </tr>
                         <tr rowspan="2">
-                            <th class="text-left" colspan="3">Purpose:  <span style="font-weight:normal">{{ $request->purpose }}</span> </th>
+                            <th class="text-left" colspan="2">Purpose:  <span style="font-weight:normal">{{ $request->purpose }}</span> </th>
                             <th class="text-left" colspan="3">Remarks:  <span style="font-weight:normal">{{ $request->remarks }}</span> </th>
                         </tr>
                         <tr>          
@@ -52,7 +52,6 @@
 						    <th>Details</th>
 						    <th>Quantity Requested</th>
 						    <th>Quantity Issued</th>
-						    <th>Quantity Released</th>
 						    <th>Notes</th>
 					    </tr>
 				    </thead>
@@ -79,7 +78,6 @@
                         { data: "details" },
                         { data: "pivot.quantity_requested" },
                         { data: "pivot.quantity_issued" },
-                        { data: "pivot.quantity_released" },
                         { data: "pivot.comments" }
                 ],
             });

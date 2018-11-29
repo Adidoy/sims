@@ -52,6 +52,7 @@
               <th class="col-md-1 no-sort ">Requestor</th>
               <th class="col-md-1 no-sort ">Office</th>
               <th class="col-md-1 no-sort ">Approved and Issued By</th>
+              <th class="col-md-1 no-sort ">Expiration Date</th>
               <th class="col-md-1">Remarks</th>
             @elseif($type == 'released')
               <th class="col-md-1">Date Released</th>
@@ -106,6 +107,7 @@
             { data: 'request_person'},
             { data: "office_name" },
             { data: "issue_person" },
+            { data: "date_expiry" },
             { data: "request_remarks" },
           @elseif($type == 'released')
             { data: "date_released" },
@@ -127,6 +129,5 @@
         ],
       });
     });
-
-</script> 
+  </script> 
 @endsection

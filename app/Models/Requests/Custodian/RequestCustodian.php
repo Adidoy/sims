@@ -8,6 +8,7 @@ use Carbon;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\UserResolver;
+use App\Models\Requests\Expiration\RequestExpiration;
 
 class RequestCustodian extends Model implements Auditable, UserResolver
 {
@@ -82,131 +83,140 @@ class RequestCustodian extends Model implements Auditable, UserResolver
         ];
       }
       
-      public $appends = [
-        'office_name', 
-        'date_approved', 
-        'date_requested', 
-        'date_released', 
-        'date_updated', 
-        'remaining_days', 
-        'expire_on', 
-        'request_person',  
-        'issue_person', 
-        'release_person', 
-        'cancel_person',
-        'request_remarks',
-        'local_id'
-      ];
+    public $appends = [
+      'office_name', 
+      'date_approved', 
+      'date_requested', 
+      'date_released', 
+      'date_updated',
+      'date_expiry',
+      'remaining_days', 
+      'expire_on', 
+      'request_person',  
+      'issue_person', 
+      'release_person', 
+      'cancel_person',
+      'request_remarks',
+      'local_id',
+    ];
     
-      public function scopeFindOfficeRequest($query, $value)
-      {
-        $officeID = App\Office::where('code','=',$value)->pluck('id')->first();
-        return $query->where('office_id','=',$officeID);
-      }
-  
-      public function getDateRequestedAttribute($value)
-      {
-        return $this->created_at->format("d F Y h:m A");
-      }
-  
-      public function getDateReleasedAttribute($value)
-      {
-        return isset($this->released_at) ? Carbon\Carbon::parse($this->released_at)->format(" d F Y h:m A") : "N/A";  
-      }
-  
-      public function getDateApprovedAttribute($value)
-      {
-        return isset($this->approved_at) ? Carbon\Carbon::parse($this->approved_at)->format(" d F Y h:m A") : "N/A";  
-      }
+    public function scopeFindOfficeRequest($query, $value)
+    {
+      $officeID = App\Office::where('code','=',$value)->pluck('id')->first();
+      return $query->where('office_id','=',$officeID);
+    }
 
-      public function getDateUpdatedAttribute($value)
-      {
-        return isset($this->updated_at) ? Carbon\Carbon::parse($this->updated_at)->format(" d F Y h:m A") : "N/A";  
-      }
-  
-      public function getLocalIdAttribute($value)
-      {
-        return isset($this->local) ? $this->local : "New Request";  
-      }
+    public function getDateRequestedAttribute($value)
+    {
+      return $this->created_at->format("d F Y h:m A");
+    }
 
-      public function getRemainingDaysAttribute()
-      {
-        if($this->approved_at == null)  return 'No Approval';
-        if($this->approved_at != null && $this->released_at != null)  return 'Released';
-        if(ucfirst($this->status) == 'Cancelled')  return 'Cancelled';
-        if(ucfirst($this->status) == 'Disapproved')  return 'Disapproved';
-        
-        $approved_date = Carbon\Carbon::parse($this->approved_at);
-        $date = Carbon\Carbon::now();
-        
-        return $approved_date->diffInDays($date);
-      }
+    public function getDateReleasedAttribute($value)
+    {
+      return isset($this->released_at) ? Carbon\Carbon::parse($this->released_at)->format("d F Y h:m A") : "N/A";  
+    }
 
-      public function getOfficeNameAttribute() 
-      {
-        return isset($this->office_id) ? strtoupper(App\Office::find($this->office_id)->name) : "None";
-      }
+    public function getDateApprovedAttribute($value)
+    {
+      return isset($this->approved_at) ? Carbon\Carbon::parse($this->approved_at)->format("d F Y h:m A") : "N/A";  
+    }
 
-      public function getRequestPersonAttribute() 
-      {
-        return isset($this->requestor_id) ? strtoupper(App\User::find($this->requestor_id)->fullname) : "None";
-      }
+    public function getDateUpdatedAttribute($value)
+    {
+      return isset($this->updated_at) ? Carbon\Carbon::parse($this->updated_at)->format("d F Y h:m A") : "N/A";  
+    }
 
-      public function getIssuePersonAttribute() 
-      {
-        return isset($this->issued_by) ? strtoupper(App\User::find($this->issued_by)->fullname) : "None";
-      }
+    public function getDateExpiryAttribute()
+    {
+      $expirationDate = RequestExpiration::where('request_id','=',$this->id)->pluck('expiration_date')->first();
+      return isset($expirationDate) ? Carbon\Carbon::parse($expirationDate)->format("d F Y")." 05:00 PM" : "N/A";  
+      // return $expirationDate;
+    }
 
-      public function getReleasePersonAttribute() 
-      {
-        return isset($this->released_by) ? strtoupper(App\User::find($this->released_by)->fullname) : "None";
-      }
+    public function getLocalIdAttribute($value)
+    {
+      return isset($this->local) ? $this->local : "New Request";  
+    }
 
-      public function getCancelPersonAttribute() 
-      {
-        return isset($this->cancelled_by) ? strtoupper(App\User::find($this->cancelled_by)->fullname) : "None";
-      }
+    public function getRemainingDaysAttribute()
+    {
+      if($this->approved_at == null)  return 'No Approval';
+      if($this->approved_at != null && $this->released_at != null)  return 'Released';
+      if(ucfirst($this->status) == 'Cancelled')  return 'Cancelled';
+      if(ucfirst($this->status) == 'Disapproved')  return 'Disapproved';
+      
+      $approved_date = Carbon\Carbon::parse($this->approved_at);
+      $date = Carbon\Carbon::now();
+      
+      return $approved_date->diffInDays($date);
+    }
 
-      public function getRequestRemarksAttribute() 
-      {
-        $remarks = $this->remarks;
-        if (isset($remarks)) {
-          if($remarks == "") {
-            $remarks = "No Remarks";
-          }
-        } else {
+    public function getOfficeNameAttribute() 
+    {
+      return isset($this->office_id) ? strtoupper(App\Office::find($this->office_id)->name) : "None";
+    }
+
+    public function getRequestPersonAttribute() 
+    {
+      return isset($this->requestor_id) ? strtoupper(App\User::find($this->requestor_id)->fullname) : "None";
+    }
+
+    public function getIssuePersonAttribute() 
+    {
+      return isset($this->issued_by) ? strtoupper(App\User::find($this->issued_by)->fullname) : "None";
+    }
+
+    public function getReleasePersonAttribute() 
+    {
+      return isset($this->released_by) ? strtoupper(App\User::find($this->released_by)->fullname) : "None";
+    }
+
+    public function getCancelPersonAttribute() 
+    {
+      return isset($this->cancelled_by) ? $this->cancelled_by == 'SYSTEM' ? $this->cancelled_by : strtoupper(App\User::find($this->cancelled_by)->fullname) : "None";
+    }
+
+    public function getRequestRemarksAttribute() 
+    {
+      $remarks = $this->remarks;
+      if (isset($remarks)) {
+        if($remarks == "") {
           $remarks = "No Remarks";
         }
-        return $remarks;
+      } else {
+        $remarks = "No Remarks";
       }
-  
-      public function getStatusAttribute($value) 
+      return $remarks;
+    }
+
+    public function getStatusAttribute($value) 
+    {
+      if($value == null) return 'Pending';
+      return ucfirst($value);
+    }
+
+    public function getExpireOnAttribute()
+    {
+      if( $this->approved_at == null ) return 'No Approval';
+
+      return Carbon\Carbon::parse($this->approved_at)->toFormattedDateString();
+    }
+
+    public function supplies()
       {
-        if($value == null) return 'Pending';
-        return ucfirst($value);
-      }
-  
-      public function getExpireOnAttribute()
-      {
-        if( $this->approved_at == null ) return 'No Approval';
-  
-        return Carbon\Carbon::parse($this->approved_at)->toFormattedDateString();
-      }
-  
-      public function supplies()
-        {
-            return $this->belongsToMany('App\Supply','requests_supplies', 'request_id', 'supply_id')
-          ->withPivot('quantity_requested', 'quantity_issued', 'quantity_released', 'comments')
-          ->withTimestamps();
-      }
-      
-      public function office()
-      {
-        return $this->belongsTo('App\Office','office_id','id');
-      }
-  
-      public function requestor()
-      {
-        return $this->belongsTo('App\User','requestor_id','id');
-      }
+          return $this->belongsToMany('App\Supply','requests_supplies', 'request_id', 'supply_id')
+        ->withPivot('quantity_requested', 'quantity_issued', 'quantity_released', 'comments')
+        ->withTimestamps();
+    }
+    
+    public function office()
+    {
+      return $this->belongsTo('App\Office','office_id','id');
+    }
+
+    public function requestor()
+    {
+      return $this->belongsTo('App\User','requestor_id','id');
+    }
+
 }

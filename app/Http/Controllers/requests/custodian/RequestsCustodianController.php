@@ -304,7 +304,7 @@ class RequestsCustodianController extends Controller
     $array = [];
     $remarks = $request->get('remarks');
     $action = $request->get('action');
-    $issued_by = Auth::user()->id;
+    $cancelled_by = Auth::user()->id;
 
     try {
 
@@ -329,7 +329,7 @@ class RequestsCustodianController extends Controller
       
       $updateRequest = RequestCustodian::find($id);
       $updateRequest->remarks = $remarks;
-      $updateRequest->issued_by = $issued_by;
+      $updateRequest->cancelled_by = $cancelled_by;
       $updateRequest->status = $action; 
       $updateRequest->approved_at = Carbon\Carbon::now();
       $updateRequest->save();
