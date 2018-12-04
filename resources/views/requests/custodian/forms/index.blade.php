@@ -66,6 +66,7 @@
               <th class="col-md-1 no-sort ">Office</th>
               <th class="col-md-1">Status</th>
               <th class="col-md-1">Remarks</th>
+              <th class="col-md-1">Updated by</th>
             @endif
 
             <th class="col-md-1 no-sort"></th>
@@ -121,6 +122,7 @@
             { data: "office_name" },
             { data: "status" },
             { data: "request_remarks" },
+            { data: "cancel_person" },
           @endif
 
           { data: function(callback){

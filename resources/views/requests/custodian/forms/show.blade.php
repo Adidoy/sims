@@ -60,16 +60,8 @@
                             <th>Stock Number</th>
 						    <th>Details</th>
 						    <th>Quantity Requested</th>
-                            @if(isset( $request->status ))
-                                @if( $request->status == 'Approved')   
-                                    <th>Quantity Issued</th>
-                                    <th>Notes</th>
-                                @elseif( $request->status == 'Released')
-                                    <th>Quantity Issued</th>
-                                    <th>Quantity Released</th>
-                                    <th>Notes</th>
-                                @endif       
-                            @endif
+                            <th>Quantity Issued</th>
+                            <th>Notes</th>
 					    </tr>
 				    </thead>
 			    </table>
@@ -94,14 +86,8 @@
                         { data: "stocknumber" },
                         { data: "details" },
                         { data: "pivot.quantity_requested" },
-                        @if($request->status == 'Approved')   
-                            { data: "pivot.quantity_issued" },
-                            { data: "pivot.comments" },
-                        @elseif($request->status == 'Released')
-                            { data: "pivot.quantity_issued" },
-                            { data: "pivot.quantity_released" },
-                            { data: "pivot.comments" },
-                        @endif       
+                        { data: "pivot.quantity_issued" },
+                        { data: "pivot.comments" },
                 ],
             });
 
