@@ -14,7 +14,7 @@ class CreateMonthlyledgerView extends Migration
     public function up()
     {
         DB::statement("
-          CREATE VIEW monthlyledger_v AS
+          CREATE DEFINER=`root`@`localhost` VIEW monthlyledger_v AS
           SELECT
                 max(reference) as reference,
                 max(date) as date,

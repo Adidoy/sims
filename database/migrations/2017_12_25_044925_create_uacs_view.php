@@ -14,7 +14,7 @@ class CreateUacsView extends Migration
     public function up()
     {
         DB::statement("
-            CREATE VIEW uacs_v AS
+            CREATE DEFINER=`root`@`localhost` VIEW uacs_v AS
             SELECT
                 purchaseorders.date_received AS date_received,
                 supplies.stocknumber AS stocknumber,

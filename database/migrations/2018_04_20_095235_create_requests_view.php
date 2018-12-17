@@ -14,7 +14,7 @@ class CreateRequestsView extends Migration
     public function up()
     {
         DB::STATEMENT("
-            CREATE VIEW requests_v AS
+            CREATE DEFINER=`root`@`localhost` VIEW requests_v AS
             SELECT 
             o.code,
             o.name,

@@ -89,6 +89,7 @@ class RequestCustodian extends Model implements Auditable, UserResolver
       'date_requested', 
       'date_released', 
       'date_updated',
+      'date_cancelled',
       'date_expiry',
       'remaining_days', 
       'expire_on', 
@@ -124,6 +125,11 @@ class RequestCustodian extends Model implements Auditable, UserResolver
     public function getDateUpdatedAttribute($value)
     {
       return isset($this->updated_at) ? Carbon\Carbon::parse($this->updated_at)->format("d F Y h:m A") : "N/A";  
+    }
+
+    public function getDateCancelledAttribute($value)
+    {
+      return isset($this->cancelled_at) ? Carbon\Carbon::parse($this->cancelled_at)->format("d F Y h:m A") : "N/A";  
     }
 
     public function getDateExpiryAttribute()

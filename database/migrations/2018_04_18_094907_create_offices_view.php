@@ -14,7 +14,7 @@ class CreateOfficesView extends Migration
     public function up()
     {
     DB::statement("
-        CREATE VIEW offices_v AS
+        CREATE DEFINER=`root`@`localhost` VIEW offices_v AS
         SELECT o1.id AS 'office_id',
                IFNULL(o4.id,IFNULL(o3.id,IFNULL(o2.id,o1.id))) AS 'sector_id',
                o1.code AS 'level1',

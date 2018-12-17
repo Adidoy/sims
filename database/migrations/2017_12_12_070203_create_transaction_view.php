@@ -14,7 +14,7 @@ class CreateTransactionView extends Migration
     public function up()
     {
         DB::statement("
-            CREATE VIEW transaction_v AS
+            CREATE DEFINER=`root`@`localhost` VIEW transaction_v AS
             SELECT 
                 stockcards.id as id,
                 stockcards.date as date,

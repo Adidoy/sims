@@ -117,7 +117,7 @@
             { data: 'release_person'},
             { data: "request_remarks" },
           @elseif($type == 'disapproved')
-            { data: "date_updated" },
+            { data: "date_cancelled" },
             { data: 'request_person'},
             { data: "office_name" },
             { data: "status" },
