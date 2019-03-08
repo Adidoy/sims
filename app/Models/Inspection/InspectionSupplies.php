@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models\Inspection;
 
 use Carbon;
 use Illuminate\Database\Eloquent\Model;

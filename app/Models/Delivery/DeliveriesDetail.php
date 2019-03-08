@@ -1,9 +1,7 @@
 <?php
 
-namespace App;
+namespace App\Models\Delivery;
 
-use App\Supply;
-use App\DeliveryHeader;
 use Illuminate\Database\Eloquent\Model;
 
 class DeliveriesDetail extends Model

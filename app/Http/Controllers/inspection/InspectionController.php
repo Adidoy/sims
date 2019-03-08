@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Inspection;
 
 use DB;
 use App;
@@ -8,15 +8,18 @@ use Auth;
 use Carbon;
 use Validator;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\Inspection\Inspection;
+use App\Models\Delivery\DeliveryHeader;
+use App\Models\Inspection\InspectionSupplies;
 
 class InspectionController extends Controller 
 {
 
     public function index(Request $request) 
     {
-        $deliveries = App\Inspection::findAllDeliveries();
+        $deliveries = Inspection::findAllDeliveries();
         if($request->ajax()) {
-            
 			return datatables($deliveries)->toJson();
 		}
         return view('inspection.supplies.forms.index')
@@ -25,7 +28,7 @@ class InspectionController extends Controller
 
     public function show(Request $request, $id) 
     {
-        $delivery = App\DeliveryHeader::with('supplies')->find($id);
+        $delivery = DeliveryHeader::with('supplies')->find($id);
         return view('inspection.supplies.forms.inspect')
             ->with('delivery', $delivery);
     }
@@ -34,18 +37,18 @@ class InspectionController extends Controller
     {
         if($id == null) {
             if($request->ajax()) {
-                $inspection = App\Inspection::get();
+                $inspection = Inspection::get();
                 return datatables($inspection)->toJson();
             }
             return view('inspection.supplies.forms.show-inspected')
                 ->with('title', 'Inspection');
         } else {
-            $inspection = App\Inspection::with('supplies')->find($id);
+            $inspection = Inspection::with('supplies')->find($id);
             if($request->ajax()) {
                 $supplies = $inspection->supplies;
                 return json_encode([
                     'data' => $supplies
-               ]);
+                ]);
             }
             return view('inspection.supplies.forms.show-approval')
                 ->with('inspection', $inspection)
@@ -57,9 +60,9 @@ class InspectionController extends Controller
     {
         $remarks = "Complete";
 
-        $inspectionHeader = new App\Inspection;
+        $inspectionHeader = new Inspection;
         $inspector = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
-        $delivery = App\DeliveryHeader::findByLocal($request->get("deliveryLocal"));
+        $delivery = DeliveryHeader::findByLocal($request->get("deliveryLocal"));
         $stocknumbers = $request->get("stocknumber");
         $quantity = $request->get("quantity");
         $unit_cost = $request->get("unit_cost");
@@ -71,19 +74,19 @@ class InspectionController extends Controller
         foreach($stocknumbers as $stocknumber) {
             if($quantity_passed["$stocknumber"] > $quantity["$stocknumber"]) {
                 DB::rollback();
-                return redirect('inspection/supply/'.$delivery->id.'/')
+                return redirect('inspection/supplies/'.$delivery->id.'/')
                     ->withInput()
                     ->withErrors(array('message' => 'Quantity Passed must not exceed the Quantity Delivered.'));
             }
             if($quantity_passed["$stocknumber"] < 0) {
                 DB::rollback();
-                return redirect('inspection/supply/'.$delivery->id.'/')
+                return redirect('inspection/supplies/'.$delivery->id.'/')
                     ->withInput()
                     ->withErrors(array('message' => 'Negative values are not allowed.'));
             }
             if(($comment["$stocknumber"] == null)||($comment["$stocknumber"] == '')||($comment["$stocknumber"] == ' ')) {
                 DB::rollback();
-                return redirect('inspection/supply/'.$delivery->id.'/')
+                return redirect('inspection/supplies/'.$delivery->id.'/')
                     ->withInput()
                     ->withErrors(array('message' => 'Please provide comments for each item inspected.'));
             }
@@ -96,7 +99,7 @@ class InspectionController extends Controller
             }
         }
 
-        $inspectionHeader = App\Inspection::create([
+        $inspectionHeader = Inspection::create([
             'local' => $this->generateLocalCode($request),
             'delivery_id' => $delivery->id,
             'inspection_personnel' => $inspector,
@@ -105,7 +108,7 @@ class InspectionController extends Controller
         ]);
         foreach($stocknumbers as $stocknumber) {
             $supply = App\Supply::StockNumber($stocknumber)->first();
-            App\InspectionSupplies::create([
+            InspectionSupplies::create([
                 'inspection_id' => $inspectionHeader->id,
                 'supply_id' =>   $supply->id,
                 'unit_cost' =>   $unit_cost["$stocknumber"],
@@ -116,28 +119,28 @@ class InspectionController extends Controller
         }
         DB::commit();
         \Alert::success('Inspection Report created successfully!')->flash();
-		return redirect('/inspection/supply/');       
+		return redirect('/inspection/supplies/');       
     }
 
     public function approveInspection(Request $request, $id, $action)
     {
         if ($action == "approve") {
             DB::beginTransaction();
-                $inspection = App\Inspection::find($id);
+                $inspection = Inspection::find($id);
                 $inspection->inspection_approval = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
                 $inspection->inspection_approval_date = Carbon\Carbon::now();
                 $inspection->save();
             DB::commit();
             \Alert::success('Inspection Report is approved!')->flash();
-            return redirect('/inspection/view/supply'); 
+            return redirect('/inspection/supplies/view'); 
         } else {
             try{
                 DB::beginTransaction();
-                    $inspection = App\Inspection::with('supplies')->find($id);
+                    $inspection = Inspection::with('supplies')->find($id);
                     $inspection->property_custodian_acknowledgement = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
                     $inspection->property_custodian_acknowledgement_date = Carbon\Carbon::now();
                     $inspection->save();
-                    $delivery = App\DeliveryHeader::find($inspection->delivery_id);
+                    $delivery = DeliveryHeader::find($inspection->delivery_id);
                     foreach($inspection->supplies as $supply) {
                         $balance = App\StockCard::findBalanceQuantity($supply->id);
                         $stockCard = new App\StockCard;
@@ -155,11 +158,11 @@ class InspectionController extends Controller
                     }
                 DB::commit();
                 \Alert::success('Inspection Report is is acknowledged! Stock cards updated!')->flash();
-                return redirect('/inspection/view/supply'); 
+                return redirect('/inspection/supplies/view'); 
             } catch(\Exception $e) {
                 DB::rollback();
                 \Alert::error('An error occured! Please try again. Message: '.$e->getMessage())->flash();
-                return redirect('/inspection/view/supply'); 
+                return redirect('/inspection/supplies/view'); 
             }
         }
       
@@ -169,7 +172,7 @@ class InspectionController extends Controller
     {
 		$now = Carbon\Carbon::now();
 		$const = $now->format('y') . '-' . $now->format('m');
-		$id = count(App\Inspection::get()) + 1;
+		$id = count(Inspection::get()) + 1;
 	
 		if (strlen($id) == 1) 
 		  $trxCode =  '000'.$id;
@@ -188,7 +191,7 @@ class InspectionController extends Controller
     public function print(Request $request, $id)
 	{
 		$orientation = 'Portrait';
-        $inspection = App\Inspection::with('delivery')->with('supplies')->find($id);
+        $inspection = Inspection::with('delivery')->with('supplies')->find($id);
 		$data = [
 			'inspection' => $inspection
 		];

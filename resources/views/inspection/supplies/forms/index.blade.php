@@ -47,7 +47,7 @@
 								"<'row'<'col-sm-12'tr>>" +
 								"<'row'<'col-sm-5'i><'col-sm-7'p>>",
 				"processing": true,
-				ajax: "{{ url('inspection/supply/') }}",
+				ajax: "{{ url('inspection/supplies/') }}",
 				columns: [
 					{ data: "local" },
 					{ data: "name" },
@@ -58,7 +58,7 @@
 					{ data: "user_name" },
 					{ data: function(callback){
 						return `
-							<a href="{{ url('inspection/supply') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i>  Inspect</a>
+							<a href="{{ url('inspection/supplies') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i>  Inspect</a>
 						`;
 					} }
 				],

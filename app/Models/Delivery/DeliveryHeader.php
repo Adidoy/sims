@@ -1,8 +1,9 @@
 <?php
 
-namespace App;
+namespace App\Models\Delivery;
 
 use DB;
+use App;
 use Auth;
 use Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -77,7 +78,7 @@ class DeliveryHeader extends Model
 
     public function getUserNameAttribute()
     {
-        $user = User::find($this->received_by);
+        $user = App\User::find($this->received_by);
         return $user->full_name;
     }
 

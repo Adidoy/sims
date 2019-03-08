@@ -65,7 +65,7 @@
 				searchPlaceholder: "Search..."
 			},
 			"processing": true,
-			ajax: "{{ url("delivery/supply/$delivery->id") }}",
+			ajax: "{{ url("delivery/supplies/$delivery->id") }}",
 			columnDefs: [{
 					targets: [3,4],
 					className: "text-right"

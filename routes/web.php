@@ -11,6 +11,8 @@
 |
 */
 
+App\Http\Modules\Delivery\Routes::all();
+App\Http\Modules\Inspection\Routes::all();
 App\Http\Modules\Maintenance\Routes::all();
 App\Http\Modules\Requests\Client\Routes::all();
 App\Http\Modules\Requests\Custodian\Routes::all();
@@ -59,21 +61,6 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('request/{type}/count', 'RequestController@count');
 
 	Route::middleware(['except-offices'])->group(function(){
-
-		
-		Route::get('inspection/supply/', 'InspectionController@index');
-		Route::get('inspection/supply/{id}/', 'InspectionController@show');
-		Route::get('inspection/view/supply/', 'InspectionController@showInspected');
-		Route::get('inspection/view/supply/{id?}', 'InspectionController@showInspected');
-		Route::post('inspection/supply/accept/',[
-			'as' => 'inspection.accept',
-			'uses'=>'InspectionController@store'
-		]);
-		Route::post('inspection/supply/{id}/action={action}/',[
-			'as' => 'inspection.approve',
-			'uses'=>'InspectionController@approveInspection'
-		]);
-		Route::get('inspection/supply/{id}/print', 'InspectionController@print');
 
 		//====================== old codes ===========================
 		Route::get('rsmi', [
@@ -131,14 +118,14 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::middleware(['amo'])->group(function(){
 
-		Route::post('delivery/supply/create',[
-			'as' => 'delivery.supply.create',
-			'uses' => 'DeliveryController@store'
-		]);
-		Route::get('delivery/supply/create','DeliveryController@create');
-		Route::resource('delivery/supply', 'DeliveryController');
-		Route::get('delivery/supply/{id}/', 'DeliveryController@show');
-		Route::get('delivery/supply/{id}/print', 'DeliveryController@print');
+		// Route::post('delivery/supply/create',[
+		// 	'as' => 'delivery.supply.create',
+		// 	'uses' => 'DeliveryController@store'
+		// ]);
+		// Route::get('delivery/supply/create','DeliveryController@create');
+		// Route::resource('delivery/supply', 'DeliveryController');
+		// Route::get('delivery/supply/{id}/', 'DeliveryController@show');
+		// Route::get('delivery/supply/{id}/print', 'DeliveryController@print');
 
 		//========================== Old Code Starts Here ========================//
 

@@ -1,9 +1,10 @@
 <?php
 
-namespace App;
+namespace App\Models\Inspection;
 
-use Carbon;
 use DB;
+use Carbon;
+use App\Models\Delivery\DeliveryHeader;
 use Illuminate\Database\Eloquent\Model;
 
 class Inspection extends Model {
@@ -88,7 +89,7 @@ class Inspection extends Model {
 
 	public function delivery() 
 	{
-        return $this->hasOne('App\DeliveryHeader', 'id', 'delivery_id');
+        return $this->hasOne('App\Models\Delivery\DeliveryHeader', 'id', 'delivery_id');
 	}
 	
 	public function supplies()

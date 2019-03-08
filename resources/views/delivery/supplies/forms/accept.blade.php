@@ -5,7 +5,7 @@
 		<legend><h3 class="text-muted">Item Delivery</h3></legend>
 			<ul class="breadcrumb">
 				<li>Supply Inventory</li>
-				<li class="active"><a href="{{ url('delivery/supply/create/') }}">Item Delivery</a></li>
+				<li class="active"><a href="{{ url('delivery/supplies/create/') }}">Item Delivery</a></li>
 			</ul>
 	</section>
 @endsection

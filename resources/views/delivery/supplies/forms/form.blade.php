@@ -254,7 +254,7 @@
 				<button type="button" id="accept" class="btn btn-md btn-primary btn-block" data-loading-text="Submitting..." autocomplete="off">Accept Delivery</button>
 			</div>
 			<div class="btn-group">
-				<button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('/delivery/supply') }}"'>Cancel</button>
+				<button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('/delivery/supplies/') }}"'>Cancel</button>
 			</div>
 		</div>
 	</div>

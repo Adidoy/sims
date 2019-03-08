@@ -35,7 +35,7 @@
                     <button type="button" id="save" class="btn btn-md btn-danger btn-block">Submit</button>
                 </div>
                 <div class="btn-group">
-                    <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('/inspection/supply') }}"'>Cancel</button>
+                    <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('/inspection/supplies/view') }}"'>Cancel</button>
                 </div>
             </div>
         </div>

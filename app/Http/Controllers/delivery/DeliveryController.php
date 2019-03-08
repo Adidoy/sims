@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Delivery;
 
 use DB;
 use App;
@@ -11,13 +11,16 @@ use Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Input;
+use App\Models\Delivery\DeliveryHeader;
+use App\Models\Delivery\DeliveriesDetail;
+
 
 class DeliveryController extends Controller {
 
 	public function index(Request $request) 
 	{
 		if($request->ajax()) {
-			$deliveries = App\DeliveryHeader::with('supplier')->get();
+			$deliveries = DeliveryHeader::with('supplier')->get();
 			return datatables($deliveries)->toJson();
 		}
 		return view('delivery.supplies.forms.index')
@@ -35,7 +38,7 @@ class DeliveryController extends Controller {
 
 	public function show(Request $request, $id) 
 	{
-		$delivery = App\DeliveryHeader::with('supplies')->find($id);
+		$delivery = DeliveryHeader::with('supplies')->find($id);
     	if($request->ajax()) {
         	$supplies = $delivery->supplies;
         	return json_encode([
@@ -49,7 +52,7 @@ class DeliveryController extends Controller {
 
 	public function store(Request $request)	
 	{
-		$deliveryHeader = new App\DeliveryHeader;
+		$deliveryHeader = new DeliveryHeader;
 		$supplier = App\Supplier::findBySupplierName($request->get("supplier"))->first();
 		//$userName = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
 		$stocknumbers = $request->get("stocknumber");
@@ -63,13 +66,13 @@ class DeliveryController extends Controller {
 		],$deliveryHeader->rules(),$deliveryHeader->messages());
 
 		if($validator->fails()) {
-			return redirect('delivery/supply/create')
+			return redirect('delivery/supplies/create')
 				->withInput()
 				->withErrors($validator);
 		}
 		
 		DB::beginTransaction();
-			$deliveryHeader = App\DeliveryHeader::create([
+			$deliveryHeader = DeliveryHeader::create([
 				'local' => $this->generateLocalCode($request),
 				'supplier_id' => $supplier->id,
 				'purchaseorder_no' => $request->get('po_no'),
@@ -82,7 +85,7 @@ class DeliveryController extends Controller {
 			]);
 			foreach($stocknumbers as $stocknumber) {
 				$supply = App\Supply::StockNumber($stocknumber)->first();
-				App\DeliveriesDetail::create([
+				DeliveriesDetail::create([
 					'delivery_id' => $deliveryHeader->id,
 					'supply_id' =>   $supply->id,
 					'quantity_delivered' => $quantity["$stocknumber"],
@@ -91,14 +94,14 @@ class DeliveryController extends Controller {
 			}
 		DB::commit();
 		\Alert::success('Supplies Delivery Recorded')->flash();
-		return redirect('delivery/supply/');
+		return redirect('delivery/supplies/');
 	}
 
 	public function generateLocalCode(Request $request) 
 	{
 		$now = Carbon\Carbon::now();
 		$const = $now->format('y') . '-' . $now->format('m');
-		$id = count(App\DeliveryHeader::get()) + 1;
+		$id = count(DeliveryHeader::get()) + 1;
 	
 		if (strlen($id) == 1) 
 		  $trxCode =  '000'.$id;
@@ -117,7 +120,7 @@ class DeliveryController extends Controller {
 	public function print(Request $request, $id)
 	{
 		$orientation = 'Portrait';
-		$delivery = App\DeliveryHeader::with('supplies')->find($id);
+		$delivery = DeliveryHeader::with('supplies')->find($id);
 		$data = [
 			'delivery' => $delivery
 		];

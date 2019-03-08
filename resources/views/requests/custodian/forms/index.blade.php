@@ -2,7 +2,7 @@
 
 @section('header')
   <section class="content-header">
-    @if($type =='pending')
+    @if($type == 'pending')
       <h1>Pending Requests</h1>
       <ol class="breadcrumb">
         <li>Requests</li>
@@ -51,7 +51,7 @@
               <th class="col-md-1">Date Approved</th>
               <th class="col-md-1 no-sort ">Requestor</th>
               <th class="col-md-1 no-sort ">Office</th>
-              <th class="col-md-1 no-sort ">Approved and Issued By</th>
+              <th class="col-md-1 no-sort ">Approved By</th>
               <th class="col-md-1 no-sort ">Expiration Date</th>
               <th class="col-md-1">Remarks</th>
             @elseif($type == 'released')
@@ -68,7 +68,6 @@
               <th class="col-md-1">Remarks</th>
               <th class="col-md-1">Updated by</th>
             @endif
-
             <th class="col-md-1 no-sort"></th>
           </tr>
         </thead>

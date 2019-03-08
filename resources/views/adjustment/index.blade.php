@@ -3,7 +3,7 @@
 @section('header')
 	<section class="content-header">
 	  <h1>
-	    Adjustments
+	    Inventory Adjustment
 	  </h1>
 	  <ol class="breadcrumb">
 	    <li>Adjustment</li>
@@ -66,6 +66,13 @@
                 } }
         ],
     });
+
+		$("div.toolbar").html(`
+				<a href="{{ url('delivery/supplies/create') }}" class="btn btn-sm btn-primary">
+					<span class="glyphicon glyphicon-tag ladda-button" aria-hidden="true"></span>
+					<span id="nav-text">Create New Inventory Adjustment</span>
+				</a>
+		`);
 
     $('#adjustmentTable').on('click','button.remove',function(){
       var removeButton = $(this);

@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Auth;
 
-class AMOFilter
+class SuppliesChiefFilter
 {
     /**
      * Handle an incoming request.
@@ -16,12 +16,9 @@ class AMOFilter
      */
     public function handle($request, Closure $next)
     {
-
-        if(Auth::user()->access != 1 && Auth::user()->access != 6 && Auth::user()->access != 7 && Auth::user()->access != 8 && Auth::user()->access != 4)
-        {
+        if(Auth::user()->access != 4 && Auth::user()->access != 1) {
             return redirect('/');
         }
-        
         return $next($request);
     }
 }

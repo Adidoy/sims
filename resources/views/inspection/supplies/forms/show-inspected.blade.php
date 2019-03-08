@@ -46,7 +46,7 @@
 				],
 				"processing": true,
 				"autoWidth": false,
-				ajax: "{{ url('inspection/view/supply/') }}",
+				ajax: "{{ url('inspection/supplies/view/') }}",
 				columns: [
 					{ data: "local" },
 					{ data: "inspection_personnel" },
@@ -57,7 +57,7 @@
 					{ data: "acknowledgement_date" },
 					{ data: function(callback){
 						return `
-							<a href="{{ url('inspection/view/supply/') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i>  View</a>
+							<a href="{{ url('inspection/supplies/view/') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i>  View</a>
 						`;
 					} }
 				],

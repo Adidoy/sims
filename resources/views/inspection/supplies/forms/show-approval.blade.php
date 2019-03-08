@@ -18,7 +18,7 @@
 		    <div class="panel panel-body table-responsive">
                 <div >
                     @if( isset($inspection->property_custodian_acknowledgement_date) && isset($inspection->inspection_approval_date) )
-                        <a href="{{ url('inspection/supply/'.$inspection->id.'/print') }}" style="text-align:justify; margin:left: 15em; font-size:11pt;" target="_blank" id="print" class="print btn btn-sm btn-default ladda-button" data-style="zoom-in">
+                        <a href="{{ url('inspection/supplies/'.$inspection->id.'/print') }}" style="text-align:justify; margin:left: 15em; font-size:11pt;" target="_blank" id="print" class="print btn btn-sm btn-default ladda-button" data-style="zoom-in">
                             <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
                             <span id="nav-text"> Print Inspection Report</span>
                         </a>
@@ -66,14 +66,14 @@
                                 <button type="button" id="approve" class="btn btn-md btn-primary btn-block">Approve</button>
                             </div>
                             <div class="btn-group">
-                                <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('inspection/view/supply') }}"'>Cancel</button>
+                                <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('inspection/supplies/view') }}"'>Cancel</button>
                             </div>
                         </div>
                     {{ Form::close() }}
                 @else
                     <div class="pull-right">
                         <div class="btn-group">
-                            <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('inspection/view/supply') }}"'>Back</button>
+                            <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('inspection/supplies/view') }}"'>Back</button>
                         </div>
                     </div>
                 @endif
@@ -86,14 +86,14 @@
                                 <button type="button" id="approve" class="btn btn-md btn-primary btn-block">Acknowledge</button>
                             </div>
                             <div class="btn-group">
-                                <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('inspection/view/supply') }}"'>Cancel</button>
+                                <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('inspection/supplies/view') }}"'>Cancel</button>
                             </div>
                         </div>
                     {{ Form::close() }}
                 @else
                     <div class="pull-right">
                         <div class="btn-group">
-                            <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('inspection/view/supply') }}"'>Back</button>
+                            <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('inspection/supplies/view') }}"'>Back</button>
                         </div>
                     </div>
                 @endif
@@ -111,7 +111,7 @@
                     searchPlaceholder: "Search..."
                 },
                 "processing": true,
-                ajax: "{{ url("inspection/view/supply/$inspection->id") }}",
+                ajax: "{{ url("inspection/supplies/view/$inspection->id") }}",
                 columnDefs: [{
 					targets: [3,4,5],
 					className: "text-right"
