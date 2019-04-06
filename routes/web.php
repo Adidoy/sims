@@ -270,6 +270,15 @@ Route::middleware(['auth'])->group(function(){
 		]);
 		Route::get('import','ImportController@index');
 		Route::post('import','ImportController@store');
+
+		Route::get('correction', 'CorrectionsController@index');
+		Route::get('correction/create', 'CorrectionsController@create');
+		Route::post('correction', 'CorrectionsController@store');
+		Route::get('correction/{id}', 'CorrectionsController@show');
+		Route::get('correction/{id}/approval', 'CorrectionsController@approval');
+		Route::post('correction/{id}/approval', 'CorrectionsController@approve');
+		Route::get('correction/{id}/cancel', 'CorrectionsController@cancellation');
+		Route::post('correction/{id}/cancel', 'CorrectionsController@cancel');
 	});
 
 	Route::middleware(['offices'])->group(function(){

@@ -27,6 +27,7 @@
         "maatwebsite/excel": "~2.1.0",
         "owen-it/laravel-auditing": "^5.0",
         "predis/predis": "^1.1",
+        "prologue/alerts": "^0.4.3",
         "vsmoraes/laravel-pdf": "^2.0",
         "yajra/laravel-datatables-oracle": "~8.0"
     },

@@ -20,12 +20,12 @@
                 <div class="navbar-header">
 
                     <!-- Collapsed Hamburger -->
-          {{--           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#app-navbar-collapse">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#app-navbar-collapse">
                         <span class="sr-only">Toggle Navigation</span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
-                    </button> --}}
+                    </button> 
 
                     <!-- Branding Image -->
                     <a class="" href="{{ url('/') }}" style="margin: 10px;">
@@ -38,7 +38,7 @@
                                     <h5><strong>Polytechnic University Of the Philippines</strong></h5>
                                 </div>
                                 <div class="row">
-                                {{ config('app.name', 'Supplies Inventory Management System') }}
+                                {{ config('app.name', 'PUP MycoNema Bank') }}
                                 </div>
                             </div>  
                         </div>
