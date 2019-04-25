@@ -16,6 +16,7 @@ App\Http\Modules\Inspection\Routes::all();
 App\Http\Modules\Maintenance\Routes::all();
 App\Http\Modules\Requests\Client\Routes::all();
 App\Http\Modules\Requests\Custodian\Routes::all();
+App\Http\Modules\Reports\Routes::all();
 
 
 Route::get('faqs','FaqsController@index');

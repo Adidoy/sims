@@ -29,7 +29,7 @@ class StockCard extends Model implements Auditable, UserResolver
 	protected $primaryKey = 'id';
 	public $fundcluster = null;
 	public $timestamps = true;
-
+	
 	//protected $fillable = [ 'date','supply_id','reference','receipt', 'received_quantity','issued_quantity', 'organization','daystoconsume']; 
 
 	public function rules() {
@@ -52,4 +52,21 @@ class StockCard extends Model implements Auditable, UserResolver
 			'Issued Quantity.integer' => 'Issued Quantity must be represented in whole numbers only.'
 		];
 	}
+
+	public function getParsedYearAttribute($value)
+	{
+		$date = Carbon\Carbon::parse($this->date);
+		return $date->format('Y');
+	}	
+
+	public function scopeFilterByYearIssued()
+	{
+		return $this->where('issued_quantity','>','0')->distinct()->select(DB::raw("CONCAT(MONTHNAME(DATE), ' ', YEAR(DATE)) 'fiscalyear'"));
+	}
+
+	public function supply()
+	{
+		return $this->belongsTo('App\Supply','supply_id','id');
+	}
+
 }

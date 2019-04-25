@@ -38,6 +38,7 @@
 
 <li class="header">Reports</li>
     <li><a href="{{ url('rsmi') }}"><i class="fa fa-ticket" aria-hidden="true"></i> <span> RSMI </span></a></li>
+    <li><a href="{{ url('reports/summary') }}"><i class="fa fa-ticket" aria-hidden="true"></i> <span> Summary Report </span></a></li>
 
 <li class="header">Queries</li>
     <li><a href="{{ url('purchaseorder') }}"><i class="fa fa-shopping-bag" aria-hidden="true"></i> <span> References </span></a></li>
