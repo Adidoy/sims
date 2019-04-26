@@ -136,7 +136,6 @@ class RequestCustodian extends Model implements Auditable, UserResolver
     {
       $expirationDate = RequestExpiration::where('request_id','=',$this->id)->pluck('expiration_date')->first();
       return isset($expirationDate) ? Carbon\Carbon::parse($expirationDate)->format("d F Y")." 05:00 PM" : "N/A";  
-      // return $expirationDate;
     }
 
     public function getLocalIdAttribute($value)

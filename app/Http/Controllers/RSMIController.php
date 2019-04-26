@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Validator;
-use Carbon;
-use Session;
-use Auth;
 use DB;
 use App;
+use Auth;
+use Carbon;
+use Session;
+use Validator;
 use Illuminate\Http\Request;
 
 class RSMIController extends Controller

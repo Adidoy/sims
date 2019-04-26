@@ -14,7 +14,31 @@
 
 @section('content')
   <div class="box" style="padding:10px;">
-    <div class="box-body">
+		<div class="form-group">
+			<div class="col-md-4">
+				<br />
+			</div>
+    	<div class="col-md-4">
+				<form method="post" action="{{ route('summary.submit') }}">
+					<input type="hidden" name="_token" value="{{ csrf_token() }}">
+					{{ Form::label('lblPeriod','Select Period:') }}
+					<select id="period" name = "period" class="form-control">
+						@foreach($years as $year)
+							<option value="{{ $year }}">{{ $year }}</option>
+						@endforeach
+					</select>
+					<button type="submit" id="generate" class="btn btn-md btn-default">
+						<span class="glyphicon glyphicon-print" href="{{ url('reports/summary/print') }}" target="_blank" aria-hidden="true"></span>
+						<span id="nav-text"> Print Report</span>
+					</button>
+				</form>
+    	</div>
+			<div class="col-md-4">
+				<br />
+			</div>
+		</div>
+		<br /><br /><br /><br />
+	  <div class="box-body">
     	<legend><h3 class="text-muted">Summary Reports</h3></legend>
 			<table class="table table-hover table-striped table-bordered table-condensed table-responsive" id="rsmiTable" cellspacing="0" width="100%">
 				<thead>
@@ -31,41 +55,42 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			var table = $('#rsmiTable').DataTable({
-				"dom": "<'row'<'col-sm-3'l><'col-sm-6'<'toolbar' id='haha'>><'col-sm-3'f>>" +
-							"<'row'<'col-sm-12'tr>>" +
-							"<'row'<'col-sm-5'i><'col-sm-7'p>>",			
+	    	pageLength: 100,
+        	serverSide: true,
+			"processing": true,
+	    	columnDefs:[
+				{ targets: 'no-sort', orderable: false },
+	    	],
+			language: {
+					searchPlaceholder: "Search..."
+			},
+			ajax: '{{ url("reports/summary/") }}',
+			columns: [
+					{ data: "stocknumber" },
+					{ data: "details" },
+					{ data: "balance" },
+			],
 			});
-			$('div.toolbar').html(`
-				<form method="post" action="{{ route('summary.submit') }}">
-					<input type="hidden" name="_token" value="{{ csrf_token() }}">
-						@if(isset($years) && count($years) > 0 )
-							<select id="ddl_years" class="form-control">
-								@foreach($years as $year)
-									<option value="{{ $year }}">{{ $year }}</option>
-								@endforeach
-							</select>
-						@endif
-					<button type="submit" id="generate" class="btn btn-md btn-default">
-						<span class="glyphicon href="{{ url("reports/summary/print") }}" glyphicon-print" aria-hidden="true"></span>
-						<span id="nav-text"> Generate Report</span>
-					</button>
-				</form>
-			`)
 		});
-		$('#rsmiTable select#ddl_years').on('click', function() {
-			alert('alert!');
-				// var url = "{{url('admin/maintenance/taxa/getRanks')}}" + "/" + $('#years').val();
-				// $.ajax({
-				// 		url: url,
-				// 		type: "GET",
-				// 		dataType: "json",
-				// 		success:function(data) {
-				// 				$('#ddl_rank').html('<option selected="selected" value="">Select Value</option>');
-				// 				$.each(data, function(key, value) {
-				// 						$('#ddl_rank').append('<option value="'+key+'">'+value+'</option>');
-				// 				});
-				// 		}
-				// });
+		$('#period').on('change', function() {
+			$('#rsmiTable').dataTable().fnDestroy();
+			var table = $('#rsmiTable').DataTable({
+	    	pageLength: 100,
+        	serverSide: true,
+			"processing": true,
+	    	columnDefs:[
+				{ targets: 'no-sort', orderable: false },
+	    	],
+			language: {
+					searchPlaceholder: "Search..."
+			},
+			ajax: '{{ url("reports/summary/getRecords") }}' + '/' + $('#period').val(),
+			columns: [
+					{ data: "stocknumber" },
+					{ data: "details" },
+					{ data: "balance" },
+			],
+			});			
 		});
 	</script>
 @endsection

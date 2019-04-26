@@ -30,8 +30,6 @@ class StockCard extends Model implements Auditable, UserResolver
 	public $fundcluster = null;
 	public $timestamps = true;
 	
-	//protected $fillable = [ 'date','supply_id','reference','receipt', 'received_quantity','issued_quantity', 'organization','daystoconsume']; 
-
 	public function rules() {
 		return [
 			'Date' => 'required',
@@ -61,7 +59,11 @@ class StockCard extends Model implements Auditable, UserResolver
 
 	public function scopeFilterByYearIssued()
 	{
-		return $this->where('issued_quantity','>','0')->distinct()->select(DB::raw("CONCAT(MONTHNAME(DATE), ' ', YEAR(DATE)) 'fiscalyear'"));
+		return $this->where('issued_quantity','>','0')
+			->distinct()
+			->select(DB::raw("CONCAT(MONTHNAME(DATE), ' ', YEAR(DATE)) 'fiscalyear'"))
+			->orderBy(DB::raw("YEAR(DATE)"),'desc')
+			->orderBy(DB::raw("MONTH(DATE)"),'desc');
 	}
 
 	public function supply()

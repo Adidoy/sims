@@ -37,7 +37,7 @@
     <li><a href="{{ url('maintenance/supplier') }}"><i class="fa fa-truck" aria-hidden="true"></i> <span> Supplier </span></a></li>
 
 <li class="header">Reports</li>
-    <li><a href="{{ url('rsmi') }}"><i class="fa fa-ticket" aria-hidden="true"></i> <span> RSMI </span></a></li>
+    <li><a href="{{ url('reports/rsmi') }}"><i class="fa fa-ticket" aria-hidden="true"></i> <span> RSMI </span></a></li>
     <li><a href="{{ url('reports/summary') }}"><i class="fa fa-ticket" aria-hidden="true"></i> <span> Summary Report </span></a></li>
 
 <li class="header">Queries</li>

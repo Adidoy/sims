@@ -22,6 +22,12 @@ class Routes
                     'as'=> 'summary.submit',
                     'uses' =>'ReportsController@summaryPrint']
                 );
+                Route::get('rsmi/', 'RSMIController@index');
+                Route::post('rsmi/print/', [
+                    'as'=> 'rsmi.submit',
+                    'uses' =>'RSMIController@print']
+                );
+                Route::get('rsmi/getRecords/{period}', 'RSMIController@getRecords');                
             });
         });
     }

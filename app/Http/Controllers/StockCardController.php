@@ -21,12 +21,9 @@ class StockCardController extends Controller {
 	public function index(Request $request, $id)
 	{
 		$stockcard = App\StockCard::findBySupplyId($id)
-		
-		->orderBy('reference', 'asc')
+				->orderBy('reference', 'asc')
 				->orderBy('created_at','desc')
 				->get();
-		//$stockcard = $stockcard->sortByDesc('created_at');
-		//return $stockcard;
 		if($request->ajax())
 		{
 			return datatables($stockcard)->toJson();
