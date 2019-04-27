@@ -62,7 +62,7 @@
               <th><h2 class="text-center text-muted">REPORT ON SUPPLIES AND MATERIALS USED <small class="pull-right">Appendix 64</small></h2></th>
           </tr>
           <tr>
-            <th class="pull-right" style="white-space: nowrap;font-weight: normal;"><h3>R.I.S. {{ isset($start) ? $start : 'N/A' }} to {{ isset($end) ? $end : 'N/A' }}</h3></th>
+            <th class="pull-right" style="white-space: nowrap;font-weight: normal;"><h3>R.I.S. {{ isset($request->first()->local) ? $request->first()->local : 'N/A' }} to {{ isset($request->last()->local) ? $request->last()->local : 'N/A' }}</h3></th>
           </tr>
         </thead>
       </table>
@@ -214,4 +214,67 @@
         </tbody>
       </table>
     </div>
-    <!-- End of Recap -->         
+    <!-- End of Recap -->
+    <p style="page-break-after: always;">&nbsp;</p>
+    <div id="content" class="col-sm-12">
+      <table id="rsmiTable" cellspacing="0" width="100%" style="font-size: 12px">
+        <thead>
+          <tr>
+            <th colspan="16" style="color: #800000;">
+              <div style="margin-left: 5em;">
+                <div style="font-size:11pt; text-align: justify;">Republic of the Philippines  </div>
+                <div style="font-size:13pt; text-align: justify;">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES </div>
+                <div style="font-size:11pt; text-align: justify;">Sta. Mesa, Manila</div>
+                <div style="font-size:10pt; text-align: justify;"><span class="pull-right">Date Printed: {{ Carbon\Carbon::now()->format("d F Y h:m A") }}</span></div>
+              </div>
+            </th>
+          </tr>
+          <tr>
+            <th class="pull-right" style="white-space: nowrap;font-weight: normal;"><h3>RIS List and Statuses</h3></th>
+          </tr>
+        </thead>
+      </table> 
+      <table  id="rsmiTable" cellspacing="0" width="100%" style="font-size: 12px">
+        <tr>
+          <td class="col-md-1" style="white-space: nowrap; text-align:center; font-weight:bold;">RIS No.</td>
+          <td class="col-md-1" style="white-space: nowrap; text-align:center; font-weight:bold;">Office</td>
+          <td class="col-md-1" style="white-space: nowrap; text-align:center; font-weight:bold;">Status</td>
+          <td class="col-md-1" style="white-space: nowrap; text-align:center; font-weight:bold;">Remarks</td>
+          <td class="col-md-1" style="white-space: nowrap; text-align:center; font-weight:bold;">Date Updated</td>
+        </tr>
+        <tbody>
+          @foreach($request as $report)
+          <tr>
+            <td style="white-space: nowrap; text-align: center;">{{ $report->local }}</td>
+            <td style="white-space: normal;text-align: justify;">{{ App\Office::find($report->office)->name }}</td>
+            <td style="white-space: normal;text-align: left;">{{ ucwords($report->status) }}</td>
+            <td style="white-space: normal;text-align: left;">{{ ucwords($report->remarks) }}</td>
+            <td style="white-space: normal;text-align: left;">{{ $report->updated_at }}</td>
+          </tr>
+          @endforeach
+          <tr>
+            <td colspan=5 class="col-sm-12"><p style="font-weight:bold; text-align: center;">  ******************* Nothing Follows ******************* </p></td>
+          </tr>
+          <tr>
+            <td class="text-center" colspan="2">  Prepared By: </th>
+            <td class="text-center" colspan="4">  Approved By: </th>
+          </tr>
+          <tr>
+            <td style="text-align: center;" colspan="2">
+              <br />
+              <br />
+              <span id="name" style="margin-top: 30px; font-size: 15px;  font-weight: bold;"> {{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</span>
+              <br />
+              <span id="office" class="text-center" style="font-size:10px;">{{ App\Office::findByCode(Auth::user()->office)->name }}</span>
+            </td>
+            <td style="text-align: center;" colspan="4">
+              <br />
+              <br />
+              <span id="name" class="text-muted" style="margin-top: 30px; font-size: 15px;  font-weight: bold;">{{ (App\Office::findByCode(Auth::user()->office)->head != '') ? App\Office::findByCode(Auth::user()->office)->head : '[ Signature Over Printed Name ]' }}</span>
+              <br />
+              <span id="office" class="text-center" style="font-size:10px;">{{ App\Office::findByCode(Auth::user()->office)->name }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>             
+    </div>             
