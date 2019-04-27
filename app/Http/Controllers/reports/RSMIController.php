@@ -19,7 +19,6 @@ class RSMIController extends Controller
     {
         $year =  StockCard::filterByYearIssued()->pluck('fiscalyear');
         $rsmiItems = RSMI::rsmiitems($year[0])->get();
-        return $rsmiItems;
         if($request->ajax()) {
             return datatables($rsmiItems)->toJson();
         }
@@ -39,10 +38,13 @@ class RSMIController extends Controller
     {
         $period = $request->get("period");
         $rsmiItems = RSMI::rsmiitems($period)->get();
+        $rsmiRecap = RSMI::rsmirecap($period)->get();
+        // return $rsmiRecap;
         $orientation = 'Portrait';
         $data = [
             'asof' => $period,
-            'rsmi' => $rsmiItems
+            'rsmi' => $rsmiItems,
+            'recap' => $rsmiRecap
         ];
         $filename = "RSMI-".$period.".pdf";
         $view = "reports.rsmi.print_rsmi";

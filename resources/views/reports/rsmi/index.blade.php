@@ -13,7 +13,7 @@
 				<br />
 			</div>
     	<div class="col-md-4">
-				<form method="post" action="{{ route('summary.submit') }}">
+				<form method="post" action="{{ route('rsmi.submit') }}">
 					<input type="hidden" name="_token" value="{{ csrf_token() }}">
 					{{ Form::label('lblPeriod','Select Period:') }}
 					<select id="period" name = "period" class="form-control">
@@ -22,7 +22,7 @@
 						@endforeach
 					</select>
 					<button type="submit" id="generate" class="btn btn-md btn-default">
-						<span class="glyphicon glyphicon-print" href="{{ url('reports/summary/print') }}" target="_blank" aria-hidden="true"></span>
+						<span class="glyphicon glyphicon-print" href="{{ url('reports/rsmi/print') }}" target="_blank" aria-hidden="true"></span>
 						<span id="nav-text"> Print Report</span>
 					</button>
 				</form>
@@ -33,7 +33,7 @@
 		</div>
 		<br /><br /><br /><br />
 	  <div class="box-body">
-    	<legend><h3 class="text-muted">Summary Reports</h3></legend>
+    	<legend><h3 class="text-muted">Report on Supplies and Materials Issued</h3></legend>
 			<table class="table table-hover table-striped table-bordered table-condensed table-responsive" id="rsmiTable" cellspacing="0" width="100%">
 				<thead>
 					<th class="col-sm-1">RIS No.</th>
