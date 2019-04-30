@@ -11,14 +11,18 @@ use Validator;
 use Illuminate\Http\Request;
 use App\Models\Reports\RSMI\RSMI;
 use App\Http\Controllers\Controller;
-use App\Models\Inventory\StockCards\StockCard;
+use App\Models\Requests\Custodian\RequestCustodian;
 
 class RSMIController extends Controller
 {
     public function index(Request $request)
     {
-        $year =  StockCard::filterByYearIssued()->pluck('fiscalyear');
+        $year =  RequestCustodian::filterByRequestPeriod()->pluck('fiscalyear');
         $rsmiItems = RSMI::rsmiitems($year[0])->get();
+        $rsmiItems = json_decode($rsmiItems);
+        for($i = 0; $i < count($rsmiItems); $i++) {
+            $rsmiItems[$i]->office = App\Models\Sector::findSectorCode($rsmiItems[$i]->office) .' - '. App\Office::find($rsmiItems[$i]->office)->name;
+        }
         if($request->ajax()) {
             return datatables($rsmiItems)->toJson();
         }
@@ -29,6 +33,10 @@ class RSMIController extends Controller
     public function getRecords(Request $request, $period)
     {
         $rsmiItems = RSMI::rsmiitems($period)->get();
+        $rsmiItems = json_decode($rsmiItems);
+        for($i = 0; $i < count($rsmiItems); $i++) {
+            $rsmiItems[$i]->office = App\Models\Sector::findSectorCode($rsmiItems[$i]->office) .' - '. App\Office::find($rsmiItems[$i]->office)->name;
+        }
         if($request->ajax()) {
             return datatables($rsmiItems)->toJson();
         }
@@ -40,7 +48,6 @@ class RSMIController extends Controller
         $rsmiItems = RSMI::rsmiitems($period)->get();
         $rsmiRecap = RSMI::rsmirecap($period)->get();
         $rsmiRequest = RSMI::rsmiRequests($period)->get();
-        // return $rsmiRecap;
         $orientation = 'Portrait';
         $data = [
             'asof' => $period,

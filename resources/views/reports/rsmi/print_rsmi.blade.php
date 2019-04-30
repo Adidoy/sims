@@ -62,8 +62,8 @@
               <th><h2 class="text-center text-muted">REPORT ON SUPPLIES AND MATERIALS USED <small class="pull-right">Appendix 64</small></h2></th>
           </tr>
           <tr>
-            <th class="pull-right" style="white-space: nowrap;font-weight: normal;"><h3>R.I.S. {{ isset($request->first()->local) ? $request->first()->local : 'N/A' }} to {{ isset($request->last()->local) ? $request->last()->local : 'N/A' }}</h3></th>
-          </tr>
+            <th class="pull-right" style="white-space: nowrap;font-weight: normal;"><h3>For the Month of {{ $asof }}</h3></th>
+          </tr>          
         </thead>
       </table>
       <table id="rsmiTable" cellspacing="0" width="100%" style="font-size: 12px">
@@ -78,16 +78,17 @@
             <td class="col-sm-1" style="white-space: nowrap; text-align:center; font-weight:bold;">Unit Cost</th>
             <td class="col-sm-1" style="white-space: nowrap; text-align:center; font-weight:bold;">Amount</th>
           </tr>
+          @if()
           @foreach($rsmi as $report)
             <tr>
               <td style="white-space: nowrap; text-align: center; padding-left: 5px; padding-right: 5px;">{{ $report->local }}</td>
               <td style="white-space: normal;text-align: justify; padding-left: 5px; padding-right: 5px;">{{ isset($report->office) ? App\Models\Sector::findSectorCode($report->office) : 'n/a' }} - {{ App\Office::find($report->office)->name }}</td>
               <td style="white-space: nowrap; text-align: center; padding-left: 5px; padding-right: 5px;">{{ $report->stocknumber }}</td>
               <td style="white-space: normal;text-align: justify; padding-left: 5px; padding-right: 5px;">{{ $report->details }}</td>
-              <td align="center">{{ $report->name }}</td>
-              <td align="right">{{ $report->quantity_issued }}</td>
-              <td align="right">{{ isset($report->unitprice) ? $report->unitprice : '0.00' }}</td>
-              <td align="right">{{ isset($report->amount) ? $report->amount : '0.00' }}</td>
+              <td style="white-space: nowrap; text-align: center; padding-left: 5px; padding-right: 5px;">{{ $report->name }}</td>
+              <td style="white-space: nowrap; text-align: right; padding-left: 5px; padding-right: 5px;">{{ $report->quantity_issued }}</td>
+              <td style="white-space: nowrap; text-align: right; padding-left: 5px; padding-right: 5px;">{{ isset($report->unitprice) ? $report->unitprice : '0.00' }}</td>
+              <td style="white-space: nowrap; text-align: right; padding-left: 5px; padding-right: 5px;">{{ isset($report->amount) ? $report->amount : '0.00' }}</td>
             </tr>
           @endforeach
           <tr>
@@ -167,9 +168,9 @@
             <td style="white-space: nowrap; text-align: center; padding-left: 5px; padding-right: 5px;">{{ $report->stocknumber }}</td>
             <td style="white-space: normal;text-align: justify; padding-left: 5px; padding-right: 5px;">{{ $report->details }}</td>
             <td style="white-space: normal;text-align: right; padding-left: 15px; padding-right: 15px;">{{ $report->quantity_issued }}</td>
-            <td align="right">{{ isset($report->unitprice) ? $report->unitprice : '0.00' }}</td>
-            <td align="right">{{ isset($report->amount) ? $report->amount : '0.00' }}</td>
-            <td align="center">{{ isset($report->uacs) ? $report->uacs : 'N/A' }}</td>
+            <td style="white-space: nowrap; text-align: right; padding-left: 5px; padding-right: 5px;">{{ isset($report->unitprice) ? $report->unitprice : '0.00' }}</td>
+            <td style="white-space: nowrap; text-align: right; padding-left: 5px; padding-right: 5px;">{{ isset($report->amount) ? $report->amount : '0.00' }}</td>
+            <td style="white-space: nowrap; text-align: center; padding-left: 5px; padding-right: 5px;">{{ isset($report->uacs) ? $report->uacs : 'N/A' }}</td>
           </tr>
           @endforeach
           <tr>
@@ -233,7 +234,8 @@
             <th class="pull-right" style="white-space: nowrap;font-weight: normal;"><h3>RIS List and Statuses</h3></th>
           </tr>
         </thead>
-      </table> 
+      </table>
+      
       <table  id="rsmiTable" cellspacing="0" width="100%" style="font-size: 12px">
         <tr>
           <td class="col-md-1" style="white-space: nowrap; text-align:center; font-weight:bold;">RIS No.</td>
@@ -241,40 +243,56 @@
           <td class="col-md-1" style="white-space: nowrap; text-align:center; font-weight:bold;">Status</td>
           <td class="col-md-1" style="white-space: nowrap; text-align:center; font-weight:bold;">Remarks</td>
           <td class="col-md-1" style="white-space: nowrap; text-align:center; font-weight:bold;">Date Updated</td>
+          <td class="col-md-1" style="white-space: nowrap; text-align:center; font-weight:bold;">Updated by</td>
         </tr>
-        <tbody>
-          @foreach($request as $report)
-          <tr>
-            <td style="white-space: nowrap; text-align: center;">{{ $report->local }}</td>
-            <td style="white-space: normal;text-align: justify;">{{ App\Office::find($report->office)->name }}</td>
-            <td style="white-space: normal;text-align: left;">{{ ucwords($report->status) }}</td>
-            <td style="white-space: normal;text-align: left;">{{ ucwords($report->remarks) }}</td>
-            <td style="white-space: normal;text-align: left;">{{ $report->updated_at }}</td>
+        @foreach($request as $report)
+        <tr>
+          <td style="white-space: nowrap; text-align: left; padding-left: 5px; padding-right: 5px;">{{ $report->local }}</td>
+          <td style="white-space: nowrap; text-align: left; padding-left: 5px; padding-right: 5px;">{{ App\Office::find($report->office)->name }}</td>
+          <td style="white-space: nowrap; text-align: center; padding-left: 5px; padding-right: 5px;">{{ isset($report->status) ? ucwords($report->status) : 'No Action' }}</td>
+          <td style="white-space: nowrap; text-align: left; padding-left: 5px; padding-right: 5px;">{{ isset($report->remarks) ? ($report->remarks == '' ? 'No Remarks' : ucwords($report->remarks)) : 'No Remarks' }}</td>
+          <td style="white-space: nowrap; text-align: left; padding-left: 5px; padding-right: 5px;">{{ $report->updated_at }}</td>
+          @if($report->status == 'approved' || $report->status == 'disapproved')
+            <td style="white-space: nowrap; text-align: left; padding-left: 5px; padding-right: 5px;"> {{ ucwords(App\User::find($report->issued_by)->fullname) }} </td>
+          @elseif( $report->status == 'released')
+            <td style="white-space: nowrap; text-align: left; padding-left: 5px; padding-right: 5px;"> {{ ucwords(App\User::find($report->released_by)->fullname) }} </td>
+          @elseif( $report->status == 'cancelled' || $report->status == 'request expired')
+            <td style="white-space: nowrap; text-align: left; padding-left: 5px; padding-right: 5px;"> {{ $report->cancelled_by == 'SYSTEM' ? $report->cancelled_by : ucwords(App\User::find($report->cancelled_by)->fullname) }} </td> 
+          @elseif( $report->status == '')
+            <td style="white-space: nowrap; text-align: left; padding-left: 5px; padding-right: 5px;"> N/A </td>           
+          @endif
+        </tr>
+        @endforeach
+        <tr>
+          <td colspan = 6 class="col-sm-12"><p style="font-weight:bold; text-align: center;">  ******************* Nothing Follows ******************* </p></td>
+        </tr>
+        </table>
+      <br /><br /><br />
+      <table cellspacing="0" width="100%" style="font-size: 12px">
+        </tbody>
+            <td class="text-center" colspan="3">  Prepared By: </th>
+            <td class="text-center" colspan="5">  Approved By: </th>
           </tr>
-          @endforeach
           <tr>
-            <td colspan=5 class="col-sm-12"><p style="font-weight:bold; text-align: center;">  ******************* Nothing Follows ******************* </p></td>
-          </tr>
-          <tr>
-            <td class="text-center" colspan="2">  Prepared By: </th>
-            <td class="text-center" colspan="4">  Approved By: </th>
-          </tr>
-          <tr>
-            <td style="text-align: center;" colspan="2">
+            <td style="text-align: center;" colspan="3">
               <br />
               <br />
-              <span id="name" style="margin-top: 30px; font-size: 15px;  font-weight: bold;"> {{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</span>
+              <span id="name" style="margin-top: 30px; font-size: 15px;  font-weight: bold;"> {{ strtoupper(Auth::user()->firstname) }} {{ strtoupper(Auth::user()->lastname) }}</span>
+              <br />
+              <span id="office" class="text-center" style="font-size:10px;">{{ isset(Auth::user()->position) ? ucwords(Auth::user()->position) : '[ Designation ]' }}</span>
               <br />
               <span id="office" class="text-center" style="font-size:10px;">{{ App\Office::findByCode(Auth::user()->office)->name }}</span>
             </td>
-            <td style="text-align: center;" colspan="4">
+            <td style="text-align: center;" colspan="5">
               <br />
               <br />
-              <span id="name" class="text-muted" style="margin-top: 30px; font-size: 15px;  font-weight: bold;">{{ (App\Office::findByCode(Auth::user()->office)->head != '') ? App\Office::findByCode(Auth::user()->office)->head : '[ Signature Over Printed Name ]' }}</span>
+              <span id="name" class="text-muted" style="margin-top: 30px; font-size: 15px;  font-weight: bold;">{{ (App\Office::findByCode(Auth::user()->office)->head != '') ? strtoupper(App\Office::findByCode(Auth::user()->office)->head) : '[ Signature Over Printed Name ]' }}</span>
               <br />
+              <span id="office" class="text-center" style="font-size:10px;">{{ (App\Office::findByCode(Auth::user()->office)->head_title != '') ? ucwords(App\Office::findByCode(Auth::user()->office)->head_title) : '[ Designation ]' }}</span>
+              <br />              
               <span id="office" class="text-center" style="font-size:10px;">{{ App\Office::findByCode(Auth::user()->office)->name }}</span>
             </td>
           </tr>
         </tbody>
-      </table>             
+      </table>        
     </div>             

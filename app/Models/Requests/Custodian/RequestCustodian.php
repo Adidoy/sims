@@ -2,6 +2,7 @@
 
 namespace App\Models\Requests\Custodian;
 
+use DB;
 use App;
 use Auth;
 use Carbon;
@@ -105,6 +106,15 @@ class RequestCustodian extends Model implements Auditable, UserResolver
     {
       $officeID = App\Office::where('code','=',$value)->pluck('id')->first();
       return $query->where('office_id','=',$officeID);
+    }
+
+    public function scopeFilterByRequestPeriod()
+    {
+      return $this
+        ->distinct()
+        ->select(DB::raw("CONCAT(MONTHNAME(updated_at), ' ', YEAR(updated_at)) 'fiscalyear'"))
+        ->orderBy(DB::raw("YEAR(updated_at)"),'desc')
+        ->orderBy(DB::raw("MONTH(updated_at)"),'desc');
     }
 
     public function getDateRequestedAttribute($value)
