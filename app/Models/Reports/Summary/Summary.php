@@ -21,7 +21,7 @@ class Summary extends Model
         $endDate = \Carbon\Carbon::parse($month." 01, ".$year);
         return $endingBalance = DB::table('stockcards')
             ->rightJoin('supplies', 'stockcards.supply_id', '=', 'supplies.id')
-            ->select('supplies.stocknumber', 'supplies.details', DB::raw('(SUM(received_quantity) - SUM(issued_quantity)) "balance"'))
+            ->select('supplies.stocknumber', 'supplies.details', DB::raw('SUM(received_quantity) "received"'), DB::raw('SUM(issued_quantity) "issued"'), DB::raw('(SUM(received_quantity) - SUM(issued_quantity)) "balance"'))
             ->whereRaw("date BETWEEN '".$startDate."' AND LAST_DAY('".$endDate."')")
             ->groupBy('supplies.stocknumber', 'supplies.details');
     }

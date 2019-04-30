@@ -48,12 +48,14 @@ class RSMIController extends Controller
         $rsmiItems = RSMI::rsmiitems($period)->get();
         $rsmiRecap = RSMI::rsmirecap($period)->get();
         $rsmiRequest = RSMI::rsmiRequests($period)->get();
+        $rsmitotalItems = RSMI::rsmiTotalItems($period)->value('total_items');
         $orientation = 'Portrait';
         $data = [
             'asof' => $period,
             'rsmi' => $rsmiItems,
             'recap' => $rsmiRecap,
-            'request' => $rsmiRequest
+            'request' => $rsmiRequest,
+            'total' => $rsmitotalItems
         ];
         $filename = "RSMI-".$period.".pdf";
         $view = "reports.rsmi.print_rsmi";

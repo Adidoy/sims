@@ -48,6 +48,18 @@ class RSMI extends Model
         ->groupBy('stocknumber', 'details', 'units.name')
         ->having(DB::raw("SUM(requests_supplies.quantity_issued)"), '>', 0);
     }
+
+    public function scopeRSMITotalItems($query, $period)
+    {
+      $period = \Carbon\Carbon::parse($period);
+      return DB::table('requests')->join('requests_supplies', 'requests.id', '=', 'requests_supplies.request_id')
+        ->join('supplies', 'supplies.id', '=', 'requests_supplies.supply_id')
+        ->join('units', 'units.id', '=', 'supplies.unit_id')
+        ->where('requests.status','released')
+        ->whereRaw("released_at BETWEEN '".$period->startOfMonth()."' AND '".$period->endOfMonth()."'")
+        ->select(DB::raw("SUM(requests_supplies.quantity_issued) AS total_items"))
+        ->having(DB::raw("SUM(requests_supplies.quantity_issued)"), '>', 0);
+    }
     
     public function scopeRSMIRequests($query, $period)
     {

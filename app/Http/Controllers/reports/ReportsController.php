@@ -38,7 +38,7 @@ class ReportsController extends Controller
             'asof' => $inputYear,
             'endingBalance' => $endingBalance
         ];
-        $filename = "BALANCE AS OF -".$inputYear.".pdf";
+        $filename = "ENDING INVENTORY AS OF ".$inputYear.".pdf";
         $view = "reports.summary.print_summary";
         return $this->printPreview($view,$data,$filename,$orientation);                    
     }

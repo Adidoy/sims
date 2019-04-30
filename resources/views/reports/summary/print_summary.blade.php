@@ -46,66 +46,83 @@
   
   <body>  
     <div id="content" class="col-sm-12">
-      <table id="rsmiTable" cellspacing="0" width="100%" style="font-size: 12px">
-        <thead>
-          <tr>
-            <th colspan="16" style="color: #800000;">
-                <div style="margin-left: 5em;">
-                  <div style="font-size:11pt; text-align: justify;">Republic of the Philippines  </div>
-                  <div style="font-size:13pt; text-align: justify;">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES </div>
-                  <div style="font-size:11pt; text-align: justify;">Sta. Mesa, Manila</div>
-                  <div style="font-size:10pt; text-align: justify;"><span class="pull-right">Date Printed: {{ Carbon\Carbon::now()->format("d F Y h:m A") }} </span></div>
-                </div>
-            </th>
-          </tr>
-          <tr >
-              <th><h2 class="text-center text-muted">SUPPLIES QUANTITY as of {{ $asof }}<small class="pull-right"></small></h2></th>
-          </tr>
-        </thead>
-      </table>
+    <table cellspacing="0" width="100%" style="font-size: 12px">
+        <tr>
+          <td rowspan = 4><img src="{{ asset('images/logo.png') }}" style="height: 80px;width:auto;" /></td>
+          <td style="font-size:11pt; text-align: justify; color: #800000;">Republic of the Philippines</td>
+        </tr>
+        <tr>
+          <td style="font-size:13pt; text-align: justify; color: #800000;"><strong>POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</strong></td>
+        </tr>
+        <tr>
+          <td style="font-size:11pt; text-align: justify; color: #800000;">Sta. Mesa, Manila</td>
+        </tr>        
+        <tr>
+          <td style="font-size:11pt; text-align: justify; color: #800000;">Date Printed: {{ Carbon\Carbon::now()->format("d F Y h:m A") }}</td>
+        </tr> 
+        <tr>
+          <td style="font-size:11pt; text-align: justify; color: #800000;"><br/><br/></td>
+        </tr>               
+        <tr>
+          <td style="font-size:14pt; text-align: center;" colspan = 15><strong>ENDING INVENTORY</strong></td>
+        </tr>
+        <tr>
+          <td style="font-size:12pt; text-align: center;" colspan = 16>For the Month of {{ $asof }}</td>
+        </tr>        
+        <tr>
+          <td style="font-size:11pt; text-align: justify; color: #800000;"><br/></td>
+        </tr>        
+      </table>    
       <table id="rsmiTable" cellspacing="0" width="100%" style="font-size: 12px">
         <tbody>
           <tr>
             <td style="white-space: nowrap; text-align:center; font-weight:bold;">Stock No.</th>
             <td style="white-space: nowrap; text-align:left; font-weight:bold;">Details</th>
+            <td style="white-space: nowrap; text-align:center; font-weight:bold;">Qty Received</th>
+            <td style="white-space: nowrap; text-align:center; font-weight:bold;">Qty Issued</th>
             <td style="white-space: nowrap; text-align:center; font-weight:bold;">Balance</th>
           </tr>
           @foreach($endingBalance as $report)
             <tr>
               <td style="white-space: nowrap; text-align:center;">{{ $report->stocknumber }}</td>
               <td style="white-space: nowrap; text-align:left;">{{ $report->details }}</td>
+              <td style="white-space: nowrap; text-align:right;">{{ $report->received }}</td>
+              <td style="white-space: nowrap; text-align:right;">{{ $report->issued }}</td>
               <td style="white-space: nowrap; text-align:right;">{{ $report->balance }}</td>
             </tr>
           @endforeach
           <tr>
-            <td colspan=3><p style="font-weight:bold; text-align: center;">  ******************* Nothing Follows ******************* </p></td>
+            <td colspan = 5><p style="font-weight:bold; text-align: center;">  ******************* Nothing Follows ******************* </p></td>
           </tr>
         </tbody>
       </table>
       <br /><br />
       <table cellspacing="0" width="100%" style="font-size: 12px">
-        <tbody>
-          <tr>
-            <td class="text-center" colspan="6">  Prepared By: </th>
-            <td class="text-center" colspan="6">  Approved By: </th>
+        </tbody>
+            <td class="text-center" colspan="3">  Prepared By: </th>
+            <td class="text-center" colspan="5">  Approved By: </th>
           </tr>
           <tr>
-            <td style="text-align: center;" colspan="6">
+            <td style="text-align: center;" colspan="3">
               <br />
               <br />
-              <span id="name" style="margin-top: 30px; font-size: 15px;  font-weight: bold;"> {{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</span>
+              <span id="name" style="margin-top: 30px; font-size: 15px;  font-weight: bold;"> {{ strtoupper(Auth::user()->firstname) }} {{ strtoupper(Auth::user()->lastname) }}</span>
+              <br />
+              <span id="office" class="text-center" style="font-size:10px;">{{ isset(Auth::user()->position) ? ucwords(Auth::user()->position) : '[ Designation ]' }}</span>
               <br />
               <span id="office" class="text-center" style="font-size:10px;">{{ App\Office::findByCode(Auth::user()->office)->name }}</span>
             </td>
-            <td style="text-align: center;" colspan="6">
+            <td style="text-align: center;" colspan="5">
               <br />
               <br />
-              <span id="name" class="text-muted" style="margin-top: 30px; font-size: 15px;  font-weight: bold;">{{ (App\Office::findByCode(Auth::user()->office)->head != '') ? App\Office::findByCode(Auth::user()->office)->head : '[ Signature Over Printed Name ]' }}</span>
+              <span id="name" class="text-muted" style="margin-top: 30px; font-size: 15px;  font-weight: bold;">{{ (App\Office::findByCode(Auth::user()->office)->head != '') ? strtoupper(App\Office::findByCode(Auth::user()->office)->head) : '[ Signature Over Printed Name ]' }}</span>
               <br />
+              <span id="office" class="text-center" style="font-size:10px;">{{ (App\Office::findByCode(Auth::user()->office)->head_title != '') ? ucwords(App\Office::findByCode(Auth::user()->office)->head_title) : '[ Designation ]' }}</span>
+              <br />              
               <span id="office" class="text-center" style="font-size:10px;">{{ App\Office::findByCode(Auth::user()->office)->name }}</span>
             </td>
           </tr>
-        </tbody>      
+        </tbody>
       </table>
     </div>
   </body>

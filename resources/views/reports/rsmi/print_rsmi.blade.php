@@ -46,25 +46,33 @@
   
   <body>  
     <div id="content" class="col-sm-12">
-      <table id="rsmiTable" cellspacing="0" width="100%" style="font-size: 12px">
-        <thead>
-          <tr>
-            <th colspan="16" style="color: #800000;">
-                <div style="margin-left: 5em;">
-                  <div style="font-size:11pt; text-align: justify;">Republic of the Philippines  </div>
-                  <div style="font-size:13pt; text-align: justify;">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES </div>
-                  <div style="font-size:11pt; text-align: justify;">Sta. Mesa, Manila</div>
-                  <div style="font-size:10pt; text-align: justify;"><span class="pull-right">Date Printed: {{ Carbon\Carbon::now()->format("d F Y h:m A") }}</span></div>
-                </div>
-            </th>
-          </tr>
-          <tr >
-              <th><h2 class="text-center text-muted">REPORT ON SUPPLIES AND MATERIALS USED <small class="pull-right">Appendix 64</small></h2></th>
-          </tr>
-          <tr>
-            <th class="pull-right" style="white-space: nowrap;font-weight: normal;"><h3>For the Month of {{ $asof }}</h3></th>
-          </tr>          
-        </thead>
+      <table cellspacing="0" width="100%" style="font-size: 12px">
+        <tr>
+          <td rowspan = 4><img src="{{ asset('images/logo.png') }}" style="height: 80px;width:auto;" /></td>
+          <td style="font-size:11pt; text-align: justify; color: #800000;">Republic of the Philippines</td>
+        </tr>
+        <tr>
+          <td style="font-size:13pt; text-align: justify; color: #800000;"><strong>POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</strong></td>
+        </tr>
+        <tr>
+          <td style="font-size:11pt; text-align: justify; color: #800000;">Sta. Mesa, Manila</td>
+        </tr>        
+        <tr>
+          <td style="font-size:11pt; text-align: justify; color: #800000;">Date Printed: {{ Carbon\Carbon::now()->format("d F Y h:m A") }}</td>
+        </tr> 
+        <tr>
+          <td style="font-size:11pt; text-align: justify; color: #800000;"><br/><br/></td>
+        </tr>               
+        <tr>
+          <td style="font-size:14pt; text-align: center;" colspan = 15><strong>REPORT ON SUPPLIES AND MATERIALS ISSUED</strong></td>
+          <td class="pull-right"><small>Appendix 64</small></td>
+        </tr>
+        <tr>
+          <td style="font-size:12pt; text-align: center;" colspan = 16>For the Month of {{ $asof }}</td>
+        </tr>        
+        <tr>
+          <td style="font-size:11pt; text-align: justify; color: #800000;"><br/></td>
+        </tr>        
       </table>
       <table id="rsmiTable" cellspacing="0" width="100%" style="font-size: 12px">
         <tbody>
@@ -78,24 +86,27 @@
             <td class="col-sm-1" style="white-space: nowrap; text-align:center; font-weight:bold;">Unit Cost</th>
             <td class="col-sm-1" style="white-space: nowrap; text-align:center; font-weight:bold;">Amount</th>
           </tr>
-          @if()
-          @foreach($rsmi as $report)
-            <tr>
-              <td style="white-space: nowrap; text-align: center; padding-left: 5px; padding-right: 5px;">{{ $report->local }}</td>
-              <td style="white-space: normal;text-align: justify; padding-left: 5px; padding-right: 5px;">{{ isset($report->office) ? App\Models\Sector::findSectorCode($report->office) : 'n/a' }} - {{ App\Office::find($report->office)->name }}</td>
-              <td style="white-space: nowrap; text-align: center; padding-left: 5px; padding-right: 5px;">{{ $report->stocknumber }}</td>
-              <td style="white-space: normal;text-align: justify; padding-left: 5px; padding-right: 5px;">{{ $report->details }}</td>
-              <td style="white-space: nowrap; text-align: center; padding-left: 5px; padding-right: 5px;">{{ $report->name }}</td>
-              <td style="white-space: nowrap; text-align: right; padding-left: 5px; padding-right: 5px;">{{ $report->quantity_issued }}</td>
-              <td style="white-space: nowrap; text-align: right; padding-left: 5px; padding-right: 5px;">{{ isset($report->unitprice) ? $report->unitprice : '0.00' }}</td>
-              <td style="white-space: nowrap; text-align: right; padding-left: 5px; padding-right: 5px;">{{ isset($report->amount) ? $report->amount : '0.00' }}</td>
-            </tr>
-          @endforeach
+          @if(count($rsmi) > 0)
+            @foreach($rsmi as $report)
+              <tr>
+                <td style="white-space: nowrap; text-align: center; padding-left: 5px; padding-right: 5px;">{{ $report->local }}</td>
+                <td style="white-space: normal;text-align: justify; padding-left: 5px; padding-right: 5px;">{{ isset($report->office) ? App\Models\Sector::findSectorCode($report->office) : 'n/a' }} - {{ App\Office::find($report->office)->name }}</td>
+                <td style="white-space: nowrap; text-align: center; padding-left: 5px; padding-right: 5px;">{{ $report->stocknumber }}</td>
+                <td style="white-space: normal;text-align: justify; padding-left: 5px; padding-right: 5px;">{{ $report->details }}</td>
+                <td style="white-space: nowrap; text-align: center; padding-left: 5px; padding-right: 5px;">{{ $report->name }}</td>
+                <td style="white-space: nowrap; text-align: right; padding-left: 5px; padding-right: 5px;">{{ $report->quantity_issued }}</td>
+                <td style="white-space: nowrap; text-align: right; padding-left: 5px; padding-right: 5px;">{{ isset($report->unitprice) ? $report->unitprice : '0.00' }}</td>
+                <td style="white-space: nowrap; text-align: right; padding-left: 5px; padding-right: 5px;">{{ isset($report->amount) ? $report->amount : '0.00' }}</td>
+              </tr>
+            @endforeach
+          @else
+            <td colspan=8 class="col-sm-12"><p style="font-weight:bold; text-align: center;">  ******************* NO ITEMS RELEASED ******************* </p></td>          
+          @endif
           <tr>
-            <td colspan="5" style="font-weight:bold; text-align: right;">Total Quantity Released: </td>
-            <td <span class="pull-right"style="font-weight:bold; text-align: right;"> 0.00 </span></td>
-            <td colspan="1">N/A</td>
-            <td colspan="1">N/A</td>
+            <td colspan="5" style="white-space: nowrap; text-align: right; padding-left: 5px; padding-right: 5px;">Total Quantity Released: </td>
+            <td <span class="pull-right" style="white-space: nowrap; text-align: right; padding-left: 5px; padding-right: 5px;"> {{ $total }} </span></td>
+            <td colspan="1" style="white-space: nowrap; text-align: right; padding-left: 5px; padding-right: 5px;">N/A</td>
+            <td colspan="1" style="white-space: nowrap; text-align: center; padding-left: 5px; padding-right: 5px;">N/A</td>
           </tr>
           <tr>
             <td colspan=8 class="col-sm-12"><p style="font-weight:bold; text-align: center;">  ******************* Nothing Follows ******************* </p></td>
@@ -136,22 +147,32 @@
     <p style="page-break-after: always;">&nbsp;</p>
     <!-- Start of Recap -->
     <div id="content" class="col-sm-12">
-      <table id="rsmiTable" cellspacing="0" width="100%" style="font-size: 12px">
-        <thead>
-          <tr>
-            <th colspan="16" style="color: #800000;">
-              <div style="margin-left: 5em;">
-                <div style="font-size:11pt; text-align: justify;">Republic of the Philippines  </div>
-                <div style="font-size:13pt; text-align: justify;">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES </div>
-                <div style="font-size:11pt; text-align: justify;">Sta. Mesa, Manila</div>
-                <div style="font-size:10pt; text-align: justify;"><span class="pull-right">Date Printed: {{ Carbon\Carbon::now()->format("d F Y h:m A") }}</span></div>
-              </div>
-            </th>
-          </tr>
-          <tr>
-            <th class="pull-right" style="white-space: nowrap;font-weight: normal;"><h3>Recapitulation</h3></th>
-          </tr>
-        </thead>
+    <table cellspacing="0" width="100%" style="font-size: 12px">
+        <tr>
+          <td rowspan = 4><img src="{{ asset('images/logo.png') }}" style="height: 80px;width:auto;" /></td>
+          <td style="font-size:11pt; text-align: justify; color: #800000;">Republic of the Philippines</td>
+        </tr>
+        <tr>
+          <td style="font-size:13pt; text-align: justify; color: #800000;"><strong>POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</strong></td>
+        </tr>
+        <tr>
+          <td style="font-size:11pt; text-align: justify; color: #800000;">Sta. Mesa, Manila</td>
+        </tr>        
+        <tr>
+          <td style="font-size:11pt; text-align: justify; color: #800000;">Date Printed: {{ Carbon\Carbon::now()->format("d F Y h:m A") }}</td>
+        </tr> 
+        <tr>
+          <td style="font-size:11pt; text-align: justify; color: #800000;"><br/><br/></td>
+        </tr>               
+        <tr>
+          <td style="font-size:14pt; text-align: center;" colspan = 16><strong>RECAPITULATION</strong></td>
+        </tr>
+        <tr>
+          <td style="font-size:12pt; text-align: center;" colspan = 16>For the Month of {{ $asof }}</td>
+        </tr>        
+        <tr>
+          <td style="font-size:11pt; text-align: justify; color: #800000;"><br/></td>
+        </tr>        
       </table>
       <table  id="rsmiTable" cellspacing="0" width="100%" style="font-size: 12px">
         <tr>
@@ -175,7 +196,7 @@
           @endforeach
           <tr>
             <td colspan="2" style="font-weight:bold; text-align: right;">Total Quantity Released: </td>
-            <td <span style="white-space: normal;text-align: right; padding-left: 15px; padding-right: 15px;"> 0.00 </span></td>
+            <td <span style="white-space: normal;text-align: right; padding-left: 15px; padding-right: 15px;"> {{ $total }} </span></td>
             <td colspan="1" style="text-align: right;">N/A</td>
             <td colspan="1" style="text-align: right;">N/A</td>
             <td colspan="1" align="center">N/A</td>
@@ -218,24 +239,33 @@
     <!-- End of Recap -->
     <p style="page-break-after: always;">&nbsp;</p>
     <div id="content" class="col-sm-12">
-      <table id="rsmiTable" cellspacing="0" width="100%" style="font-size: 12px">
-        <thead>
-          <tr>
-            <th colspan="16" style="color: #800000;">
-              <div style="margin-left: 5em;">
-                <div style="font-size:11pt; text-align: justify;">Republic of the Philippines  </div>
-                <div style="font-size:13pt; text-align: justify;">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES </div>
-                <div style="font-size:11pt; text-align: justify;">Sta. Mesa, Manila</div>
-                <div style="font-size:10pt; text-align: justify;"><span class="pull-right">Date Printed: {{ Carbon\Carbon::now()->format("d F Y h:m A") }}</span></div>
-              </div>
-            </th>
-          </tr>
-          <tr>
-            <th class="pull-right" style="white-space: nowrap;font-weight: normal;"><h3>RIS List and Statuses</h3></th>
-          </tr>
-        </thead>
-      </table>
-      
+    <table cellspacing="0" width="100%" style="font-size: 12px">
+        <tr>
+          <td rowspan = 4><img src="{{ asset('images/logo.png') }}" style="height: 80px;width:auto;" /></td>
+          <td style="font-size:11pt; text-align: justify; color: #800000;">Republic of the Philippines</td>
+        </tr>
+        <tr>
+          <td style="font-size:13pt; text-align: justify; color: #800000;"><strong>POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</strong></td>
+        </tr>
+        <tr>
+          <td style="font-size:11pt; text-align: justify; color: #800000;">Sta. Mesa, Manila</td>
+        </tr>        
+        <tr>
+          <td style="font-size:11pt; text-align: justify; color: #800000;">Date Printed: {{ Carbon\Carbon::now()->format("d F Y h:m A") }}</td>
+        </tr> 
+        <tr>
+          <td style="font-size:11pt; text-align: justify; color: #800000;"><br/><br/></td>
+        </tr>               
+        <tr>
+          <td style="font-size:14pt; text-align: center;" colspan = 16><strong>RIS LIST AND STATUSES</strong></td>
+        </tr>
+        <tr>
+          <td style="font-size:12pt; text-align: center;" colspan = 16>For the Month of {{ $asof }}</td>
+        </tr>        
+        <tr>
+          <td style="font-size:11pt; text-align: justify; color: #800000;"><br/></td>
+        </tr>        
+      </table>    
       <table  id="rsmiTable" cellspacing="0" width="100%" style="font-size: 12px">
         <tr>
           <td class="col-md-1" style="white-space: nowrap; text-align:center; font-weight:bold;">RIS No.</td>

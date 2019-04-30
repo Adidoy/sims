@@ -43,7 +43,9 @@
 			<table class="table table-hover table-striped table-bordered table-condensed table-responsive" id="rsmiTable" cellspacing="0" width="100%">
 				<thead>
 					<th class="col-sm-1">Stock No.</th>
-					<th class="col-sm-1">Supply Name</th>
+					<th class="col-sm-2">Supply Name</th>
+					<th class="col-sm-1">Quantity Received</th>
+					<th class="col-sm-1">Quantity Issued</th>
 					<th class="col-sm-1">Remaining Balance</th>
 				</thead>
 			</table>
@@ -68,6 +70,8 @@
 			columns: [
 					{ data: "stocknumber" },
 					{ data: "details" },
+					{ data: "received" },
+					{ data: "issued" },
 					{ data: "balance" },
 			],
 			});
@@ -88,6 +92,8 @@
 			columns: [
 					{ data: "stocknumber" },
 					{ data: "details" },
+					{ data: "received" },
+					{ data: "issued" },
 					{ data: "balance" },
 			],
 			});			
