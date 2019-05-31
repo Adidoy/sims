@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>$request->code</title>
+    <title>Print :: RIS No.: {{ $request->local }}</title>
 
 
     <!-- Bootstrap 3.3.5 -->
@@ -47,6 +47,32 @@
   <body>
     
   <div id="content" class="col-sm-12">
+    <table cellspacing="0" width="100%" style="font-size: 12px">
+      <tr>
+        <td rowspan = 4><img src="{{ asset('images/logo.png') }}" style="height: 80px;width:auto;" /></td>
+        <td style="font-size:11pt; text-align: justify; color: #800000;">Republic of the Philippines</td>
+        <td><small>Appendix 64</small></td>
+      </tr>
+      <tr>
+        <td style="font-size:13pt; text-align: justify; color: #800000;"><strong>POLYTECHNIC UNIVERSITY OF THE PHILIPPINES</strong></td>
+      </tr>
+      <tr>
+        <td style="font-size:11pt; text-align: justify; color: #800000;">Sta. Mesa, Manila</td>
+      </tr>        
+      <tr>
+        <td style="font-size:11pt; text-align: justify; color: #800000;">Date Printed: {{ Carbon\Carbon::now()->format("d F Y h:m A") }}</td>
+      </tr> 
+      <tr>
+        <td style="font-size:11pt; text-align: justify; color: #800000;"><br/><br/></td>
+      </tr>               
+      <tr>
+        <td style="font-size:14pt; text-align: center;" colspan = 15><strong>REQUISITION AND ISSUE SLIP</strong></td>
+        <td class="pull-right"></td>
+      </tr>      
+      <tr>
+        <td style="font-size:11pt; text-align: justify; color: #800000;"><br/></td>
+      </tr>        
+    </table>
     <table class="table table-striped table-bordered table-condensed" id="inventoryTable" width="100%" cellspacing="0">
       <thead>
         <tr><th colspan="16" style="color: #800000;">
@@ -54,7 +80,7 @@
               <div style="font-size:11pt; text-align: justify;">Republic of the Philippines  </div>
               <div style="font-size:13pt; text-align: justify;">POLYTECHNIC UNIVERSITY OF THE PHILIPPINES </div>
               <div style="font-size:11pt; text-align: justify;">Sta. Mesa, Manila</div>
-              <div style="font-size:10pt; text-align: justify;"><span class="pull-right"> {{ Carbon\Carbon::now()->toDayDateTimeString() }} </span></div>
+              <div style="font-size:10pt; text-align: justify;"><span class="pull-right">Date Printed: {{ Carbon\Carbon::now()->format("d F Y h:m A") }} </span></div>
             </div>
         </th></tr>
           <tr >
@@ -82,7 +108,7 @@
                 <span style="font-weight:normal">{{ isset($request->office) ? $request->office->name : $request->office }}</span> 
                 @endif
               </th>
-              <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="10">RIS No.:  <span style="font-weight:normal">{{ $request->code }}</span> </th>
+              <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="10">RIS No.:  <span style="font-weight:normal">{{ $request->local }}</span> </th>
           </tr>
         </thead>
       </table>
@@ -132,14 +158,15 @@
           <td colspan="2" style="white-space: nowrap; text-align: right; padding-left: 5px; padding-right: 5px;">{{ $supply->pivot->comments }}</td>
         </tr>
         @endforeach
-          <tr>
-            <td colspan=16 class="col-sm-12"><p style="font-weight:bold; text-align: center;">  ******************* Nothing Follows ******************* </p></td>
-          </tr>
+        <tr>
+          <td colspan=16 class="col-sm-12"><p style="font-weight:bold; text-align: center;">  ******************* Nothing Follows ******************* </p></td>
+        </tr>
+
       
       <!-- Purpose -->
       <tfoot>
         <tr>
-              <td class="text-left" colspan="16"><span style="font-size: 15px; "><b>Purpose:</b></span></td>
+              <td class="text-left" colspan="16"><span style="font-size: 12px; "><b>Purpose:</b></span></td>
           </tr>
         <tr>
           <td  colspan="16">
@@ -172,13 +199,21 @@
           <td width="105px" style="white-space: nowrap; text-align:left; font-weight:bold;" class="text-left">  Printed Name:</td>
           <td width="250px" style="text-align:center; font-weight:bold; font-size: 12px;" width=50px>
             <span> 
-              {{ isset($signatory->id) ? $signatory->requestor_name : isset($office->name) ? $office->head != "None" ? $office->head : "" : "" }}
+              @if( isset($signatory->requestor_name) )
+                {{ strtoupper($signatory->requestor_name) }}
+              @elseif( $officeSignatory <> 'NONE' )
+                {{ strtoupper($officeSignatory->head) }}
+              @endif
             </span>
             
           </td>
           <td width="250px" style="text-align:center; font-weight:bold; font-size: 12px;" width=50px>
             <span>
-              {{isset($signatory->id) ? $signatory->approver_name : isset($sector->name) ? $sector->head : $request->office->head }}
+              @if( isset($signatory->approver_name) )
+                {{ strtoupper($signatory->approver_name) }}
+              @elseif( $headOffice <> 'NONE' )
+                {{ strtoupper($headOffice->head) }}
+              @endif
             </span>  
           </td>
           <td class="text-center">  </td>
@@ -189,12 +224,21 @@
           <td width="105px" style="white-space: nowrap; text-align:left; font-weight:bold;" class="text-left">Designation:</td>
           <td width="250px" style="white-space: nowrap; text-align:center; font-weight:bold;font-size:10px; word-wrap: break-word;">
             <span> 
-              {{  isset($signatory->id) ? $signatory->requestor_designation: isset($office->name) ? $office->head_title != "None" ? $office->head_title : "" : "" }}
+              @if( isset($signatory->requestor_designation) )
+                {{ $signatory->requestor_designation }}
+              @elseif( $officeSignatory <> 'NONE' )
+                {{ $officeSignatory->head_title }}
+              @endif
             </span>
           </td>
           <td width="250px" style="white-space: nowrap; text-align:center; font-weight:bold;font-size:10px; word-wrap: break-word;">
             <span>
-              {{ isset($signatory->id) ? $signatory->approver_designation : isset($sector->head) ? $sector->head_title : $request->office->head_title }}</span>
+              @if( isset($signatory->approver_designation) )
+                {{ $signatory->approver_designation }}
+              @elseif( $headOffice <> 'NONE' )
+                {{ $headOffice->head_title }}
+              @endif
+            </span>
           </td>
           <td class="text-center">          </td>
           <td class="text-center">          </td>
@@ -202,7 +246,11 @@
         <!-- Signatories Date-->
         <tr>
           <td width="105px" style="white-space: nowrap; text-align:left; font-weight:bold;" class="text-left">Date:</td>
-          <td width="250px" class="text-center"> </td>
+          <td width="250px" style="white-space: nowrap; text-align:center; font-weight:bold;font-size:10px; word-wrap: break-word;">
+            <span> 
+              {{ $request->date_requested }} 
+            </span>
+          </td>
           <td width="250px" class="text-center"> </td>
           <td class="text-center"> </td>
           <td class="text-center"> </td>
@@ -220,6 +268,19 @@
         </tr>
       </tfoot>
     </table>
+    @if($request->status == 'Released')
+        <table>
+          <tr>
+            <td colspan=16 class="col-sm-12">
+              <p style="color:red; font-weight:bold; text-align: justified; font-size:12pt;">
+                NOTE: Supplies and materials for this Requisition and Issuance Slip are tagged as RELEASED. <br/>
+                Processed By: {{ App\User::find($request->released_by)->fullname }}  <br />
+                Date Processed: {{ $request->date_released }}
+              </p>
+            </td>
+          </tr>
+        </table>
+    @endif
   </div>  
 </body>
 </html>

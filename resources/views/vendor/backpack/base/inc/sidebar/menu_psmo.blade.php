@@ -2,8 +2,8 @@
 <li class="treeview">
         <a href="#"><i class="fa fa-share" aria-hidden="true"></i><span>Requesition and Issuance</span><i class="fa fa-angle-left pull-right"></i></a>
         <ul class="treeview-menu">
-        <li><a href="{{ url('request/custodian/?type=pending') }}"><i class="fa fa-edit" aria-hidden="true"></i><span>For Approval and Issuance</span></a></li>
-            <li><a href="{{ url('request/custodian/?type=approved') }}"><i class="fa fa-thumbs-up" aria-hidden="true"></i><span>For Releasing</span></a></li>            
+        <li><a href="{{ url('request/custodian/?type=pending') }}"><i class="fa fa-edit" aria-hidden="true"></i><span>Pending Requests</span></a></li>
+            <li><a href="{{ url('request/custodian/?type=approved') }}"><i class="fa fa-thumbs-up" aria-hidden="true"></i><span>Approved Requests</span></a></li>            
             <li><a href="{{ url('request/custodian/?type=released') }}"><i class="fa fa-angle-double-right" aria-hidden="true"></i><span>Released Requests</span></a></li>
             <li><a href="{{ url('request/custodian/?type=disapproved') }}"><i class="fa fa-times-circle" aria-hidden="true"></i><span>Disapproved/Expired/<br/>&emsp;&nbsp;&nbsp;Cancelled</span></a></li>
         </ul>

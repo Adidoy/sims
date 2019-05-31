@@ -5,6 +5,7 @@ namespace App\Models\Requests\Client;
 use App;
 use Auth;
 use Carbon;
+use App\Models\Sector;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\UserResolver;
@@ -51,7 +52,7 @@ class RequestClient extends Model implements Auditable, UserResolver
       'date_requested', 
       'date_released',  
       'remaining_days', 
-      'expire_on', 
+      'date_expiry', 
       'date_approved', 
       'date_cancelled', 
       'local_id', 
@@ -121,6 +122,19 @@ class RequestClient extends Model implements Auditable, UserResolver
     public function getLocalIdAttribute($value)
     {
       return isset($this->local) ? $this->local : "New Request";  
+    }
+
+    public function getDateExpiryAttribute()
+    {
+      $sector = Sector::findSectorCode($this->office->id);
+      if($sector == 'OVPBSC')
+        if ($sector != $this->office->code)
+          $expirationDate = Carbon\Carbon::parse($this->approved_at)->addDays(5)->format("d F Y") . " 05:00 PM";
+        else
+          $expirationDate = Carbon\Carbon::parse($this->approved_at)->addDays(3)->format("d F Y") . " 05:00 PM";  
+      else
+        $expirationDate = Carbon\Carbon::parse($this->approved_at)->addDays(3)->format("d F Y") . " 05:00 PM";
+      return $expirationDate;
     }
 
     public function getDateCancelledAttribute($value)

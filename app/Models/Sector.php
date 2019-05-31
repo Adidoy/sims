@@ -10,11 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sector extends Model
 {
-    //public static $appends = ['sector_code', 'sector_name'];
-
-    public function scopeFindSectorCode($query, $office)
+    public function scopeFindSectorCode($query, $value)
     {
-        $office = App\Office::find($office);
+        $office = App\Office::find($value);
         if(isset($office->head_office))
         {
             while(isset($office->head_office)) {

@@ -61,15 +61,15 @@
               <th colspan="16"><h2 class="text-center">REQUISITION AND ISSUE SLIP  <small class="pull-right">Appendix 63</small></h2></th>
           </tr>
           <tr rowspan="2">
-              <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="16">Fund Cluster:  <span style="font-weight:normal"></span> </th>
+              <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="10">Fund Cluster:  <span style="font-weight:normal"></span> </th>
+              <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="6">RIS No.:  <span style="font-weight:normal">{{ $request->local }}</span> </th>
           </tr>
           <tr rowspan="2">
-
               <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="6">Division:  
                 @if($request->office->head_office == null)
-                <span style="font-weight:normal; font-size:10pt; text-align: justify;">N/A</span> 
+                  <span style="font-weight:normal; font-size:10pt; text-align: justify;">N/A</span> 
                 @else
-                <span style="font-weight:normal; font-size:10pt; text-align: justify;">{{ isset($request->office->headoffice) ? $request->office->headoffice->name : $request->office->name }}</span> 
+                  <span style="font-weight:normal; font-size:10pt; text-align: justify;">{{ isset($request->office->headoffice) ? $request->office->headoffice->name : $request->office->name }}</span> 
                 @endif
               </th>
               <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="10">Responsibility Center Code:  <span style="font-weight:normal">{{ isset($request->office->code) ? $request->office->code : $request->office }}</span> </th>
@@ -82,7 +82,7 @@
                 <span style="font-weight:normal">{{ isset($request->office) ? $request->office->name : $request->office }}</span> 
                 @endif
               </th>
-              <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="10">RIS No.:  <span style="font-weight:normal">{{ $request->local }}</span> </th>
+              <th class="text-left" style="font-size:10pt; text-align: justify;" colspan="6">Date of Request:  <span style="font-weight:normal">{{$request->date_requested}}</span> </th>              
           </tr>
         </thead>
       </table>
@@ -230,14 +230,10 @@
           <td class="text-center"> </td>
         </tr>
           <td colspan="16" style="border: none; font-size: 12px;"><br/><br/> <b>
-            *This request is valid for 3 working days (5 days for Branches and Campuses) upon approval after which, if items are not picked up, the request is automatically <span class="text-danger"> cancelled</span>.
-            @if(isset($sector->code) == 'OVPBSC')
-             <br>*Request will expire on <span class="text-danger">{{ $request->created_at->addWeekdays(5)}} </span>
-            @else
-             <br>*Request will expire on <span class="text-danger">{{ $request->created_at->addWeekdays(3)}} </span>
-            @endif
-          <br>*Supplies and Materials will be released <span class="text-danger">only </span> to authorized personnel of the requesting office.  
-          <br>*Please pay attention to the <span class="text-danger">UNIT</span> of the item. The unit of measurement to be followed is in the unit column above  </b>
+            <br>*This request is valid for 3 working days (5 days for Branches and Campuses) upon approval after which, if items are not picked up, the request is automatically <span class="text-danger"> cancelled</span>.
+            <br>*Request will expire on <span style="color:red; font-weight:bold; text-align: justified;">{{ $request->date_expiry }} </span>
+            <br>*Supplies and Materials will be released <span class="text-danger">only </span> to authorized personnel of the requesting office.  
+            <br>*Please pay attention to the <span class="text-danger">UNIT</span> of the item. The unit of measurement to be followed is in the unit column above  </b>
         </td>
         </tr>
       </tfoot>

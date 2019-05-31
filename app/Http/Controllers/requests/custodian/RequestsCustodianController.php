@@ -208,11 +208,11 @@ class RequestsCustodianController extends Controller
       $updateRequest->approved_at = Carbon\Carbon::now();
       $updateRequest->save();
 
-      $requestExpiration = new RequestExpiration;
-      $requestExpiration->request_id = $updateRequest->id;
-      $requestExpiration->date_requested = Carbon\Carbon::now();
-      $requestExpiration->expiration_date = Carbon\Carbon::now()->addDays(3);
-      $requestExpiration->save();
+      // $requestExpiration = new RequestExpiration;
+      // $requestExpiration->request_id = $updateRequest->id;
+      // $requestExpiration->date_requested = Carbon\Carbon::now();
+      // $requestExpiration->expiration_date = Carbon\Carbon::now()->addDays(3);
+      // $requestExpiration->save();
 
       DB::commit();
       \Alert::success('Request Approved!')->flash();
@@ -400,7 +400,6 @@ class RequestsCustodianController extends Controller
       'pages' => $data_count,
       'end' => $remaining_rows
     ];
-
     $filename = "Request-".Carbon\Carbon::now()->format('mdYHm')."-"."$request->code".".pdf";
     $view = "requests.client.reports.print_ris";
     return $this->printPreview($view,$data,$filename,$orientation);

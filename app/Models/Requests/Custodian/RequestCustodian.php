@@ -9,6 +9,7 @@ use Carbon;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\UserResolver;
+use App\Models\Sector;
 use App\Models\Requests\Expiration\RequestExpiration;
 
 class RequestCustodian extends Model implements Auditable, UserResolver
@@ -144,8 +145,15 @@ class RequestCustodian extends Model implements Auditable, UserResolver
 
     public function getDateExpiryAttribute()
     {
-      $expirationDate = RequestExpiration::where('request_id','=',$this->id)->pluck('expiration_date')->first();
-      return isset($expirationDate) ? Carbon\Carbon::parse($expirationDate)->format("d F Y")." 05:00 PM" : "N/A";  
+      $sector = Sector::findSectorCode($this->office->id);
+      if($sector == 'OVPBSC')
+        if ($sector != $this->office->code)
+          $expirationDate = Carbon\Carbon::parse($this->approved_at)->addDays(5)->format("d F Y") . " 05:00 PM";
+        else
+          $expirationDate = Carbon\Carbon::parse($this->approved_at)->addDays(3)->format("d F Y") . " 05:00 PM";  
+      else
+        $expirationDate = Carbon\Carbon::parse($this->approved_at)->addDays(3)->format("d F Y") . " 05:00 PM";
+      return $expirationDate;
     }
 
     public function getLocalIdAttribute($value)
