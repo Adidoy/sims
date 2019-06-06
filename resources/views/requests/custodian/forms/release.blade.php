@@ -59,6 +59,7 @@
             <th class="col-sm-1">Stock Number</th>
             <th class="col-sm-1">Information</th>
             <th class="col-sm-1">Remaining Quantity</th>
+            <th class="col-sm-1">Requested Quantity</th>
             <th class="col-sm-1">Issued Quantity</th>
           </tr>
         </thead>
@@ -77,6 +78,7 @@
             <td>{{ $supply->stocknumber }}<input type="hidden" name="stocknumber[]" value="{{ $supply->stocknumber }}"</td>
             <td class="text-justified">{{ $supply->details }}</td>
             <td>{{ $supply->stock_balance }}</td>
+            <td><input type="hidden" name="quantity[{{ $supply->stocknumber }}]" class="form-control" value="{{ $supply->pivot->quantity_requested }}"  />{{ $supply->pivot->quantity_requested }}</td>
             <td><input type="hidden" name="quantity[{{ $supply->stocknumber }}]" class="form-control" value="{{ $supply->pivot->quantity_issued }}"  />{{ $supply->pivot->quantity_issued }}</td>
           </tr>
 
