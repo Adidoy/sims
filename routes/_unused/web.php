@@ -27,14 +27,18 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('question/create', 'FaqsController@createIssue');
 	Route::get('question/{id}/solution', 'SolutionsController@index');
 	Route::get('question/{id}/solution/create', 'SolutionsController@createSolution');
+
 	Route::post('question/{id}/solution', 'SolutionsController@storeSolution');
 	Route::post('question', 'FaqsController@storeIssue');
+
 	Route::get('/', 'HomeController@index');
 	Route::get('settings',['as'=>'settings.edit','uses'=>'SessionsController@edit']);
 	Route::post('settings',['as'=>'settings.update','uses'=>'SessionsController@update']);
 	Route::get('logout', 'Auth\LoginController@logout');
+
 	Route::get('dashboard','DashboardController@index');
 	Route::get('inventory/supply/all/print', 'SupplyInventoryController@printMasterList');
+
 	Route::get('inventory/supply/ledgercard/{type}/computecost','LedgerCardController@computeCost');
 
 	/**
@@ -54,6 +58,9 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('get/inventory/supply/stocknumber/all','StockCardController@getAllStockNumber');
 	// return stock number for autocomplete
 	Route::get('get/inventory/supply/stocknumber','SupplyInventoryController@show');
+
+	Route::get('request/{type}/count', 'RequestController@count');
+
 	Route::middleware(['except-offices'])->group(function(){
 
 		//====================== old codes ===========================
@@ -91,12 +98,35 @@ Route::middleware(['auth'])->group(function(){
 
 
 		Route::get('purchaseorder/{id}/print','PurchaseOrderController@printPurchaseOrder');
+
 		Route::resource('purchaseorder','PurchaseOrderController');
+
+		Route::get('request/generate','RequestController@generate');
+
 		Route::get('receipt/{receipt}/print','ReceiptController@printReceipt');
+
 		Route::resource('receipt','ReceiptController');
 	});
 
+	Route::middleware(['amo-office'])->group(function(){
+		// Route::get('inspection/{id}/print', 'InspectionController@print');
+		// Route::get('inspection/{id}/apply', 'InspectionController@applyToStockCard');
+		// Route::get('inspection/{id}/approve', 'InspectionController@getApprovalForm');
+		// Route::put('inspection/{id}/approve', 'InspectionController@approval');
+
+
+	});
+
 	Route::middleware(['amo'])->group(function(){
+
+		// Route::post('delivery/supply/create',[
+		// 	'as' => 'delivery.supply.create',
+		// 	'uses' => 'DeliveryController@store'
+		// ]);
+		// Route::get('delivery/supply/create','DeliveryController@create');
+		// Route::resource('delivery/supply', 'DeliveryController');
+		// Route::get('delivery/supply/{id}/', 'DeliveryController@show');
+		// Route::get('delivery/supply/{id}/print', 'DeliveryController@print');
 
 		//========================== Old Code Starts Here ========================//
 
@@ -123,6 +153,29 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('inventory/supply/stockcard/print','StockCardController@printAllStockCard');
 
 		Route::resource('inventory/supply.stockcard','StockCardController');
+
+		Route::get('reports/rislist','RequestController@ris_list_index');
+
+		Route::get('reports/rislist/{id}','RequestController@ris_list_show');
+
+		Route::get('reports/rislist/print/{id}','RequestController@print_ris_list');
+
+		Route::put('request/{id}/reset', 'RequestController@resetStatus');
+
+		Route::post('request/{id}/expire', 'RequestController@expireStatus'); 
+
+		Route::get('request/{id}/accept','RequestController@getAcceptForm');
+		
+		Route::put('request/{id}/accept',[
+			'as' => 'request.accept',
+			'uses' => 'RequestController@accept'
+		]);
+
+		// Route::get('request/{id}/release',[
+		// 	'as' => 'request.release',
+		// 	'uses' => 'RequestController@releaseView'
+		// ]);
+
 		Route::get('adjustment/{id}/print', 'AdjustmentsController@print');
 		Route::get('adjustment/dispose', 'AdjustmentsController@dispose');
 		Route::put('adjustment/return', [
@@ -204,9 +257,11 @@ Route::middleware(['auth'])->group(function(){
 	});
 
 	Route::middleware(['admin'])->group(function(){
+		
 		Route::get('sync', 'SyncController@getSync');
 		Route::get('sync/getstocknumberlist', 'SyncController@getStockNumbers');
 		Route::post('sync', 'SyncController@sync');
+
 		Route::get('audittrail','AuditTrailController@index');
 		Route::resource('account','AccountsController');
 		Route::post('account/password/reset','AccountsController@resetPassword');
@@ -216,6 +271,7 @@ Route::middleware(['auth'])->group(function(){
 		]);
 		Route::get('import','ImportController@index');
 		Route::post('import','ImportController@store');
+
 		Route::get('correction', 'CorrectionsController@index');
 		Route::get('correction/create', 'CorrectionsController@create');
 		Route::post('correction', 'CorrectionsController@store');
@@ -225,6 +281,20 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('correction/{id}/cancel', 'CorrectionsController@cancellation');
 		Route::post('correction/{id}/cancel', 'CorrectionsController@cancel');
 	});
+
+	Route::middleware(['offices'])->group(function(){
+		Route::get('request/{id}/print','RequestController@print');
+		// Route::get('request/{id}/cancel','RequestController@getCancelForm');
+		Route::get('request/{id}/comments','RequestController@getComments');
+
+		Route::post('request/{id}/comments','RequestController@postComments');
+		// Route::post('request/{id}/cancel',[
+		// 	'as' => 'request.cancel',
+		// 	'uses' => 'RequestController@cancel'
+		// ]);
+		Route::resource('request','RequestController');
+	});
+
 	Route::get('get/supply/stocknumber','SupplyInventoryController@show');
 
 });

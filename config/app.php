@@ -211,6 +211,7 @@ return [
 
         // ...
         App\Providers\DashboardService::class,
+        Barryvdh\Debugbar\ServiceProvider::class,
     ],
 
     /*
@@ -266,7 +267,7 @@ return [
         'SnappyImage' => Barryvdh\Snappy\Facades\SnappyImage::class,
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
-
+        'Debugbar' => Barryvdh\Debugbar\Facade::class,
     ],
 
 ];

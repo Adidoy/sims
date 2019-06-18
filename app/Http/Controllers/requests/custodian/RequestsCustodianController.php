@@ -208,12 +208,6 @@ class RequestsCustodianController extends Controller
       $updateRequest->approved_at = Carbon\Carbon::now();
       $updateRequest->save();
 
-      // $requestExpiration = new RequestExpiration;
-      // $requestExpiration->request_id = $updateRequest->id;
-      // $requestExpiration->date_requested = Carbon\Carbon::now();
-      // $requestExpiration->expiration_date = Carbon\Carbon::now()->addDays(3);
-      // $requestExpiration->save();
-
       DB::commit();
       \Alert::success('Request Approved!')->flash();
       return redirect('request/custodian?type=pending');
