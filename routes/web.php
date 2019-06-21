@@ -16,6 +16,7 @@ App\Http\Modules\Inspection\Routes::all();
 App\Http\Modules\Maintenance\Routes::all();
 App\Http\Modules\Requests\Client\Routes::all();
 App\Http\Modules\Requests\Custodian\Routes::all();
+App\Http\Modules\Adjustments\Routes::all();
 App\Http\Modules\Reports\Routes::all();
 
 
@@ -123,15 +124,15 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('inventory/supply/stockcard/print','StockCardController@printAllStockCard');
 
 		Route::resource('inventory/supply.stockcard','StockCardController');
-		Route::get('adjustment/{id}/print', 'AdjustmentsController@print');
-		Route::get('adjustment/dispose', 'AdjustmentsController@dispose');
-		Route::put('adjustment/return', [
-			'as' => 'adjustment.dispose',
-			'uses' => 'AdjustmentsController@destroy'
-		]);
-		Route::get('adjustment/return', 'AdjustmentsController@create');
+		// Route::get('adjustment/{id}/print', 'AdjustmentsController@print');
+		// Route::get('adjustment/dispose', 'AdjustmentsController@dispose');
+		// Route::put('adjustment/return', [
+		// 	'as' => 'adjustment.dispose',
+		// 	'uses' => 'AdjustmentsController@destroy'
+		// ]);
+		// Route::get('adjustment/return', 'AdjustmentsController@create');
 
-		Route::resource('adjustment', 'AdjustmentsController');
+		// Route::resource('adjustment', 'AdjustmentsController');
 
 		Route::resource('announcement', 'AnnouncementsController');
 

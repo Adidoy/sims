@@ -13,10 +13,10 @@
       'class' => 'form-control',
       'placeholder' => 'Supply Stock Number '
     ]) }}
-    <p class="text-muted" style="font-size: 10px">Press <strong>Add</strong> Button to search for list of supplies</p>
+    <p class="text-muted" style="font-size: 10px">Press <strong>Search</strong> Button to search for list of supplies</p>
     </div>
     <div class="col-sm-1" style="padding-left:0px;">
-      <button type="button" id="add-stocknumber" class="btn btn-default">Add</button>
+      <button type="button" id="add-stocknumber" class="btn btn-default">Search</button>
     </div>
   </div>
   <input type="hidden" id="supply-item" />
@@ -29,16 +29,12 @@
       'class' => 'form-control',
       'placeholder' => 'Quantity'
     ]) }}
-    </div>
-  </div>
-  <div class="col-md-12">
-    <div class="form-group">
-    {{ Form::label('Unit Cost') }}
-    {{ Form::text('unitcost','',[
-      'id' => 'unitcost',
+    {{ Form::label('Reference')}}
+    {{ Form::text('reference',null,[
+      'id' => 'reference',
       'class' => 'form-control',
-      'placeholder' => 'Unit Cost'
-    ]) }}
+      'placeholder' => 'Enter RIS Number or Reference Number here'
+    ])}}
     </div>
   </div>
   <div class="btn-group" style="margin-bottom: 20px">
@@ -53,7 +49,6 @@
         <th class=col-sm-1>Stock Number</th>
         <th class=col-sm-1>Information</th>
         <th class=col-sm-1>Quantity</th>
-        <th class=col-sm-1>Unit Cost</th>
         <th class=col-sm-1></th>
       </tr>
     </thead>

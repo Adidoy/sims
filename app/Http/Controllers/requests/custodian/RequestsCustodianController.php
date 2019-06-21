@@ -102,10 +102,9 @@ class RequestsCustodianController extends Controller
     }
   }
 
-  public function generateCode() 
+  public function generateCode($id) 
   {
     $requests = RequestCustodian::whereNotNull('local')->orderBy('created_at','desc')->first();
-    $id = substr($requests->local,6,4) + 1;
     $now = Carbon\Carbon::now();
     $year = substr($requests->local,0,2);
     if($year != $now->format('y')) {
@@ -199,7 +198,7 @@ class RequestsCustodianController extends Controller
 
       $updateRequest = RequestCustodian::find($id);
       if (!isset($updateRequest->local)) {
-        $updateRequest->local = $this->generateCode();
+        $updateRequest->local = $this->generateCode($updateRequest->id);
       }
       $updateRequest->supplies()->sync($array);
       $updateRequest->remarks = $remarks;
