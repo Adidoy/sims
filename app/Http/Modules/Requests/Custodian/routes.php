@@ -16,7 +16,10 @@ class Routes
     {
         Route::middleware(['amo'])->namespace('requests\custodian')->group(function() {
             Route::prefix('request/custodian')->group(function() {
-                Route::get('/', 'RequestsCustodianController@index');
+                Route::get('/pending', 'RequestsCustodianController@pendingRequests');
+                Route::get('/approved', 'RequestsCustodianController@approvedRequests');
+                Route::get('/released', 'RequestsCustodianController@releasedRequests');
+                Route::get('/disapproved', 'RequestsCustodianController@disapprovedRequests');
                 Route::get('{id}', 'RequestsCustodianController@show');
                 Route::get('{id}/cancel', 'RequestsCustodianController@getCancelRequest');
                 Route::post('{id}/cancel', [

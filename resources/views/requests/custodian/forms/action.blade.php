@@ -56,7 +56,7 @@
       <button type="submit" name="approve" id="approve" style="text-align:justify; font-size:11pt;" class="btn btn-md btn-success" value="approved">
         <i class="fa fa-thumbs-up" aria-hidden="true"> Approve Request</i>
       </button>
-      <a type="button" id="cancel" style="text-align:justify; font-size:11pt;" class="btn btn-md btn-default" href="{{ url("request/custodian?type=pending") }}">
+      <a type="button" id="cancel" style="text-align:justify; font-size:11pt;" class="btn btn-md btn-default" href="{{ url("request/custodian/pending") }}">
         Go Back
       </a>
   </div>

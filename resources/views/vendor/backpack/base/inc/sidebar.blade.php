@@ -5,28 +5,16 @@
       <section class="sidebar">
         <!-- Sidebar user panel -->
         <div class="user-panel">
-          <div class="pull-left image">
-            {{-- <img src="https://placehold.it/160x160/00a65a/ffffff/&text={{ mb_substr(Auth::user()->name, 0, 1) }}" class="img-circle" alt="User Image"> --}}
-            {{-- <img src="{{ asset('images/logo.png') }}" class="img-circle" alt="User Image" /> --}}
-            <img data-name="{{ Auth::user()->firstname }}" class="profile-image img-circle" alt="User Image" /> 
-          </div>
-          <div class="pull-left info">
-            <p>{{ Auth::user()->name }}</p>
-            <a href="#">
-              <i class="fa fa-circle text-success"></i> 
-              <span>
-              {{ Auth::user()->firstname }} {{ Auth::user()->lastname }}
-              @if(isset(Auth::user()->position))
-              @if(strlen(Auth::user()->position) > 7)
-              <br /><span class="text-center" style="font-size: 8px">
-              @else
-              <span class="text-center">|
-              @endif
-                <label> {{  substr(ucfirst(Auth::user()->position), 0, 30) . ((strlen(Auth::user()->position) > 15) ? "..." : "") }} </label>
-              </span>
-              @endif
-              </span>
-            </a>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="text-center">
+                <p style="color:#FFFFFF;">
+                  {{ strtoupper(Auth::user()->firstname) }} {{strtoupper(Auth::user()->lastname) }}
+                  <br />
+                  {{  substr(ucfirst(Auth::user()->position), 0, 30) . ((strlen(Auth::user()->position) > 15) ? "..." : "") }}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
         <!-- sidebar menu: : style can be found in sidebar.less -->

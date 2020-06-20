@@ -17,7 +17,7 @@ class Supply extends Model
 
 	protected $table = 'supplies';
 	protected $primaryKey = 'id';
-	protected $fillable = ['stocknumber', 'details', 'unit', 'reorderpoint'];
+	protected $fillable = ['stocknumber', 'details', 'unit_id', 'reorderpoint'];
 	public $incrementing = false;
 	public $timestamps = true;
 
@@ -32,25 +32,24 @@ class Supply extends Model
 		'temp_balance',
 		'stock_balance',
 		'ledger_balance',
-		'unitcost',
 		'unit_name'
 	];
 
 	public function getUnitNameAttribute($value)
 	{
-		return (isset($this->unit) && count($this->unit) > 0) ?  $this->unit->name : null;
+		return (isset($this->unit) && count((array)$this->unit) > 0) ?  $this->unit->name : null;
 	}
 
-	public function getUnitCostAttribute($value)
-	{
-		$cost = ReceiptSupply::findByStockNumber($this->stocknumber)
-								->where('remaining_quantity', '>', 0)
-								->whereNotNull('unitcost')
-								->select('unitcost')
-								->avg('unitcost');
+	// public function getUnitCostAttribute($value)
+	// {
+	// 	$cost = ReceiptSupply::findByStockNumber($this->stocknumber)
+	// 							->where('remaining_quantity', '>', 0)
+	// 							->whereNotNull('unitcost')
+	// 							->select('unitcost')
+	// 							->avg('unitcost');
 		
-		return (count($cost) > 0) ? $cost : 0;
-	}
+	// 	return (count($cost) > 0) ? $cost : 0;
+	// }
 
 	public function getTempBalanceAttribute($value)
 	{

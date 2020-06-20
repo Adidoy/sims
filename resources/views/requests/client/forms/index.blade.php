@@ -94,7 +94,7 @@
         "dom": "<'row'<'col-sm-3'l><'col-sm-6'<'toolbar'>><'col-sm-3'f>>" +
                       "<'row'<'col-sm-12'tr>>" +
                       "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-        ajax: "{{ url('request/client/?type=' . $type) }}",
+        ajax: "{{ url('request/client/' . $type) }}",
         columns: [
           { data: "local_id" },
           @if($type == 'pending')

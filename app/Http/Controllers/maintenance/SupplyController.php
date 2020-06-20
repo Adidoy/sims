@@ -105,7 +105,7 @@ class SupplyController extends Controller
 	 */
 	public function update(Request $request,  $id)
 	{
-		$this->dispatch(new UpdateSupply($request));
+		$this->dispatch(new UpdateSupply($request, $id));
 		\Alert::success( __('supplies.successful_update') )->flash();
 		return redirect('maintenance/supply');
 	}

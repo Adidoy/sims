@@ -101,7 +101,7 @@
           <button type="button" id="approve" class="btn btn-md btn-danger btn-block">Release</button>
         </div>
         <div class="btn-group">
-          <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('request/custodian/').'?type=approved' }}"'>Cancel</button>
+          <button type="button" id="cancel" class="btn btn-md btn-default" onclick='window.location.href = "{{ url('request/custodian/approved') }}"'>Cancel</button>
         </div>
       </div>
       {{ Form::close() }}

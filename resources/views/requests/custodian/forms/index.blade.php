@@ -11,6 +11,18 @@
       </ol>
     @elseif($type == 'approved')
       <h1>Approved Requests</h1>
+      @if (\Session::has('success'))
+        <br>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="alert alert-danger">
+                <ul>
+                    <li>{!! \Session::get('success') !!}</li>
+                </ul>
+            </div>
+          </div>
+        </div>
+      @endif
       <ol class="breadcrumb">
         <li>Requests</li>
         <li>For Issuance</li>
@@ -94,7 +106,7 @@
         "dom": "<'row'<'col-sm-3'l><'col-sm-6'<'toolbar'>><'col-sm-3'f>>" +
                       "<'row'<'col-sm-12'tr>>" +
                       "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-        ajax: "{{ url('request/custodian/?type=' . $type) }}",
+        ajax: "{{ url('request/custodian/' . $type) }}",
         columns: [
           { data: "local_id" },
           @if($type == 'pending')

@@ -77,12 +77,12 @@ class StockCard extends Model implements Auditable, UserResolver
 
 	public function getSupplyNameAttribute($value)
 	{
-		return count($this->supply) > 0 ? $this->supply->details : 'N/A';
+		return count((array)$this->supply) > 0 ? $this->supply->details : 'N/A';
 	}
 
 	public function getStocknumberAttribute($value)
 	{
-		return count($this->supply) > 0 ? $this->supply->stocknumber : 'N/A';
+		return count((array)$this->supply) > 0 ? $this->supply->stocknumber : 'N/A';
 	}
 
 	public function getMonthAttribute($value)
@@ -328,7 +328,7 @@ class StockCard extends Model implements Auditable, UserResolver
 				'number' => $this->reference
 			], [
 				'date_received' => Carbon\Carbon::parse($this->date),
-				'supplier_id' => (count($supplier) > 0 && isset($supplier->id)) ? $supplier->id : null
+				'supplier_id' => (count((array)$supplier) > 0 && isset($supplier->id)) ? $supplier->id : null
 			]);
 
 			/**

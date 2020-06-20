@@ -19,38 +19,59 @@ use App\Models\Requests\Client\RequestDetailsClient;
 
 class RequestsClientController extends Controller
 {
-    public function index(Request $request) 
+
+    public function pendingRequests(Request $request)
     {
-        if(isset($request->type)) {
-            if($request->type == 'pending') {
-                $requests = RequestClient::findOfficeRequest(Auth::user()->office)
-                    ->whereNull('status')
-                    ->orderBy('created_at', 'desc')
-                    ->get();    
-            } elseif ($request->type == 'approved') {
-                $requests = RequestClient::findOfficeRequest(Auth::user()->office)
-                    ->where('status','=','approved')
-                    ->orderBy('approved_at', 'desc')
-                    ->get();
-            } elseif ($request->type == 'released') {
-                $requests = RequestClient::findOfficeRequest(Auth::user()->office)
-                    ->where('status','=','released')
-                    ->orderBy('released_at', 'desc')
-                    ->get();
-            } elseif ($request->type == 'disapproved') {
-                $requests = RequestClient::findOfficeRequest(Auth::user()->office)
-                    ->where(function($query) {
-                        $query->where('status','=','cancelled')
-                                ->orWhere('status','=','disapproved')
-                                ->orWhere('status','=','request expired');
-                    })
-                    ->orderBy('cancelled_at', 'desc')
-                    ->get();
-            }
-        }
-        $type = $request->type;
+        $requests = RequestClient::findOfficeRequest(Auth::user()->office)
+            ->whereNull('status')
+            ->orderBy('created_at', 'desc')
+            ->get();   
+        $type = "pending";
         if($request->ajax()) {
-          return datatables($requests)->toJson();
+            return datatables($requests)->toJson();
+        }
+        return view('requests.client.forms.index', compact('type', 'requests'));
+    }
+
+    public function approvedRequests(Request $request)
+    {
+        $requests = RequestClient::findOfficeRequest(Auth::user()->office)
+            ->where('status','=','approved')
+            ->orderBy('approved_at', 'desc')
+            ->get();
+        $type = "approved";
+        if($request->ajax()) {
+            return datatables($requests)->toJson();
+        }
+        return view('requests.client.forms.index', compact('type', 'requests'));
+    }
+
+    public function releasedRequests(Request $request)
+    {
+        $requests = RequestClient::findOfficeRequest(Auth::user()->office)
+            ->where('status','=','released')
+            ->orderBy('released_at', 'desc')
+            ->get();
+        $type = "released";
+        if($request->ajax()) {
+            return datatables($requests)->toJson();
+        }
+        return view('requests.client.forms.index', compact('type', 'requests'));
+    }
+
+    public function disapprovedRequests(Request $request)
+    {
+        $requests = RequestClient::findOfficeRequest(Auth::user()->office)
+        ->where(function($query) {
+            $query->where('status','=','cancelled')
+                    ->orWhere('status','=','disapproved')
+                    ->orWhere('status','=','request expired');
+        })
+        ->orderBy('cancelled_at', 'desc')
+        ->get();
+        $type = "disapproved";
+        if($request->ajax()) {
+            return datatables($requests)->toJson();
         }
         return view('requests.client.forms.index', compact('type', 'requests'));
     }
@@ -118,7 +139,7 @@ class RequestsClientController extends Controller
             }
             DB::commit();
             \Alert::success('Request Sent')->flash();
-            return redirect('request/client?type=pending');
+            return redirect('request/client/pending');
         } catch(\Exception $e) {
           DB::rollback();
           \Alert::error('An error occured! Please try again. Message: '.$e->getMessage())->flash();
@@ -170,7 +191,7 @@ class RequestsClientController extends Controller
             $updateRequest->save();
             DB::commit();
             \Alert::success('Request cancelled')->flash();
-            return redirect('request/client?type=disapproved');
+            return redirect('request/client/disapproved');
         } catch(\Exception $e) {
           DB::rollback();
           \Alert::error('An error occured! Please try again. Message: '.$e->getMessage())->flash();

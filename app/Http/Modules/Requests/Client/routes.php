@@ -18,7 +18,10 @@ class Routes
             Route::prefix('request/client')->group(function() {
                 Route::get('create', 'RequestsClientController@create');
                 Route::post('create', 'RequestsClientController@store');
-                Route::get('/', 'RequestsClientController@index');
+                Route::get('/pending', 'RequestsClientController@pendingRequests');
+                Route::get('/approved', 'RequestsClientController@approvedRequests');
+                Route::get('/released', 'RequestsClientController@releasedRequests');
+                Route::get('/disapproved', 'RequestsClientController@disapprovedRequests');
                 Route::get('{id}', 'RequestsClientController@show');
                 Route::get('{id}/cancel', 'RequestsClientController@getCancelRequest');
                 Route::post('{id}/cancel', [

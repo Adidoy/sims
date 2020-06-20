@@ -20,34 +20,53 @@ use App\Http\Controllers\Inventory\Stockcards\StockCardController;
 
 class RequestsCustodianController extends Controller
 {
-  public function index(Request $request) 
+  public function pendingRequests(Request $request) 
   {
-    if(isset($request->type)) {
-      if($request->type == 'pending') {
-          $requests = RequestCustodian::whereNull('status')
-            ->orderBy('created_at', 'desc')
-            ->get();
-      } elseif ($request->type == 'approved') {
-          $requests = RequestCustodian::where('status','=','approved')
-            ->orderBy('approved_at', 'desc')
-            ->get();
-      } elseif ($request->type == 'released') {
-          $requests = RequestCustodian::where('status','=','released')
-            ->orderBy('released_at', 'desc')
-            ->get();
-      } elseif ($request->type == 'disapproved') {
-          $requests = RequestCustodian::where(function($query) {
-                  $query->where('status','=','cancelled')
-                          ->orWhere('status','=','disapproved')
-                          ->orWhere('status','=','request expired');
-              })
-              ->orderBy('updated_at', 'desc')
-              ->get();
-      }
-    } else {
-      return redirect("/");
+    $requests = RequestCustodian::whereNull('status')
+    ->orderBy('created_at', 'desc')
+    ->get();
+    $type = 'pending';
+    if($request->ajax()) {
+      return datatables($requests)->toJson();
     }
-    $type = $request->type;
+    return view('requests.custodian.forms.index', compact('type', 'requests'));
+  }
+
+  public function approvedRequests(Request $request) 
+  {
+    $requests = RequestCustodian::where('status','=','approved')
+    ->orderBy('approved_at', 'desc')
+    ->get();
+    $type = 'approved';
+    $isExpired = false;
+    if($request->ajax()) {
+      return datatables($requests)->toJson();
+    }
+    return view('requests.custodian.forms.index', compact('type', 'requests', 'isExpired'));
+  }
+
+  public function releasedRequests(Request $request) 
+  {
+    $requests = RequestCustodian::where('status','=','released')
+    ->orderBy('released_at', 'desc')
+    ->get();
+    $type = 'released';
+    if($request->ajax()) {
+      return datatables($requests)->toJson();
+    }
+    return view('requests.custodian.forms.index', compact('type', 'requests'));
+  }
+
+  public function disapprovedRequests(Request $request) 
+  {
+    $requests = RequestCustodian::where(function($query) {
+      $query->where('status','=','cancelled')
+              ->orWhere('status','=','disapproved')
+              ->orWhere('status','=','request expired');
+    })
+    ->orderBy('updated_at', 'desc')
+    ->get();
+    $type = 'disapproved';
     if($request->ajax()) {
       return datatables($requests)->toJson();
     }
@@ -86,6 +105,17 @@ class RequestsCustodianController extends Controller
   public function getReleaseForm(Request $request, $id)
   {
     $requests = RequestCustodian::find($id);
+    $dateToday = Carbon\Carbon::now();
+    if ((strpos($requests->office, 'BRANCH') !== false) &&  $dateToday->greaterThanOrEqualTo(Carbon\Carbon::parse($requests->approved_at)->addDays(5))) {
+      $risNo = $requests->local;
+      $this->expireRIS($id);
+      return redirect()->back()->with('success', 'Request Expired: RIS '.$risNo. ' was tagged as expired due to inactivity in the system within the prescribed time. (5 days)'); 
+    }
+    else if ((strpos($requests->office, 'BRANCH') == false) &&  $dateToday->greaterThanOrEqualTo(Carbon\Carbon::parse($requests->approved_at)->addDays(3))) {
+      $risNo = $requests->local;
+      $this->expireRIS($id);
+      return redirect()->back()->with('success', 'Request Expired: RIS '.$risNo. ' was tagged as expired due to inactivity in the system within the prescribed time. (5 days)'); 
+    }
     return view('requests.custodian.forms.release')
       ->with('request', $requests)
       ->with('action', 'request')
@@ -216,7 +246,7 @@ class RequestsCustodianController extends Controller
 
       DB::commit();
       \Alert::success('Request Approved!')->flash();
-      return redirect('request/custodian?type=pending');
+      return redirect('request/custodian/pending');
     } catch(\Exception $e) {
       DB::rollback();
       \Alert::error('An error occured! Please try again. Message: '.$e->getMessage())->flash();
@@ -243,7 +273,7 @@ class RequestsCustodianController extends Controller
     try {
       $updateRequest = RequestCustodian::find($id);
       DB::beginTransaction();
-      if( count($updateRequest) <= 0 || !in_array($updateRequest->status, [ 'Approved', 'approved']) || Auth::user()->access != 1 && Auth::user()->access != 6) {
+      if( count((array)$updateRequest) <= 0 || !in_array($updateRequest->status, [ 'Approved', 'approved']) || Auth::user()->access != 1 && Auth::user()->access != 6) {
         return view('errors.404');
       }
       $office = App\Office::where('id','=',$updateRequest->office->id)->first();
@@ -287,7 +317,7 @@ class RequestsCustodianController extends Controller
 			}
 
       \Alert::success('Items for RIS No.:'.$updateRequest->local.' are now released.')->flash();
-      return redirect('request/custodian?type=approved');
+      return redirect('request/custodian/approved');
     } catch(\Exception $e) {
       DB::rollback();
       \Alert::error('An error occured! Please try again. Message: '.$e->getMessage())->flash();
@@ -336,7 +366,51 @@ class RequestsCustodianController extends Controller
 
       DB::commit();
       \Alert::error('Request Disapproved.')->flash();
-      return redirect('request/custodian?type=pending');
+      return redirect('request/custodian/pending');
+    } catch(\Exception $e) {
+      DB::rollback();
+      \Alert::error('An error occured! Please try again. Message: '.$e->getMessage())->flash();
+      return redirect("request/custodian/$id/approve"); 
+    }
+  }
+
+  public function expireRIS($id)
+  {
+    $remarks = "Automatic expiration of request due to inactivity in the system.";
+    $action = "request expired";
+    $cancelled_by = "SYSTEM";
+
+    try {
+
+      DB::beginTransaction();
+
+      //$updateRequestDetails = new RequestDetailsClient;
+      $updateRequest = new RequestCustodian;
+
+      // $validator = Validator::make([
+      //   'Remarks' => $remarks
+      // ], $updateRequest->approveRules(), $updateRequest->approveMessages());
+
+      // if($validator->fails()) {
+      //   return redirect("request/custodian/$id/approve")
+      //     ->with('total',count($stocknumbers))
+      //     ->with('stocknumber',$stocknumbers)
+      //     ->with('quantity',$quantity)
+      //     ->with('comment', $comment)
+      //     ->withInput()
+      //     ->withErrors($validator);
+      // }
+      
+      $updateRequest = RequestCustodian::find($id);
+      $updateRequest->remarks = $remarks;
+      $updateRequest->cancelled_by = $cancelled_by;
+      $updateRequest->status = $action; 
+      $updateRequest->approved_at = Carbon\Carbon::now();
+      $updateRequest->save();
+
+      DB::commit();
+      \Alert::error('Request Expired.')->flash();
+      return redirect('request/custodian/approved');
     } catch(\Exception $e) {
       DB::rollback();
       \Alert::error('An error occured! Please try again. Message: '.$e->getMessage())->flash();
