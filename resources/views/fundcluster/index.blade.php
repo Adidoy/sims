@@ -36,7 +36,6 @@
 	$(document).ready(function() {
 
 	    var table = $('#fundclusterTable').DataTable({
-	    	serverSide: true,
 			language: {
 					searchPlaceholder: "Search..."
 			},

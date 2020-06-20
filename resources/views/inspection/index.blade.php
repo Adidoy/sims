@@ -43,8 +43,6 @@
 
     table = $('#requestTable').DataTable({
       pageLength: 25,
-      serverSide: true,
-      stateSave: true,
       "processing": true,
       language: {
               searchPlaceholder: "Search..."

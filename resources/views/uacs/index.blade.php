@@ -50,7 +50,6 @@
 
 	    var table = $('#uacsTable').DataTable( {
 	    	@if(count($uacs_codes) > 0)
-	    	serverSide: true,
 	    	columnDefs:[
 				{ targets: 'no-sort', orderable: false },
 	    	],

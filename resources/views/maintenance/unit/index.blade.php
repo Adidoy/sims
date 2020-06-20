@@ -37,7 +37,6 @@
 	$(document).ready(function(){
 
 	    var table = $('#unitTable').DataTable( {
-				serverSide: true,
 	    	columnDefs:[
 				{ targets: 'no-sort', orderable: false },
 	    	],

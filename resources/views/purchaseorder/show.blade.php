@@ -76,7 +76,6 @@
 	$(document).ready(function() {
 
     var table = $('#purchaseOrderTable').DataTable({
-    	// serverSide: true,
 		"processing": true,
 		// select: {
 		// 	style: 'single'

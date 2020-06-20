@@ -27,7 +27,6 @@
   $(document).ready(function(){
 
       var table = $('#supplyInventoryTable').DataTable({
-        serverSide: true,
         language: {
             searchPlaceholder: "Search..."
         },

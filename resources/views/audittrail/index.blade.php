@@ -55,8 +55,6 @@
 	$(document).ready(function() {
 
 	    var table = $('#auditTrailTable').DataTable({
-	    	serverSide: true,
-	    	processing: true,
 			select: {
 				style: 'single'
 			},

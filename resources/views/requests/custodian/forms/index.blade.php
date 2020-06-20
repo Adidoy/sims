@@ -90,13 +90,10 @@
 
 @section('after_scripts')
   <script>
-    jQuery(document).ready(function($) 
-    {
+    $(document).ready(function() {
       table = $('#requestTable').DataTable(
       {
         pageLength: 25,
-        serverSide: true,
-        stateSave: true,
         "processing": true,
         "autoWidth": true,
         language: {

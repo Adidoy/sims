@@ -31,7 +31,6 @@
   $(document).ready(function(){
 
       var table = $('#feedbackTable').DataTable( {
-        serverSide: true,
         columnDefs:[
         { "width": "15%", "targets": 0 },
         { "width": "85%", "targets": 1 },

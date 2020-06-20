@@ -58,7 +58,6 @@
 		$(document).ready(function() {
 			var table = $('#rsmiTable').DataTable({
 	    	pageLength: 100,
-        	serverSide: true,
 			"processing": true,
 	    	columnDefs:[
 				{ targets: 'no-sort', orderable: false },
@@ -80,7 +79,6 @@
 			$('#rsmiTable').dataTable().fnDestroy();
 			var table = $('#rsmiTable').DataTable({
 	    	pageLength: 100,
-        	serverSide: true,
 			"processing": true,
 	    	columnDefs:[
 				{ targets: 'no-sort', orderable: false },

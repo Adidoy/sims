@@ -52,7 +52,6 @@
 <script>
 	$(document).ready(function(){
 	    var table = $('#departmentTable').DataTable( {
-	    	serverSide: true,
 			"processing": true,
 	    	columnDefs:[
 				{ targets: 'no-sort', orderable: false },

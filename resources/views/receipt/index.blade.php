@@ -51,7 +51,6 @@
   jQuery(document).ready(function($) {
 
     var table = $('#receiptTable').DataTable({
-        serverSide: true,
         language: {
                 searchPlaceholder: "Search..."
         },

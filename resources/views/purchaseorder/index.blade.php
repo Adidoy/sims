@@ -37,7 +37,6 @@
 	$(document).ready(function() {
 
 	    var table = $('#purchaseOrderTable').DataTable({
-	    	serverSide: true,
 			language: {
 					searchPlaceholder: "Search..."
 			},

@@ -49,7 +49,6 @@
 
     var table = $('#rsmiTable').DataTable({
 		pageLength: 100,
-		serverSide: true,
 		"processing": true,
 		language: {
 				searchPlaceholder: "Search..."

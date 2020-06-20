@@ -37,8 +37,6 @@
 <script>
 	$(document).ready(function(){
 	    var table = $('#officeTable').DataTable( {
-	    	serverSide: true,
-	    	processing: true,
 			"processing": true,
 	    	columnDefs:[
 				{ targets: 'no-sort', orderable: false },
