@@ -31,13 +31,13 @@
 		                <th class="text-left" colspan="4">Reorder Point: <span style="font-weight:normal">{{ $supply->reorderpoint }}</span> </th>
 		            </tr>
 					<tr>
+						<th data-visible="false">ID</th>
 						<th>Date</th>
-						<th>Reference</th>
+						<th width="15%">Reference</th>
 						<th>Receipt Qty</th>
 						<th>Issue Qty</th>
 						<th>Office</th>
 						<th>Balance Qty</th>
-						<th>Days To Consume</th>
 					</tr>
 				</thead>
 			</table>
@@ -66,13 +66,13 @@
 			"processing": true,
 			ajax: '{{ url("inventory/supply/$supply->id/stockcard/") }}',
 			columns: [
+					{ data: "updated_at"},
 					{ data: "parsed_date"},
 					{ data: "reference_information" },
 					{ data: "received_quantity"},
 					{ data: "issued_quantity" },
 					{ data: "organization" },
-					{ data: "balance_quantity" },
-					{ data: "daystoconsume" },
+					{ data: "balance_quantity" }
 			],
 	    });
 

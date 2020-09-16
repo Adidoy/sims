@@ -79,7 +79,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('report/ris/{college}','ReportsController@getRISPerCollege');
 		Route::get('report/fundcluster','ReportsController@fundcluster');
 
-		Route::get('get/office/code/all','OfficeController@getAllCodes');
+		// Route::get('get/office/code/all','OfficeController@getAllCodes');
 
 		Route::get('get/office/code','OfficeController@show');
 
@@ -144,7 +144,7 @@ Route::middleware(['auth'])->group(function(){
 			'as' => 'supply.stockcard.release',
 			'uses' => 'StockCardController@release'
 		]);
-
+		//Route::get('get/office/code','OfficeController@showOfficeCodes');
 		Route::get('inventory/physical', 'PhysicalInventoryController@index');
 		Route::get('inventory/physical/print', 'PhysicalInventoryController@print');
 

@@ -41,6 +41,8 @@
 	$(document).ready(function() {
 
 	    var table = $('#deliveriesTable').DataTable({
+			pageLength: 25,
+        	"processing": true,
 			language: {
 					searchPlaceholder: "Search..."
 			},
@@ -50,7 +52,6 @@
 			"dom": "<'row'<'col-sm-3'l><'col-sm-6'<'toolbar'>><'col-sm-3'f>>" +
 							"<'row'<'col-sm-12'tr>>" +
 							"<'row'<'col-sm-5'i><'col-sm-7'p>>",
-			"processing": true,
 			ajax: "{{ url('delivery/supplies/') }}",
 			columns: [
 				{ data: "local" },

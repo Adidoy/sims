@@ -56,7 +56,7 @@ class PurchaseOrder extends Model
 
     public function getSupplierNameAttribute()
     {
-        if(isset($this->supplier) && count($this->supplier) > 0):
+        if(isset($this->supplier) && $this->supplier->count() > 0):
             if($this->supplier->name)
                 return $this->supplier->name;
         endif;

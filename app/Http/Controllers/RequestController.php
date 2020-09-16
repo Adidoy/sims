@@ -699,7 +699,7 @@ class RequestController extends Controller
     $now = Carbon\Carbon::now();
     $const = $now->format('y') . '-' . $now->format('m');
 
-    if(count($requests) > 0) {
+    if($requests->count() > 0) {
       $id = $requests->id + 1;
     }
     else {

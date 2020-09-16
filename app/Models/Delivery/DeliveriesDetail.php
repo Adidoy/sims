@@ -12,7 +12,8 @@ class DeliveriesDetail extends Model
         'delivery_id',
     	'supply_id',
     	'quantity_delivered',
-        'unit_cost'
+        'unit_cost',
+        'total_cost'
     ];
     
     public function scopeFindByDeliveryID($query, $value)	{

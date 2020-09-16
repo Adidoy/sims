@@ -88,20 +88,19 @@ class OfficeController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show(Request $request, $id = null)
+	public function show(Request $request, $id = null, $code = null)
 	{
 		$office = App\Office::find($id);
-
 		if($request->ajax())
 		{
-
 			if(Input::has('term'))
 			{
 				$code = Input::get('term');
-				return json_encode( App\Office::where('code','like','%'.$code.'%')->pluck('code')->toArray());
+				$offices = App\Office::where('code','like',$code.'%')->pluck('code')->toArray();
+				return json_encode( App\Office::where('code','like',$code.'%')->pluck('code')->toArray());
 			}
 
-			if(count($office) > 0 )
+			if($office->count() > 0 )
 			{
 				return datatables($office->departments)->toJson();
 			}
@@ -111,7 +110,7 @@ class OfficeController extends Controller {
 			]);
 		}
 
-		if(count($office) <= 0 )
+		if($office->count() <= 0 )
 		{
 			 return view('errors.404');
 		}
@@ -121,6 +120,34 @@ class OfficeController extends Controller {
 				->with('office', $office);
 	}
 
+
+	public function showOfficeCodes(Request $request, $id = null)
+	{
+		if($request->ajax())
+		{
+			if($request->has('term'))
+			{
+				$code = $this->sanitizeString($request->get('term'));
+				$office = App\Office::where('code','like',$code.'%')->pluck('code');
+				return json_encode($office);
+			}
+		}
+	}
+
+	public function showOfficeDetails(Request $request, $code)
+	{
+		$office = App\Office::findByCode($code);
+		return json_encode($office);
+		if($request->ajax())
+		{
+			if($request->has('term'))
+			{
+				//$code = $this->sanitizeString($request->get('term'));
+				$office = App\Office::findByCode($code);
+				return json_encode($office);
+			}
+		}
+	}
 
 	/**
 	 * Show the form for editing the specified resource.

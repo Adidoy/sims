@@ -49,6 +49,7 @@
 							<th class="text-center">Unit of Measure</th>
 						    <th class="text-center">Quantity Delivered</th>
 						    <th class="text-center">Unit Cost</th>
+							<th class="text-center">Total Cost</th>
 					    </tr>
 				    </thead>
 			    </table>
@@ -67,7 +68,7 @@
 			"processing": true,
 			ajax: "{{ url("delivery/supplies/$delivery->id") }}",
 			columnDefs: [{
-					targets: [3,4],
+					targets: [3,4,5],
 					className: "text-right"
 				}
 			],
@@ -76,7 +77,8 @@
 					{ data: "details" },
 					{ data: "unit.name" },
 					{ data: "pivot.quantity_delivered" },
-					{ data: "pivot.unit_cost" }
+					{ data: "pivot.unit_cost" },
+					{ data: "pivot.total_cost" }
 			],
 		});
 	});

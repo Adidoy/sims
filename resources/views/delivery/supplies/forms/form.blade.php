@@ -1,18 +1,37 @@
 <!-- suppliers -->
 <div class="row">
-	<!-- supplier form -->
-	<div class="col-md-12">
-		<div class="col-md-12">
-			<div class="form-group">
-				{{ Form::label('Supplier') }}
-				{{ Form::select('supplier', (isset($supplier) && count($supplier) > 0) ? $supplier : [], old('supplier'),[
-					'id' => 'supplier',
-					'class' => 'form-control'
-				]) }}
-			</div>
+	<div class="col-sm-12">
+		<div class="form-horizontal">
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="col-lg-6 col-md-6 col-sm-12">
+						<div class="form-group">
+							<div class="col-sm-12">
+								{{ Form::label('Supplier') }}
+								{{ Form::select('supplier', (isset($supplier) && count($supplier) > 0) ? $supplier : [], old('supplier'),[
+									'id' => 'supplier',
+									'class' => 'form-control'
+								]) }}
+							</div>
+						</div>
+					</div>
+					<!-- <div class="col-lg-2 col-md-2 col-sm-12"></div> -->
+					<div class="col-lg-6 col-md-6 col-sm-12">
+						<div class="form-group">
+							<div class=col-sm-12>
+								{{ Form::label('Fund Cluster') }}
+								{{ Form::select('fund_cluster', (isset($fund_cluster) && $fund_cluster->count() > 0) ? $fund_cluster : [], old('fund_cluster'),[
+									'id' => 'fund_cluster',
+									'class' => 'form-control'
+								]) }}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div> 
 		</div>
-	</div> <!-- end of supplier form -->
-</div> 
+	</div>
+</div>
 <!-- suppliers -->
 
 <hr style="color: black; background-color :black;" />

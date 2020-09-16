@@ -23,6 +23,8 @@ class Routes
             // administrator of the system or the authorized personnels
             Route::prefix('maintenance')->group(function() {
                 Route::get('supply/print','SupplyController@print');
+                Route::get('get/office/autocomplete','OfficeController@showOfficeCodes');
+                Route::get('get/office/{code}','OfficeController@showOfficeDetails');
                 Route::resource('supply','SupplyController');
                 Route::resource('office','OfficeController');
                 Route::resource('unit','UnitController');

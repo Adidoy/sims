@@ -85,6 +85,17 @@ class Supply extends Model
 		return $balance;
 	}
 
+	public function getStockBalanceCostAttribute($value)
+	{
+		$balance = StockCard::findBySupplyId($this->id)
+						->orderBy('id','desc')
+						->pluck('balance_cost')
+						->first();
+
+		$balance = (empty($balance) || $balance == null || $balance == '') ? 0 : $balance;
+		return $balance;
+	}
+
 	public function getLedgerBalanceAttribute($value)
 	{
 		$balance = LedgerCard::findBySupplyId($this->id)

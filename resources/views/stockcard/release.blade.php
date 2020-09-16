@@ -2,10 +2,10 @@
 
 @section('header')
 	<section class="content-header">
-		<legend><h3 class="text-muted">Release</h3></legend>
+		<legend><h3 class="text-muted">Late Entry - Requisition and Issuance</h3></legend>
 		<ul class="breadcrumb">
-			<li><a href="{{ url('inventory/supply') }}">Supply Inventory</a></li>
-			<li class="active">Release</li>
+			<li>Requisition and Issuance</li>
+			<li class="active">Late Entry</li>
 		</ul>
 	</section>
 @endsection

@@ -53,6 +53,7 @@
       <table class="table table-hover table-striped" id="requestTable" width=100%>
         <thead width="100%">
           <tr>
+            <th data-visible="false">ID</th>
             <th class="col-md-1 no-sort">Request No.</th>
             @if($type == 'pending')
               <th class="col-md-1 no-sort ">Request Date</th>
@@ -99,12 +100,14 @@
         language: {
               searchPlaceholder: "Search..."
         },
-        columnDefs:[{ targets: 'no-sort', orderable: false }],
+        columnDefs:[{ targets: 'no-sort' }],
         "dom": "<'row'<'col-sm-3'l><'col-sm-6'<'toolbar'>><'col-sm-3'f>>" +
                       "<'row'<'col-sm-12'tr>>" +
                       "<'row'<'col-sm-5'i><'col-sm-7'p>>",
         ajax: "{{ url('request/custodian/' . $type) }}",
+        "order": [[ 0, "desc" ]],
         columns: [
+          { data: "id" },
           { data: "local_id" },
           @if($type == 'pending')
             { data: 'date_requested' },

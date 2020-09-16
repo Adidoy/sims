@@ -3,6 +3,7 @@
 namespace App\Http\Modules\Requests\Client;
 
 use Illuminate\Support\Facades\Route;
+use App\Reports\bin\PUPSIMSReporting;
 
 class Routes
 {

@@ -13,12 +13,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Input;
 use App\Models\Delivery\DeliveryHeader;
 use App\Models\Delivery\DeliveriesDetail;
+use App\Http\Controllers\Inventory\StockCards\StockCardController;
 
 
 class DeliveryController extends Controller {
 
 	public function index(Request $request) 
 	{
+		//return DeliveryHeader::with('supplier')->get();
 		if($request->ajax()) {
 			$deliveries = DeliveryHeader::with('supplier')->get();
 			return datatables($deliveries)->toJson();
@@ -30,17 +32,19 @@ class DeliveryController extends Controller {
 	public function create() 
 	{
 		$supplier = App\Supplier::pluck('name','name');
+		$fund_cluster = App\FundCluster::pluck('description', 'id');
 		return view('delivery.supplies.forms.accept')
 			->with('title','Supply Delivery')
 			->with('type', 'stock')
-			->with('supplier',$supplier);
+			->with('supplier', $supplier)
+			->with('fund_cluster', $fund_cluster);
 	}
 
 	public function show(Request $request, $id) 
 	{
 		$delivery = DeliveryHeader::with('supplies')->find($id);
     	if($request->ajax()) {
-        	$supplies = $delivery->supplies;
+			$supplies = $delivery->supplies;
         	return json_encode([
 				'data' => $supplies
 		  	]);
@@ -54,10 +58,10 @@ class DeliveryController extends Controller {
 	{
 		$deliveryHeader = new DeliveryHeader;
 		$supplier = App\Supplier::findBySupplierName($request->get("supplier"))->first();
-		//$userName = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname;
 		$stocknumbers = $request->get("stocknumber");
 		$quantity = $request->get("quantity");
 		$unitcost = $request->get("unitcost");
+		$fund_cluster = App\FundCluster::findByID($request->get("fund_cluster"));
 	
 		$validator = Validator::make([
 			'Purchase Order Number' => $request->get('po_no'),
@@ -81,7 +85,8 @@ class DeliveryController extends Controller {
 				'invoice_date' => Carbon\Carbon::parse($request->get('invoice_date')),
 				'delrcpt_no' => $request->get('dr_no'),
 				'delivery_date' => Carbon\Carbon::parse($request->get('dr_date')),
-				'received_by' => Auth::user()->id
+				'received_by' => Auth::user()->id,
+				'fund_source' => $fund_cluster->id
 			]);
 			foreach($stocknumbers as $stocknumber) {
 				$supply = App\Supply::StockNumber($stocknumber)->first();
@@ -89,10 +94,14 @@ class DeliveryController extends Controller {
 					'delivery_id' => $deliveryHeader->id,
 					'supply_id' =>   $supply->id,
 					'quantity_delivered' => $quantity["$stocknumber"],
-					'unit_cost' => $unitcost["$stocknumber"]
+					'unit_cost' => $unitcost["$stocknumber"],
+					'total_cost' => ($unitcost["$stocknumber"] * $quantity["$stocknumber"])
 				]);
 			}
 		DB::commit();
+		$stockCardController = new StockCardController;
+		$stockCardController->receiveSupplies($request, $deliveryHeader->id);
+		
 		\Alert::success('Supplies Delivery Recorded')->flash();
 		return redirect('delivery/supplies/');
 	}

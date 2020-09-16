@@ -16,14 +16,14 @@ use App\Models\Requests\Signatory\RequestSignatory;
 use App\Models\Requests\Custodian\RequestCustodian;
 use App\Models\Requests\Client\RequestDetailsClient;
 use App\Models\Requests\Expiration\RequestExpiration;
-use App\Http\Controllers\Inventory\Stockcards\StockCardController;
+use App\Http\Controllers\Inventory\StockCards\StockCardController;
 
 class RequestsCustodianController extends Controller
 {
   public function pendingRequests(Request $request) 
   {
     $requests = RequestCustodian::whereNull('status')
-    ->orderBy('created_at', 'desc')
+    ->orderBy('local', 'desc')
     ->get();
     $type = 'pending';
     if($request->ajax()) {
@@ -35,7 +35,7 @@ class RequestsCustodianController extends Controller
   public function approvedRequests(Request $request) 
   {
     $requests = RequestCustodian::where('status','=','approved')
-    ->orderBy('approved_at', 'desc')
+    ->orderBy('local', 'desc')
     ->get();
     $type = 'approved';
     $isExpired = false;
@@ -48,7 +48,7 @@ class RequestsCustodianController extends Controller
   public function releasedRequests(Request $request) 
   {
     $requests = RequestCustodian::where('status','=','released')
-    ->orderBy('released_at', 'desc')
+    ->orderBy('id', 'desc')
     ->get();
     $type = 'released';
     if($request->ajax()) {
@@ -64,7 +64,7 @@ class RequestsCustodianController extends Controller
               ->orWhere('status','=','disapproved')
               ->orWhere('status','=','request expired');
     })
-    ->orderBy('updated_at', 'desc')
+    ->orderBy('id', 'desc')
     ->get();
     $type = 'disapproved';
     if($request->ajax()) {
@@ -305,7 +305,7 @@ class RequestsCustodianController extends Controller
       DB::commit();
 
       $stockCardController = new StockCardController;
-      $stockCardController->releaseSupplies($request, $id);
+      $stockCardController->releaseSupplies($request, $updateRequest->id);
       $quantity = $request->get('quantity');
       $stocknumber = $request->get('stocknumber');
       foreach($stocknumber as $stocknumber) {

@@ -31,9 +31,14 @@ class FundCluster extends Model
     	return $query->where('code','=',$value)->first();
     }
 
+    public function scopeFindByID($query,$value)
+    {
+    	return $query->where('id','=',$value)->first();
+    }
+
 	public function purchaseorders()
 	{
 		return $this->belongsToMany('App\FundCluster','purchaseorders_fundclusters','fundcluster_id','purchaseorder_id')
           ->withTimestamps();
-	}
+    }
 }

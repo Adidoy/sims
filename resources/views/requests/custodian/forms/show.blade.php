@@ -29,9 +29,9 @@
                             </a>
                             <br /><br />
                         @elseif (($request->status == 'Released'))
-                            <a href="{{ url("request/custodian/$request->id/print") }}" style="text-align:justify; font-size:11pt;" target="_blank" id="print" class="print btn btn-sm btn-default ladda-button" data-style="zoom-in">
+                            <a href="{{ url("../reports/requests/$request->local/print") }}" style="text-align:justify; font-size:11pt;" target="_blank" id="print" class="print btn btn-sm btn-default ladda-button" data-style="zoom-in">
                                 <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
-                                <span id="nav-text"> Download Requisition and Issuance Slip</span>
+                                <span id="nav-text"> Download Requisition and Issue Slip</span>
                             </a>
                             <br /><br />
                         @endif

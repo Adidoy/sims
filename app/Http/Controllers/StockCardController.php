@@ -8,9 +8,14 @@ use DB;
 use Auth;
 use PDF;
 use Session;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Input;
+use App\Http\Controllers;
+use App\Models\Requests\LateEntry\RequestClient;
+use App\Models\Requests\Signatory\RequestSignatory;
+use App\Models\Requests\LateEntry\RequestDetailsClient;
+
 class StockCardController extends Controller {
 
 	/**
@@ -212,8 +217,13 @@ class StockCardController extends Controller {
 	 */
 	public function releaseForm()
 	{
+		$issued_by = DB::table('users')->where('office', '=', 'PSMO')->select('id', DB::raw("CONCAT(firstname,' ',lastname) AS fullname"))->pluck('fullname', 'id');
+		$released_by = DB::table('users')->where('office', '=', 'PSMO')->select('id', DB::raw("CONCAT(firstname,' ',lastname) AS fullname"))->pluck('fullname', 'id');
 		return view('stockcard.release')
 				->with('type', 'stock')
+				->with('date', Carbon\Carbon::now())
+				->with('issued_by', $issued_by)
+				->with('released_by', $released_by)
 				->with('title','Release');
 	}
 
@@ -226,62 +236,105 @@ class StockCardController extends Controller {
 	 */
 	public function release(Request $request)
 	{
-		$purchaseorder = $this->sanitizeString($request->get('purchaseorder'));
-		$reference = $this->sanitizeString($request->get('reference'));
-		$date = $this->sanitizeString($request->get('date'));
-		$office = $this->sanitizeString($request->get('office'));
-		$daystoconsume = $request->get("daystoconsume");
-		$stocknumber = $request->get("stocknumber");
-		$quantity = $request->get("quantity");
-
-		DB::beginTransaction();
-
-		foreach($stocknumber as $_stocknumber)
+		$date_requested = $request->get('date_requested');
+		$date_released = $request->get('date_released');
+		$date_issued = $request->get('date_issued');
+		$office = $request->get('office');
+		$stocknumbers = $request->get("stocknumber");
+		$quantity_requested = $request->get("quantity_requested");
+		$quantity_released = $request->get("quantity_released");
+		$office = App\Office::where("code", "=", $request->get("office"))->first()->id;
+		$issued_by = $request->get("issued_by");
+		$released_by = $request->get("released_by");
+		$requested_by = DB::table('users')->where('office', '=', $request->get("office"))->orderBy('id', 'DESC')->first()->id;
+		$reference = $this->generateCode();
+		
+		foreach($stocknumbers as $stocknumber)
 		{
-			$validator = Validator::make([
-				'Stock Number' => $stocknumber,
-				'Requisition and Issue Slip' => $reference,
-				'Date' => $date,
-				'Issued Quantity' => $quantity["$_stocknumber"],
-				'Office' => $office,
-				'Days To Consume' => $daystoconsume
-			],App\StockCard::$issueRules);
+			// $validator = Validator::make([
+			// 	'Stock Number' => $stocknumber,
+			// 	'Requisition and Issue Slip' => $reference,
+			// 	'Date' => $date_issued,
+			// 	'Issued Quantity' => $quantity_released["$stocknumber"],
+			// 	'Office' => $office
+			// ],App\StockCard::$issueRules);$validator->fails() || 
 
-			$balance = App\Supply::findByStockNumber($_stocknumber)->stock_balance;
-			if($validator->fails() || $quantity["$_stocknumber"] > $balance)
+			$balance = App\Supply::findByStockNumber($stocknumber)->stock_balance;
+			if($quantity_released["$stocknumber"] > $balance)
 			{
-
-				DB::rollback();
-
-				if($quantity["$_stocknumber"] > $balance)
+				if($quantity_released["$stocknumber"] > $balance)
 				{
-					$validator = [ "You cannot release quantity of $_stocknumber which is greater than the remaining balance ($balance)" ];
+					$validator = [ "You cannot release quantity of $stocknumber which is greater than the remaining balance ($balance)" ];
 				}
 
 				return redirect("inventory/supply/stockcard/release")
-						->with('total',count($stocknumber))
 						->with('stocknumber',$stocknumber)
-						->with('quantity',$quantity)
-						->with('daystoconsume',$daystoconsume)
+						->with('quantity_requested',$quantity_requested)
+						->with('quantity_released',$quantity_released)
 						->withInput()
 						->withErrors($validator);
 			}
-
-			$transaction = new App\StockCard;
-			$transaction->date = Carbon\Carbon::parse($date);
-			$transaction->stocknumber = $_stocknumber;
-			$transaction->reference = $reference;
-			$transaction->organization = $office;
-			$transaction->issued_quantity  = $quantity["$_stocknumber"];
-			$transaction->daystoconsume = $daystoconsume["$_stocknumber"];
-			$transaction->user_id = Auth::user()->id;
-			$transaction->issue();
 		}
 
-		DB::commit();
+        //try{
+            DB::beginTransaction();
+            $newRequest = RequestClient::create([
+				'local'=> $reference,
+				'requestor_id' => $requested_by,
+				'office_id' => $office,
+				'issued_by' => $issued_by,
+				'remarks' => 'Late Entry for RIS in the System.',
+				'purpose' => 'Late Entry for RIS in the System.',
+				'status' => 'released',
+				'released_by' => $released_by,
+				'released_at' => Carbon\Carbon::parse($date_released),
+				'approved_at' => Carbon\Carbon::parse($date_issued),
+				'created_at' => Carbon\Carbon::parse($date_requested),
+				'updated_at' => Carbon\Carbon::now()
+            ]);
+            foreach($stocknumbers as $stocknumber) {
+                $newRequestDetails = RequestDetailsClient::create([
+                    'supply_id' => App\Supply::stockNumber($stocknumber)->first()->id, 
+                    'request_id' => $newRequest->id, 
+					'quantity_requested' => $quantity_requested["$stocknumber"],
+					'quantity_issued' => $quantity_released["$stocknumber"],
+					'quantity_released' => $quantity_released["$stocknumber"],
+                ]);
+			}
 
-		\Alert::success('Supplies Released')->flash();
-		return redirect('inventory/supply');
+			DB::commit();
+
+			$office = App\Office::where('id','=',$office)->first();
+			if(!isset($office->head_office)) {
+				$headOffice = $office;
+				$office = App\Office::where('code','=',$office->code.'-A'.$office->code)->first();
+			} else {
+				$headOffice = App\Office::where('id','=',$office->head_office)->first();
+				while(isset($headOffice->head_office)) {
+					$office = $headOffice;
+					$headOffice = App\Office::where('id','=',$headOffice->head_office)->first();
+				}
+			}
+		
+			$sector = $headOffice;
+			$signatory = new RequestSignatory;
+			$signatory->request_id = $newRequest->id;
+			$signatory->requestor_name = isset($office->name) ? $office->head != "None" ?$office->head : "" : "";
+			$signatory->requestor_designation = isset($office->name) ? $office->head_title != "None" ? $office->head_title : "" : "";
+			$signatory->approver_name = isset($sector->name) ? $sector->head : $newRequest->office->head;
+			$signatory->approver_designation = isset($sector->head) ? $sector->head_title : $newRequest->office->head_title;
+			$signatory->save();
+
+			$stockCardController = new Inventory\Stockcards\StockCardController;
+			$stockCardController->lateReleaseSupplies($request, $newRequest->id);
+            
+            \Alert::success('Late Entry of RIS is now saved.')->flash();
+            return redirect('/');
+        // } catch(\Exception $e) {
+        //  DB::rollback();
+        //  \Alert::error('An error occured! Please try again. Message: '.$e->getMessage())->flash();
+        //  return redirect('inventory/supply/stockcard/release'); 
+        // }
 	}
 
 	public function printStockCard($stocknumber)
@@ -319,4 +372,28 @@ class StockCardController extends Controller {
 		return json_encode(App\StockCard::computeDaysToConsume($stocknumber));
 	}
 
+	public function generateCode() 
+	{
+	  $requests = App\Models\Requests\Custodian\RequestCustodian::whereNotNull('local')->orderBy('created_at','desc')->first();
+	  $id = substr($requests->local,6,4) + 1;
+	  $now = Carbon\Carbon::now();
+	  $year = substr($requests->local,0,2);
+	  if($year != $now->format('y')) {
+		$id = 1;
+	  }
+	  
+	  $const = $now->format('y') . '-' . $now->format('m');
+	  if (strlen($id) == 1) 
+		$requestCode =  '000'.$id;
+	  elseif (strlen($id) == 2) 
+		$requestCode =  '00'.$id;
+	  elseif (strlen($id) == 3) 
+		$requestCode =  '0'.$id;
+	  elseif (strlen($id) == 4) 
+		$requestCode =  $id;
+	  else
+		$requestCode =  $id;
+		  
+		return $const . '-' . $requestCode;
+	}
 }

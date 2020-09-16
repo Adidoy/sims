@@ -22,6 +22,12 @@ class CreateDeliveryHeaderTable extends Migration
                     ->on('suppliers')
                     ->onUpdate('cascade')
                     ->onDelete('cascade');
+            $table->integer('fund_source')->unsigned()->nullable();
+            $table->foreign('fund_source')
+                    ->references('id')
+                    ->on('fundclusters')
+                    ->onUpdate('cascade')
+                    ->onDelete('cascade');
             $table->string('purchaseorder_no');
             $table->datetime('purchaseorder_date');
             $table->string('invoice_no');

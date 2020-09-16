@@ -22,7 +22,8 @@ class DeliveryHeader extends Model
     	'invoice_date',
     	'delrcpt_no',
         'delivery_date',
-        'received_by'
+        'received_by',
+        'fund_source'
     ];
 
     protected $appends = [ 'date_invoice', 'date_delivered', 'date_purchaseorder', 'date_processed', 'supplier_name', 'user_name' ];
@@ -69,7 +70,7 @@ class DeliveryHeader extends Model
 
     public function getSupplierNameAttribute() 
     {
-        if(isset($this->supplier) && count($this->supplier) > 0):
+        if(isset($this->supplier) && $this->supplier->count() > 0):
             if($this->supplier->name)
                 return $this->supplier->name;
         endif;
@@ -100,7 +101,7 @@ class DeliveryHeader extends Model
     public function supplies() 
     {
         return $this->belongsToMany('App\Supply', 'deliveries_supplies',  'delivery_id', 'supply_id')
-            ->withPivot('quantity_delivered', 'unit_cost');
+            ->withPivot('quantity_delivered', 'unit_cost', 'total_cost');
     }
   
     public function inspection() 
