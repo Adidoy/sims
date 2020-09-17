@@ -309,6 +309,7 @@ class RequestsCustodianController extends Controller
       $quantity = $request->get('quantity');
       $stocknumber = $request->get('stocknumber');
       foreach($stocknumber as $stocknumber) {
+
         $_quantity = $quantity["$stocknumber"];
 				$supply = App\Supply::findByStockNumber($stocknumber);
         $updateRequest->supplies()->updateExistingPivot($supply->id, [

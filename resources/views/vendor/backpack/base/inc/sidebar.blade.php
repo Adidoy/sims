@@ -104,11 +104,11 @@
           @endif
           <!-- ======================================= -->
           <li class="header">{{ trans('backpack::base.user') }}</li>
-          @if(Auth::user()->access == 0)
+          <!-- @if(Auth::user()->access == 0)
           <li><a href="{{ url('clientfeedback') }}"><i class="fa fa-twitch" aria-hidden="true"></i><span> Comments and Suggestion</span></a></li>
           @else
           <li><a href="{{ url('clientfeedback/create') }}"><i class="fa fa-twitch" aria-hidden="true"></i><span> Comments and Suggestion</span></a></li>
-          @endif
+          @endif -->
           <li><a href="{{ url('settings') }}"><i class="fa fa-user-o" aria-hidden="true"></i> <span> Settings</span></a></li>
 
           <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/logout') }}"><i class="fa fa-sign-out"></i> <span>{{ trans('backpack::base.logout') }}</span></a></li>

@@ -12,37 +12,64 @@
 @endsection
 
 @section('content')
-<!-- Default box -->
+
 <div class="box" style="padding:10px">
     <div class="box-body">
-			<table class="table table-hover table-striped table-bordered table-condensed" id="inventoryTable" cellspacing="0" width="100%">
-				<thead>
-		            <tr rowspan="2">
-		                <th class="text-left" colspan="8">Fund Cluster:
-		                	<span style="font-weight:normal"> </span>
-		                </th>
-		            </tr>
-		            <tr rowspan="2">
-		                <th class="text-left" colspan="4">Item:  <span style="font-weight:normal">{{ $supply->details }}</span> </th>
-		                <th class="text-left" colspan="4">Stock No.:  <span style="font-weight:normal">{{ $supply->stocknumber }}</span> </th>
-		            </tr>
-		            <tr rowspan="2">
-		                <th class="text-left" colspan="4">Unit Of Measurement:  <span style="font-weight:normal">{{ $supply->unit->name }}</span>  </th>
-		                <th class="text-left" colspan="4">Reorder Point: <span style="font-weight:normal">{{ $supply->reorderpoint }}</span> </th>
-		            </tr>
-					<tr>
-						<th data-visible="false">ID</th>
-						<th>Date</th>
-						<th width="15%">Reference</th>
-						<th>Receipt Qty</th>
-						<th>Issue Qty</th>
-						<th>Office</th>
-						<th>Balance Qty</th>
-					</tr>
-				</thead>
-			</table>
-    </div><!-- /.box-body -->
-</div><!-- /.box -->
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="col-sm-3">
+				</div>
+				<div class="col-sm-3">
+					<div class="float-right">
+						<a href="{{ url('../reports/stockcards') }}/{{ $supply->stocknumber }}/print" target="_blank" id="print" class="print btn btn-md btn-primary" data-style="zoom-in" style="width:100%">
+							<span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+							<span id="nav-text"> Download Stock Card</span>
+						</a>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<a href="{{ url('../reports/stockcards/ledger') }}/{{ $supply->stocknumber }}/print" target="_blank" id="print" class="print btn btn-md btn-success" data-style="zoom-in" style="width:100%">
+						<span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+						<span id="nav-text"> Download Ledger Card</span>
+					</a>
+				</div>
+				<div class="col-sm-3">
+				</div>
+			</div>
+		</div>
+		<hr />
+		<div class="row">
+			<div class="col-sm-12">
+				<table class="table table-hover table-striped table-bordered table-condensed" id="inventoryTable" cellspacing="0" width="100%">
+					<thead>
+						<tr rowspan="2">
+							<th class="text-left" colspan="8">Fund Cluster:
+								<span style="font-weight:normal"> </span>
+							</th>
+						</tr>
+						<tr rowspan="2">
+							<th class="text-left" colspan="4">Item:  <span style="font-weight:normal">{{ $supply->details }}</span> </th>
+							<th class="text-left" colspan="4">Stock No.:  <span style="font-weight:normal">{{ $supply->stocknumber }}</span> </th>
+						</tr>
+						<tr rowspan="2">
+							<th class="text-left" colspan="4">Unit Of Measurement:  <span style="font-weight:normal">{{ $supply->unit->name }}</span>  </th>
+							<th class="text-left" colspan="4">Reorder Point: <span style="font-weight:normal">{{ $supply->reorderpoint }}</span> </th>
+						</tr>
+						<tr>
+							<th data-visible="false">ID</th>
+							<th>Date</th>
+							<th width="15%">Reference</th>
+							<th>Receipt Qty</th>
+							<th>Issue Qty</th>
+							<th>Office</th>
+							<th>Balance Qty</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
+		</div>
+    </div>
+</div>
 @endsection
 
 @section('after_scripts')
@@ -54,9 +81,6 @@
 			language: {
 					searchPlaceholder: "Search..."
 			},
-			"dom": "<'row'<'col-sm-3'l><'col-sm-6'<'toolbar'>><'col-sm-3'f>>" +
-							"<'row'<'col-sm-12'tr>>" +
-							"<'row'<'col-sm-5'i><'col-sm-7'p>>",
 			"columnDefs":[
 				{ "type": "date", "targets": 0 },
 			],
@@ -75,13 +99,6 @@
 					{ data: "balance_quantity" }
 			],
 	    });
-
-	 	$("div.toolbar").html(`
-	       <a href="{{ url("inventory/supply/$supply->id/stockcard/print") }}" target="_blank" id="print" class="print btn btn-sm btn-default ladda-button" data-style="zoom-in">
-	        <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
-	        <span id="nav-text"> Print</span>
-	      </a>
-		`);
 	} );
 </script>
 @endsection

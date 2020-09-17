@@ -112,9 +112,9 @@ class RequestCustodian extends Model implements Auditable, UserResolver
     {
       return $this
         ->distinct()
-        ->select(DB::raw("CONCAT(MONTHNAME(updated_at), ' ', YEAR(updated_at)) 'fiscalyear'"))
-        ->orderBy(DB::raw("YEAR(updated_at)"),'desc')
-        ->orderBy(DB::raw("MONTH(updated_at)"),'desc');
+        ->select(DB::raw("MONTH(updated_at) 'month', YEAR(updated_at) 'year', CONCAT(MONTHNAME(updated_at), ' ', YEAR(updated_at)) 'fiscalyear'"))
+        ->orderBy(DB::raw("year"),'desc')
+        ->orderBy(DB::raw("month"),'desc');
     }
 
     public function getDateRequestedAttribute($value)

@@ -39,13 +39,17 @@ class StockCardController extends Controller
 					'Office' => $office
 				],$newIssue->rules(),$newIssue->messages());
 
-				$supply = App\Supply::findByStockNumber($stocknumber);
-				$stockBalance = $supply->stock_balance;
-				$stockBalanceCost = $supply->stock_balance_cost;
-				$stockTotalBalanceCost = ($stockBalance * $stockBalanceCost);
+				$supply = DB::table('supplies')->where('stocknumber', '=', $stocknumber)->first();
+				$stockcard = DB::table('stockcards')->where('supply_id', '=', $supply->id)->orderBy('created_at', 'desc')->first();
+
+				$stockBalance = $stockcard->balance_quantity;
+				$stockBalanceCost = $stockcard->balance_cost;
+				$stockTotalBalanceCost = $stockcard->total_balance_cost;
+
 				$issuedQuantity = $quantity["$stocknumber"];
 				$issuedCost = $stockBalanceCost;
 				$totalIssuedCost = $quantity["$stocknumber"] * $stockBalanceCost;
+				
 				$newBalance = $stockBalance - $issuedQuantity;
 				$newBalanceTotalCost = $stockTotalBalanceCost - $totalIssuedCost;
 				$newBalanceUnitCost = $stockBalanceCost;
@@ -96,13 +100,17 @@ class StockCardController extends Controller
 					'Office' => $office
 				],$newIssue->rules(),$newIssue->messages());
 
-				$supply = App\Supply::findByStockNumber($stocknumber);
-				$stockBalance = $supply->stock_balance;
-				$stockBalanceCost = $supply->stock_balance_cost;
-				$stockTotalBalanceCost = ($stockBalance * $stockBalanceCost);
+				$supply = DB::table('supplies')->where('stocknumber', '=', $stocknumber)->first();
+				$stockcard = DB::table('stockcards')->where('supply_id', '=', $supply->id)->orderBy('created_at', 'desc')->first();
+
+				$stockBalance = $stockcard->balance_quantity;
+				$stockBalanceCost = $stockcard->balance_cost;
+				$stockTotalBalanceCost = $stockcard->total_balance_cost;
+
 				$issuedQuantity = $quantity["$stocknumber"];
 				$issuedCost = $stockBalanceCost;
 				$totalIssuedCost = $quantity["$stocknumber"] * $stockBalanceCost;
+				
 				$newBalance = $stockBalance - $issuedQuantity;
 				$newBalanceTotalCost = $stockTotalBalanceCost - $totalIssuedCost;
 				$newBalanceUnitCost = $stockBalanceCost;
