@@ -31,16 +31,6 @@
       ]) }}
     </div>
   </div>
-  <div class="col-md-12">
-    <div class="form-group">
-      {{ Form::label('Unit Cost') }}
-      {{ Form::text('unitcost','',[
-        'id' => 'unitcost',
-        'class' => 'form-control',
-        'placeholder' => 'Unit Cost'
-      ]) }}
-    </div>
-  </div>
   <div class="btn-group" style="margin-bottom: 20px">
     <button type="button" id="add" class="btn btn-md btn-success"><span class="glyphicon glyphicon-plus"></span> Add</button>
   </div>
@@ -52,11 +42,10 @@
         <table class="table table-hover table-condensed table-striped" id="supplyTable">
           <thead>
             <tr>
-              <th class=col-sm-1>Stock Number</th>
-              <th class=col-sm-1>Information</th>
-              <th class=col-sm-1>Quantity</th>
-              <th class=col-sm-1>Unit Cost</th>
-              <th class=col-sm-1></th>
+              <th class=col-sm-1 width="25%" style="text-align:center;">Stock Number</th>
+              <th class=col-sm-1 width="25%" style="text-align:center;">Information</th>
+              <th class=col-sm-1 width="25%" style="text-align:center;">Quantity</th>
+              <th class=col-sm-1 width="25%" style="text-align:center;">Remove</th>
             </tr>
           </thead>
           <tbody>
@@ -233,7 +222,6 @@
           </td>
           <td><input type="hidden" class="form-control text-center" value="` + _info + `" name="info[` + _stocknumber + `]" style="border:none;" />` + _info + `</td>
           <td><input type="number" class="form-control text-center" value="` + _quantity + `" name="quantity[` + _stocknumber + `]" style="border:none;"  /></td>
-          <td><input type="text" class="form-control text-center" value="` + _unitcost + `" name="unitcost[` + _stocknumber + `]" style="border:none;"  /></td>
           <td><button type="button" class="remove btn btn-md btn-danger text-center"><span class="glyphicon glyphicon-remove"></span></button></td>
         </tr>
       `)

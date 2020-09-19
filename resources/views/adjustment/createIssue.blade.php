@@ -3,11 +3,11 @@
 @section('header')
 	<section class="content-header">
 	  <h1>
-	    Create Inventory Adjustment - Receive
+	    Create Inventory Adjustment - Issuance
 	  </h1>
 	  <ol class="breadcrumb">
 	    <li>Adjustment</li>
-	    <li class="active">Receive</li>
+	    <li class="active">Issuance</li>
 	  </ol>
 	</section>
 @endsection
@@ -17,9 +17,9 @@
 <!-- Default box -->
   <div class="box">
     <div class="box-body">
-    {{ Form::open(['method'=>'post','route'=>array('adjustment.receive.create'),'class'=>'form-horizontal','id'=>'adjustmentForm']) }}
+    {{ Form::open(['method'=>'post','route'=>array('adjustment.issue.create'),'class'=>'form-horizontal','id'=>'adjustmentForm']) }}
         @include('errors.alert')
-        @include('adjustment.form')
+        @include('adjustment.formIssue')
       {{ Form::close() }}
     </div><!-- /.box-body -->
   </div><!-- /.box -->

@@ -3,7 +3,8 @@
         <a href="#"><i class="fa fa-share" aria-hidden="true"></i><span>Requesition and Issuance</span><i class="fa fa-angle-left pull-right"></i></a>
         <ul class="treeview-menu">
         <li><a href="{{ url('request/custodian/pending') }}"><i class="fa fa-edit" aria-hidden="true"></i><span>For Approval and Issuance</span></a></li>
-            <li><a href="{{ url('request/custodian/approved') }}"><i class="fa fa-thumbs-up" aria-hidden="true"></i><span>For Releasing</span></a></li>            
+            <li><a href="{{ url('request/custodian/approved') }}"><i class="fa fa-thumbs-up" aria-hidden="true"></i><span>For Releasing</span></a></li>
+            <li><a href="{{ url('inventory/supply/stockcard/release') }}"><li><i class="fa fa-file" aria-hidden="true"></i>Late Entry</a></li>            
             <li><a href="{{ url('request/custodian/released') }}"><i class="fa fa-angle-double-right" aria-hidden="true"></i><span>Released Requests</span></a></li>
             <li><a href="{{ url('request/custodian/disapproved') }}"><i class="fa fa-times-circle" aria-hidden="true"></i><span>Disapproved/Expired/<br/>&emsp;&nbsp;&nbsp;Cancelled</span></a></li>
         </ul>
@@ -11,7 +12,8 @@
 <li class="treeview">
         <a href="#"><i class="fa fa-paperclip" aria-hidden="true"></i><span>Item Delivery</span><i class="fa fa-angle-left pull-right"></i></a>
         <ul class="treeview-menu">
-            <li><a href="{{ url('delivery/supplies') }}"><li><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Supplies</a></li>
+        <li><a href="{{ url('delivery/supplies/create') }}"><li><i class="fa fa-plus" aria-hidden="true"></i>New Delivery</a></li>
+            <li><a href="{{ url('delivery/supplies') }}"><li><i class="fa fa-pencil-square-o" aria-hidden="true"></i>View Deliveries</a></li>
             <!-- <li><a href="{{ url('delivery/property') }}"><li><i class="fa fa-laptop" aria-hidden="true"></i>Equipment and Other Property</a></li> -->
         </ul>
     </li>
@@ -23,12 +25,11 @@
             <li><a href="{{ url('inventory/physical') }}"><i class="fa fa-archive" aria-hidden="true"></i> <span> Physical Count</span></a></li>
         </ul>
     </li>
-    <li class="treeview"><a href="#"><i class="fa fa-sliders" aria-hidden="true"></i><span>Adjustment</span><i class="fa fa-angle-left pull-right"></i></a>
+    <li class="treeview"><a href="#"><i class="fa fa-sliders" aria-hidden="true"></i><span>Inventory Adjustment</span><i class="fa fa-angle-left pull-right"></i></a>
         <ul class="treeview-menu">
-            <li><a href="{{ url('inventory/supply/stockcard/release') }}"><li><i class="fa fa-file" aria-hidden="true"></i>Late Entry</a></li>
-            <li><a href="{{ url('adjustment') }}"><li><i class="fa fa-eye" aria-hidden="true"></i>View</a></li>
-            <li><a href="{{ url('adjustment/dispose') }}"><li><i class="fa fa-trash-o" aria-hidden="true"></i>Disposal</a></li>
-            <li><a href="{{ url('adjustment/return') }}"><li><i class="fa fa-pencil" aria-hidden="true"></i>Return</a></li>
+            <li><a href="{{ url('inventory/adjustments/') }}"><li><i class="fa fa-eye" aria-hidden="true"></i>View Adjustments</a></li>
+            <li><a href="{{ url('inventory/adjustments/receive/create') }}"><li><i class="fa fa-edit" aria-hidden="true"></i>Create Receiving Adjustment</a></li>
+            <li><a href="{{ url('inventory/adjustments/issue/create') }}"><li><i class="fa fa-pencil" aria-hidden="true"></i>Create Issuance Adjustment</a></li>
         </ul>
     </li>
 <li class="header">Information System</li>

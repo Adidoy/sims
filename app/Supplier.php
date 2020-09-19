@@ -14,7 +14,7 @@ class Supplier extends Model
 
 	public static $rules = array(
 		'Name' => 'required',
-		'Email' => 'email',
+		'Email' => 'email|nullable',
  	);
 
 	public static $updateRules = array(

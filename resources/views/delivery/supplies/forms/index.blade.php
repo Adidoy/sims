@@ -16,18 +16,19 @@
   <div class="box">
     <div class="box-body">
 		<div class="panel panel-body table-responsive">
-		<table class="table table-hover table-striped table-bordered table-condensed" id="deliveriesTable">
-			<thead>
-				<th class="col-sm-1">Delivery No.</th>
-				<th class="col-sm-1">Supplier</th>
-				<th class="col-sm-1">Purchase Order No.</th>
-				<th class="col-sm-1">Invoice No.</th>
-				<th class="col-sm-1">Delivery Receipt No.</th>
-				<th class="col-sm-1">Date Processed</th>
-				<th class="col-sm-1">Processed by</th>
-				<th class="no-sort col-sm-1"></th>
-			</thead>
-		</table>
+			<table class="table table-hover table-striped table-bordered table-condensed" id="deliveriesTable">
+				<thead>
+					<th class="hidden">created_at</th>
+					<th>Delivery Reference</th>
+					<th>Supplier</th>
+					<th>Purchase Order No.</th>
+					<th>Invoice No.</th>
+					<th>Delivery Receipt No.</th>
+					<th>Date Processed</th>
+					<th>Processed by</th>
+					<th></th>
+				</thead>
+			</table>
 		</div>
 
     </div><!-- /.box-body -->
@@ -46,38 +47,40 @@
 			language: {
 					searchPlaceholder: "Search..."
 			},
-	    	columnDefs:[
-				{ targets: 'no-sort', orderable: false },
-	    	],
+			'columnDefs' : [
+        		{ 'visible': false, 'targets': [0] }
+    		],
+			"order": [[ 0, "desc" ]],
 			"dom": "<'row'<'col-sm-3'l><'col-sm-6'<'toolbar'>><'col-sm-3'f>>" +
 							"<'row'<'col-sm-12'tr>>" +
 							"<'row'<'col-sm-5'i><'col-sm-7'p>>",
 			ajax: "{{ url('delivery/supplies/') }}",
 			columns: [
-				{ data: "local" },
-				{ data: "supplier_name" },
-				{ data: "purchaseorder_no" },
-				{ data: "invoice_no" },
-				{ data: "delrcpt_no" },
-				{ data: "date_processed" },
-				{ data: "user_name" },
+				{ data: "created_at" },
+				{ data: "DeliveryReference" },
+				{ data: "Supplier" },
+				{ data: "PONumber" },
+				{ data: "InvoiceNumber" },
+				{ data: "DRNumber" },
+				{ data: "DateProcessed" },
+				{ data: "ProcessedBy" },
 				{ data: function(callback){
-	            	return `
-						<a href="{{ url('delivery/supplies') }}/`+ callback.id +`" class="btn btn-default ladda-button" data-style="zoom-in"><i class="fa fa-list-ul" aria-hidden="true"></i> View</a>
-						<a href="{{ url("delivery/supplies") }}` + '/' + callback.id  + '/print' +`" target="_blank" id="print" class="print btn btn-default ladda-button" data-style="zoom-in">
-									<span class="glyphicon glyphicon-print" aria-hidden="true"></span>
-									<span id="nav-text"> Download</span>
-	            	`;
-	            } }
+					if(callback.DeliveryReference != '')
+					{
+						return `
+							<a href="{{ url('delivery/supplies') }}/`+ callback.ID +`" class="btn btn-default ladda-button" data-style="zoom-in"><i class="fa fa-list-ul" aria-hidden="true"></i> View</a>
+						`;
+					}
+					else
+					{
+						return `
+							<a href="{{ url('receipt') }}/`+ callback.ID +`" class="btn btn-default ladda-button" data-style="zoom-in"><i class="fa fa-list-ul" aria-hidden="true"></i> View</a>
+						`;
+					}
+				} 
+	}
 			],
 	    });
-
-		$("div.toolbar").html(`
-				<a href="{{ url('delivery/supplies/create') }}" class="btn btn-sm btn-primary">
-					<span class="glyphicon glyphicon-tag ladda-button" aria-hidden="true"></span>
-					<span id="nav-text">Create New Delivery Record</span>
-				</a>
-		`);
 
 		$('#page-body').show();
 	} );

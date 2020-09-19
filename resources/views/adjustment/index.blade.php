@@ -3,7 +3,7 @@
 @section('header')
 	<section class="content-header">
 	  <h1>
-	    Inventory Adjustment
+	    View Inventory Adjustments
 	  </h1>
 	  <ol class="breadcrumb">
 	    <li>Adjustment</li>
@@ -19,10 +19,13 @@
       <table class="table table-hover table-striped" id="adjustmentTable" width=100%>
         <thead>
           <tr>
-            <th class="col-sm-1">Adjustment No.</th>
-            <th class="col-sm-1">Details</th>
-            <th class="col-sm-1">Date Created</th>
-            <th class="col-sm-1">Created By</th>
+            <th class="col-sm-1">Date</th>
+            <th class="col-sm-1">Adjustment Reference</th>
+            <th class="col-sm-1">References</th>
+            <th class="col-sm-1">Reasons Leading<br />to Adjustment</th>
+            <th class="col-sm-1">Other Details</th>
+            <th class="col-sm-1">Action</th>
+            <th class="col-sm-1">Processed by</th>
             <th class="col-sm-1 no-sort"></th>
           </tr>
         </thead>
@@ -50,51 +53,23 @@
                         "<'row'<'col-sm-12'tr>>" +
                         "<'row'<'col-sm-5'i><'col-sm-7'p>>",
         "processing": true,
-        ajax: "{{ url('adjustment') }}",
+        ajax: "{{ url('inventory/adjustments') }}",
         columns: [
-                { data: "code" },
-                { data: 'details' },
-                { data: 'date_created' },
-                { data: "created_by" },
+                { data: 'date_processed' },
+                { data: 'local' },
+                { data: 'reference' },
+                { data: 'reasonLeadingTo' },
+                { data: 'details_append' },
+                { data: 'action' },
+                { data: "processed_person" },
                 { data: function(callback){
-
                   ret_val =  `
-                    <a href="{{ url('adjustment') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i> View</a>
+                    <a href="{{ url('inventory/adjustments') }}/`+ callback.id +`" class="btn btn-default btn-sm"><i class="fa fa-list-ul" aria-hidden="true"></i> View</a>
                   `
-
                     return ret_val;
                 } }
         ],
     });
-
-		$("div.toolbar").html(`
-				<a href="{{ url('delivery/supplies/create') }}" class="btn btn-sm btn-primary">
-					<span class="glyphicon glyphicon-tag ladda-button" aria-hidden="true"></span>
-					<span id="nav-text">Create New Inventory Adjustment</span>
-				</a>
-		`);
-
-    $('#adjustmentTable').on('click','button.remove',function(){
-      var removeButton = $(this);
-      removeButton.button('loading');
-      $.ajax({
-        type: 'delete',
-        url: '{{ url("adjustment") }}' + '/' + $(this).data('id'),
-        dataType: 'json',
-        success: function(response){
-          if(response == 'success')
-          swal("Operation Success",'Disposal Report has been removed.',"success")
-          else
-            swal("Error Occurred",'An error has occurred while processing your data.',"error")
-            table.ajax.reload()
-            removeButton.button('reset');
-        },
-        error: function(response){
-          swal("Error Occurred",'An error has occurred while processing your data.',"error")
-        }
-
-      })
-    })
   });
 </script>
 @endsection

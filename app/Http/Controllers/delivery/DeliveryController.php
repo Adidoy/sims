@@ -20,9 +20,8 @@ class DeliveryController extends Controller {
 
 	public function index(Request $request) 
 	{
-		//return DeliveryHeader::with('supplier')->get();
 		if($request->ajax()) {
-			$deliveries = DeliveryHeader::with('supplier')->get();
+			$deliveries = DB::table('vdeliveries')->orderBy('DateProcessed', 'desc')->get();
 			return datatables($deliveries)->toJson();
 		}
 		return view('delivery.supplies.forms.index')

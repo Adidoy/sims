@@ -11,6 +11,7 @@ use App\StockCard;
 use App\LedgerCard;
 use App\PurchaseOrder;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Inventory\Adjustments\AdjustmentDetails;
 
 class Supply extends Model
 {
@@ -182,4 +183,10 @@ class Supply extends Model
             ->withTimestamps();
 	}
 
+	public function adjustmentdetails()
+	{
+		return $this->belongsTo(Adjustment::class, 'supplies', 'adjustment_id', 'supply_id')
+            ->withPivot('quantity', 'unit_cost', 'total_cost')
+            ->withTimestamps();
+	}
 }

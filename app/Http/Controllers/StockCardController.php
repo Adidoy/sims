@@ -374,7 +374,7 @@ class StockCardController extends Controller {
 
 	public function generateCode() 
 	{
-	  $requests = App\Models\Requests\Custodian\RequestCustodian::whereNotNull('local')->orderBy('created_at','desc')->first();
+	  $requests = App\Models\Requests\Custodian\RequestCustodian::whereNotNull('local')->orderBy('local','desc')->first();
 	  $id = substr($requests->local,6,4) + 1;
 	  $now = Carbon\Carbon::now();
 	  $year = substr($requests->local,0,2);

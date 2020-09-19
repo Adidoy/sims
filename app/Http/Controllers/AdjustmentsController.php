@@ -49,74 +49,70 @@ class AdjustmentsController extends Controller
 	 *
 	 * @return Response
 	 */
-	public function store(Request $request)
+	public function receive(Request $request)	
 	{
-		$stocknumbers = $request->get("stocknumber");
-		$quantity = $request->get("quantity");
-		$unitcost = $request->get("unitcost");
-		$array = [];
-		$status = null;
-		$details = $request->get('details');
-		$created_by = Auth::user()->firstname . " " . Auth::user()->middlename . " " . Auth::user()->lastname ;
-
-		DB::beginTransaction();
-
-		$adjustment = App\Adjustment::create([
-			'created_by' => $created_by,
-			'details' => $details,
-			'status' => $status
+		$validator = Validator::make($request->all(), [
+            'references' => 'required|max:255',
+            'reasons' => 'required|max:255',
 		]);
 
-		foreach(array_flatten($stocknumbers) as $stocknumber)
-		{
-			if($stocknumber == '' || $stocknumber == null || !isset($stocknumber))
-			{
-			  \Alert::error('Encountered an invalid stock! Resetting table')->flash();
-			   return redirect("adjustment/create");
-			}
+		if ($validator->fails()) {
+            return redirect('post/create')
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+		
 
-			$validator = Validator::make([
-			    'Stock Number' => $stocknumber,
-			    'Quantity' => $quantity["$stocknumber"]
-			],App\Adjustment::$rules);
+		$stocknumbers -> $request->get('stocknumber');
+		// $quantity -> $request->get('quantity');
+		// $unitCosts -> $request->get('unitcost');
+		// $references -> $request->get('references');
+		// $reason -> $request->get('reasons');
+		// $details -> $request->get('details');
+	
 
-			if($validator->fails())
-			{
-			    return redirect("adjustment/create")
-			            ->with('total',count($stocknumbers))
-			            ->with('stocknumber',$stocknumbers)
-			            ->with('quantity',$quantity)
-			            ->with('unitcost',$unitcost)
-			            ->withInput()
-			            ->withErrors($validator);
-			}
 
-			$supply = App\Supply::findByStockNumber($stocknumber);
+		// $validator = Validator::make([
+		// 	'Purchase Order Number' => $request->get('po_no'),
+		// 	'Invoice Number' => $request->get('invoice_no'),
+		// 	'Delivery Receipt Number' => $request->get('dr_no'),
+		// ],$deliveryHeader->rules(),$deliveryHeader->messages());
 
-			array_push($array,[
-			    'quantity' => $quantity["$stocknumber"],
-			    'supply_id' => $supply->id,
-			    'unitcost' => $unitcost["$stocknumber"]
-			]);
-
-			$transaction = new App\StockCard;
-			$transaction->date = Carbon\Carbon::now();
-			$transaction->stocknumber = $supply->stocknumber;
-			$transaction->reference = "Adjustment#$adjustment->code";
-			$transaction->receipt = null;
-			$transaction->organization = null;
-			$transaction->received_quantity = $quantity["$stocknumber"];
-			$transaction->daystoconsume = null;
-			$transaction->user_id = Auth::user()->id;
-			$transaction->receipt();
-		}
-
-		$adjustment->supplies()->sync($array);
-
-		DB::commit();
-
-		\Alert::success('Adjustment Report Created')->flash();
-		return redirect('adjustment');
+		// if($validator->fails()) {
+		// 	return redirect('delivery/supplies/create')
+		// 		->withInput()
+		// 		->withErrors($validator);
+		// }
+		
+		// DB::beginTransaction();
+		// 	$deliveryHeader = DeliveryHeader::create([
+		// 		'local' => $this->generateLocalCode($request),
+		// 		'supplier_id' => $supplier->id,
+		// 		'purchaseorder_no' => $request->get('po_no'),
+		// 		'purchaseorder_date' => Carbon\Carbon::parse($request->get('po_date')),
+		// 		'invoice_no' => $request->get('invoice_no'),
+		// 		'invoice_date' => Carbon\Carbon::parse($request->get('invoice_date')),
+		// 		'delrcpt_no' => $request->get('dr_no'),
+		// 		'delivery_date' => Carbon\Carbon::parse($request->get('dr_date')),
+		// 		'received_by' => Auth::user()->id,
+		// 		'fund_source' => $fund_cluster->id
+		// 	]);
+		// 	foreach($stocknumbers as $stocknumber) {
+		// 		$supply = App\Supply::StockNumber($stocknumber)->first();
+		// 		DeliveriesDetail::create([
+		// 			'delivery_id' => $deliveryHeader->id,
+		// 			'supply_id' =>   $supply->id,
+		// 			'quantity_delivered' => $quantity["$stocknumber"],
+		// 			'unit_cost' => $unitcost["$stocknumber"],
+		// 			'total_cost' => ($unitcost["$stocknumber"] * $quantity["$stocknumber"])
+		// 		]);
+		// 	}
+		// DB::commit();
+		// $stockCardController = new StockCardController;
+		// $stockCardController->receiveSupplies($request, $deliveryHeader->id);
+		
+		// \Alert::success('Supplies Delivery Recorded')->flash();
+		// return redirect('delivery/supplies/');
 	}
 
 
