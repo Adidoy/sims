@@ -13,22 +13,24 @@ class CreatePurchaseOrdersFundClustersTable extends Migration
      */
     public function up()
     {
-        Schema::create('purchaseorders_fundclusters', function (Blueprint $table) {
-            $table->integer('purchaseorder_id')->unsigned();
-            $table->foreign('purchaseorder_id')
-                    ->references('id')
-                    ->on('purchaseorders')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $table->integer('fundcluster_id')->unsigned();
-            $table->foreign('fundcluster_id')
-                    ->references('id')
-                    ->on('fundclusters')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $table->primary(['purchaseorder_id', 'fundcluster_id'], 'purchaseorders_fundclusters_primary');
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('purchaseorders_fundclusters')){
+            Schema::create('purchaseorders_fundclusters', function (Blueprint $table) {
+                $table->integer('purchaseorder_id')->unsigned();
+                $table->foreign('purchaseorder_id')
+                        ->references('id')
+                        ->on('purchaseorders')
+                        ->onUpdate('cascade')
+                        ->onDelete('cascade');
+                $table->integer('fundcluster_id')->unsigned();
+                $table->foreign('fundcluster_id')
+                        ->references('id')
+                        ->on('fundclusters')
+                        ->onUpdate('cascade')
+                        ->onDelete('cascade');
+                $table->primary(['purchaseorder_id', 'fundcluster_id'], 'purchaseorders_fundclusters_primary');
+                $table->timestamps();
+            });
+        } 
     }
 
     /**

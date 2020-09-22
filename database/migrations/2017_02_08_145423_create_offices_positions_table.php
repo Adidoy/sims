@@ -13,18 +13,20 @@ class CreateOfficesPositionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('offices_positions', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('office_id')->unsigned()->nullable();
-            $table->foreign('office_id')
-                    ->references('id')
-                    ->on('offices')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $table->string('title',50)->unique();
-            $table->string('description')->nullable();
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('offices_positions')){
+            Schema::create('offices_positions', function (Blueprint $table) {
+                $table->increments('id');
+                $table->integer('office_id')->unsigned()->nullable();
+                $table->foreign('office_id')
+                        ->references('id')
+                        ->on('offices')
+                        ->onUpdate('cascade')
+                        ->onDelete('cascade');
+                $table->string('title',50)->unique();
+                $table->string('description')->nullable();
+                $table->timestamps();
+            });
+        } 
     }
 
     /**

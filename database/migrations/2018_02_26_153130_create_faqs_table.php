@@ -13,21 +13,23 @@ class CreateFaqsTable extends Migration
      */
     public function up()
     {
-        Schema::create( 'faqs', function(Blueprint $table){
-            $table->increments('id');
-            $table->string('title');
-            $table->longtext('description');
-            $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')
-                    ->references('id')
-                    ->on('users')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $table->integer('upvote')->default(0);
-            $table->integer('reads')->default(0);
-            $table->integer('importance')->default(0);
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('faqs')){
+            Schema::create( 'faqs', function(Blueprint $table){
+                $table->increments('id');
+                $table->string('title');
+                $table->longtext('description');
+                $table->integer('user_id')->unsigned();
+                $table->foreign('user_id')
+                        ->references('id')
+                        ->on('users')
+                        ->onUpdate('cascade')
+                        ->onDelete('cascade');
+                $table->integer('upvote')->default(0);
+                $table->integer('reads')->default(0);
+                $table->integer('importance')->default(0);
+                $table->timestamps();
+            });
+        }
     }
 
     /**

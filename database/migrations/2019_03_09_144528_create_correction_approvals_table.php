@@ -13,13 +13,15 @@ class CreateCorrectionApprovalsTable extends Migration
      */
     public function up()
     {
-        Schema::create('correction_approvals', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name')->nullable();
-            $table->string('approved_by')->nullable();
-            $table->string('correction_id');
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('correction_approvals')){
+            Schema::create('correction_approvals', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('name')->nullable();
+                $table->string('approved_by')->nullable();
+                $table->string('correction_id');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

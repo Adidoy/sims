@@ -12,15 +12,17 @@ class CreateRequestSignatories extends Migration
      * @return void
      */
     public function up() {
-        Schema::create('requests_signatories', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('request_id');
-            $table->string('requestor_name');
-            $table->string('requestor_designation');
-            $table->string('approver_name');
-            $table->string('approver_designation');
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('requests_signatories')){
+            Schema::create('requests_signatories', function (Blueprint $table) {
+                $table->increments('id');
+                $table->integer('request_id');
+                $table->string('requestor_name');
+                $table->string('requestor_designation');
+                $table->string('approver_name');
+                $table->string('approver_designation');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

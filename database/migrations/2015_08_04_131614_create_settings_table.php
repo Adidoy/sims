@@ -12,16 +12,18 @@ class CreateSettingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('settings', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('key');
-            $table->string('name');
-            $table->string('description')->nullable();
-            $table->text('value')->nullable();
-            $table->text('field');
-            $table->tinyInteger('active');
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('settings')){
+            Schema::create('settings', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('key');
+                $table->string('name');
+                $table->string('description')->nullable();
+                $table->text('value')->nullable();
+                $table->text('field');
+                $table->tinyInteger('active');
+                $table->timestamps();
+            });
+        } 
     }
 
     /**

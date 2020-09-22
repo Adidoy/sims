@@ -13,25 +13,27 @@ class CreateDisposalSupplyTable extends Migration
      */
     public function up()
     {
-        Schema::create('disposal_supply', function(Blueprint $table){
-            $table->increments('id');
-            $table->integer('disposal_id')->unsigned();
-            $table->foreign('disposal_id')
-                    ->references('id')
-                    ->on('disposals')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');        
-            $table->integer('supply_id')->unsigned();
-            $table->foreign('supply_id')
-                    ->references('id')
-                    ->on('supplies')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $table->integer('quantity');
-            $table->decimal('unitcost', 8, 2)->nullable();
-            $table->softDeletes();
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('disposal_supply')){
+            Schema::create('disposal_supply', function(Blueprint $table){
+                $table->increments('id');
+                $table->integer('disposal_id')->unsigned();
+                $table->foreign('disposal_id')
+                        ->references('id')
+                        ->on('disposals')
+                        ->onUpdate('cascade')
+                        ->onDelete('cascade');        
+                $table->integer('supply_id')->unsigned();
+                $table->foreign('supply_id')
+                        ->references('id')
+                        ->on('supplies')
+                        ->onUpdate('cascade')
+                        ->onDelete('cascade');
+                $table->integer('quantity');
+                $table->decimal('unitcost', 8, 2)->nullable();
+                $table->softDeletes();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

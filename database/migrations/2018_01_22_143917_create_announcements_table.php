@@ -13,20 +13,22 @@ class CreateAnnouncementsTable extends Migration
      */
     public function up()
     {
-        Schema::create('announcements', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('title', 50);
-            $table->longtext('details')->nullable();
-            $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')
-                    ->references('id')
-                    ->on('users')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $table->integer('access')->default(4);
-            $table->longtext('url')->nullable();
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('announcements')){
+            Schema::create('announcements', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('title', 50);
+                $table->longtext('details')->nullable();
+                $table->integer('user_id')->unsigned();
+                $table->foreign('user_id')
+                        ->references('id')
+                        ->on('users')
+                        ->onUpdate('cascade')
+                        ->onDelete('cascade');
+                $table->integer('access')->default(4);
+                $table->longtext('url')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

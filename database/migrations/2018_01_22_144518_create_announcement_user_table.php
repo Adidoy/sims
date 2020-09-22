@@ -13,23 +13,25 @@ class CreateAnnouncementUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('announcement_user', function (Blueprint $table) {
-            $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')
-                    ->references('id')
-                    ->on('users')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $table->integer('announcement_id')->unsigned();
-            $table->foreign('announcement_id')
-                    ->references('id')
-                    ->on('announcements')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $table->boolean('is_read')->default(0);
-            $table->primary([ 'user_id', 'announcement_id' ]);
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('announcement_user')){
+            Schema::create('announcement_user', function (Blueprint $table) {
+                $table->integer('user_id')->unsigned();
+                $table->foreign('user_id')
+                        ->references('id')
+                        ->on('users')
+                        ->onUpdate('cascade')
+                        ->onDelete('cascade');
+                $table->integer('announcement_id')->unsigned();
+                $table->foreign('announcement_id')
+                        ->references('id')
+                        ->on('announcements')
+                        ->onUpdate('cascade')
+                        ->onDelete('cascade');
+                $table->boolean('is_read')->default(0);
+                $table->primary([ 'user_id', 'announcement_id' ]);
+                $table->timestamps();
+            });
+        }
     }
 
     /**

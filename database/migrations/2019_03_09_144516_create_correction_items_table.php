@@ -13,22 +13,24 @@ class CreateCorrectionItemsTable extends Migration
      */
     public function up()
     {
-        Schema::create('correction_items', function (Blueprint $table) {
-            $table->integer('correction_id')->unsigned();
-            $table->foreign('correction_id')
-                    ->references('id')
-                    ->on('corrections');        
-            $table->integer('supply_id')->unsigned();
-            $table->foreign('supply_id')
-                    ->references('id')
-                    ->on('supplies');
-            $table->integer('quantity_from');
-            $table->integer('quantity_to');
-            $table->string('remarks');
-            $table->string('status');
-            $table->primary(['correction_id', 'supply_id']);
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('correction_items')){
+            Schema::create('correction_items', function (Blueprint $table) {
+                $table->integer('correction_id')->unsigned();
+                $table->foreign('correction_id')
+                        ->references('id')
+                        ->on('corrections');        
+                $table->integer('supply_id')->unsigned();
+                $table->foreign('supply_id')
+                        ->references('id')
+                        ->on('supplies');
+                $table->integer('quantity_from');
+                $table->integer('quantity_to');
+                $table->string('remarks');
+                $table->string('status');
+                $table->primary(['correction_id', 'supply_id']);
+                $table->timestamps();
+            });
+        }
     }
 
     /**

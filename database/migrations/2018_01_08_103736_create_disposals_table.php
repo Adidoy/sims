@@ -13,13 +13,15 @@ class CreateDisposalsTable extends Migration
      */
     public function up()
     {
-        Schema::create('disposals', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('details')->nullable();
-            $table->string('created_by');
-            $table->string('status')->nullable();
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('disposals')){
+            Schema::create('disposals', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('details')->nullable();
+                $table->string('created_by');
+                $table->string('status')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

@@ -13,14 +13,16 @@ class CreateUnitsTable extends Migration
      */
     public function up()
     {
-        Schema::create('units', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name')->unique();
-            $table->string('abbreviation')->unique();
-            $table->string('description');
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        if(!Schema::hasTable('units')){
+            Schema::create('units', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('name')->unique();
+                $table->string('abbreviation')->unique();
+                $table->string('description');
+                $table->timestamps();
+                $table->softDeletes();
+            });
+        } 
     }
 
     /**

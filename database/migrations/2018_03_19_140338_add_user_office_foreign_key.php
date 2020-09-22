@@ -13,13 +13,15 @@ class AddUserOfficeForeignKey extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-                    $table->foreign('office')
-                    ->references('code')
-                    ->on('offices')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-        });
+        if(!Schema::hasTable('users')){
+            Schema::table('users', function (Blueprint $table) {
+                        $table->foreign('office')
+                        ->references('code')
+                        ->on('offices')
+                        ->onUpdate('cascade')
+                        ->onDelete('cascade');
+            });
+        }
     }
 
     /**

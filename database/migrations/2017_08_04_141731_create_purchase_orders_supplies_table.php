@@ -13,26 +13,28 @@ class CreatePurchaseOrdersSuppliesTable extends Migration
      */
     public function up()
     {
-        Schema::create('purchaseorders_supplies', function (Blueprint $table) {
-            $table->integer('purchaseorder_id')->unsigned();
-            $table->foreign('purchaseorder_id')
-                    ->references('id')
-                    ->on('purchaseorders')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $table->integer('supply_id')->unsigned();
-            $table->foreign('supply_id')
-                    ->references('id')
-                    ->on('supplies')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $table->decimal('unitcost')->default(0);
-            $table->integer('ordered_quantity')->default(0);
-            $table->integer('received_quantity')->default(0);
-            $table->integer('remaining_quantity')->default(0);
-            $table->primary(['purchaseorder_id', 'supply_id']);
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('purchaseorders_supplies')){
+            Schema::create('purchaseorders_supplies', function (Blueprint $table) {
+                $table->integer('purchaseorder_id')->unsigned();
+                $table->foreign('purchaseorder_id')
+                        ->references('id')
+                        ->on('purchaseorders')
+                        ->onUpdate('cascade')
+                        ->onDelete('cascade');
+                $table->integer('supply_id')->unsigned();
+                $table->foreign('supply_id')
+                        ->references('id')
+                        ->on('supplies')
+                        ->onUpdate('cascade')
+                        ->onDelete('cascade');
+                $table->decimal('unitcost')->default(0);
+                $table->integer('ordered_quantity')->default(0);
+                $table->integer('received_quantity')->default(0);
+                $table->integer('remaining_quantity')->default(0);
+                $table->primary(['purchaseorder_id', 'supply_id']);
+                $table->timestamps();
+            });
+        } 
     }
 
     /**

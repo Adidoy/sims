@@ -13,20 +13,22 @@ class CreateAdjustmentHeader extends Migration
      */
     public function up()
     {
-        Schema::create('adjustments_header', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('local');
-            $table->string('reference');
-            $table->string('reasonLeadingTo');
-            $table->string('details')->nullable();
-            $table->string('action');
-            $table->integer('processed_by')->unsigned();
-            $table->foreign('processed_by')
-                    ->references('id')
-                    ->on('users');
-            $table->softDeletes();
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('adjustments_header')){
+            Schema::create('adjustments_header', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('local');
+                $table->string('reference');
+                $table->string('reasonLeadingTo');
+                $table->string('details')->nullable();
+                $table->string('action');
+                $table->integer('processed_by')->unsigned();
+                $table->foreign('processed_by')
+                        ->references('id')
+                        ->on('users');
+                $table->softDeletes();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

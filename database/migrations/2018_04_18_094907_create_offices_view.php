@@ -13,19 +13,23 @@ class CreateOfficesView extends Migration
      */
     public function up()
     {
-    DB::statement("
-        CREATE DEFINER=`root`@`localhost` VIEW offices_v AS
-        SELECT o1.id AS 'office_id',
-               IFNULL(o4.id,IFNULL(o3.id,IFNULL(o2.id,o1.id))) AS 'sector_id',
-               o1.code AS 'level1',
-               IFNULL(o2.code,o1.code) AS 'level2',
-               IFNULL(o3.code,IFNULL(o2.code,o1.code)) AS 'level3',
-               IFNULL(o4.code,IFNULL(o3.code,IFNULL(o2.code,o1.code))) AS 'level4'
-        FROM offices AS o1
-        LEFT JOIN offices AS o2 ON o1.head_office = o2.id
-        LEFT JOIN offices AS o3 ON o2.head_office = o3.id
-        LEFT JOIN offices AS o4 ON o3.head_office = o4.id
-");
+        $query = DB::select("SELECT * FROM information_schema.VIEWS WHERE TABLE_NAME='offices_v'");
+        if(empty($query)){
+            DB::statement("
+                CREATE DEFINER=`root`@`localhost` VIEW offices_v AS
+                SELECT o1.id AS 'office_id',
+                       IFNULL(o4.id,IFNULL(o3.id,IFNULL(o2.id,o1.id))) AS 'sector_id',
+                       o1.code AS 'level1',
+                       IFNULL(o2.code,o1.code) AS 'level2',
+                       IFNULL(o3.code,IFNULL(o2.code,o1.code)) AS 'level3',
+                       IFNULL(o4.code,IFNULL(o3.code,IFNULL(o2.code,o1.code))) AS 'level4'
+                FROM offices AS o1
+                LEFT JOIN offices AS o2 ON o1.head_office = o2.id
+                LEFT JOIN offices AS o3 ON o2.head_office = o3.id
+                LEFT JOIN offices AS o4 ON o3.head_office = o4.id
+        ");
+	    } 
+
     }
 
     /**

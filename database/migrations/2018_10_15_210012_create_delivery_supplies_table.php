@@ -12,16 +12,18 @@ class CreateDeliverySuppliesTable extends Migration
      * @return void
      */
     public function up() {
-        Schema::create('deliveries_supplies', function (Blueprint $table) {
-            $table->integer('delivery_id')->unsigned();
-            $table->foreign('delivery_id')->references('id')->on('deliveries_header');
-            $table->integer('supply_id')->unsigned();
-            $table->foreign('supply_id')->references('id')->on('supplies');
-            $table->integer('quantity_delivered');
-            $table->decimal('unit_cost',8,2);
-            $table->softDeletes();
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('deliveries_supplies')){
+            Schema::create('deliveries_supplies', function (Blueprint $table) {
+                $table->integer('delivery_id')->unsigned();
+                $table->foreign('delivery_id')->references('id')->on('deliveries_header');
+                $table->integer('supply_id')->unsigned();
+                $table->foreign('supply_id')->references('id')->on('supplies');
+                $table->integer('quantity_delivered');
+                $table->decimal('unit_cost',8,2);
+                $table->softDeletes();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

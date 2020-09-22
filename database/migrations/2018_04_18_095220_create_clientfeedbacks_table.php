@@ -13,13 +13,15 @@ class CreateClientfeedbacksTable extends Migration
      */
     public function up()
     {
-        Schema::create('clientfeedbacks', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('user');
-            $table->string('type');
-            $table->string('comment');
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('clientfeedbacks')){
+            Schema::create('clientfeedbacks', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('user');
+                $table->string('type');
+                $table->string('comment');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

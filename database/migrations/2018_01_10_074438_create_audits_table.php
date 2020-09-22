@@ -25,19 +25,21 @@ class CreateAuditsTable extends Migration
      */
     public function up()
     {
-        Schema::create('audits', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('user_id')->nullable();
-            $table->string('event');
-            $table->morphs('auditable');
-            $table->text('old_values')->nullable();
-            $table->text('new_values')->nullable();
-            $table->text('url')->nullable();
-            $table->ipAddress('ip_address')->nullable();
-            $table->string('user_agent')->nullable();
-            $table->string('tags')->nullable();
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('audits')){
+            Schema::create('audits', function (Blueprint $table) {
+                $table->increments('id');
+                $table->unsignedInteger('user_id')->nullable();
+                $table->string('event');
+                $table->morphs('auditable');
+                $table->text('old_values')->nullable();
+                $table->text('new_values')->nullable();
+                $table->text('url')->nullable();
+                $table->ipAddress('ip_address')->nullable();
+                $table->string('user_agent')->nullable();
+                $table->string('tags')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

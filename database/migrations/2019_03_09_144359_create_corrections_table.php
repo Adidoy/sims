@@ -13,20 +13,22 @@ class CreateCorrectionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('corrections', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('control_number');
-            $table->datetime('filled_at')->nullable();
-            $table->datetime('submitted_at')->nullable();
-            $table->datetime('processed_at')->nullable();
-            $table->longText('remarks')->nullable();
-            $table->longText('reasons')->nullable();
-            $table->string('requested_by')->nullable();
-            $table->string('processed_by')->nullable();
-            $table->string('endorsed_by')->nullable();
-            $table->string('status')->nullable();
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('corrections')){
+            Schema::create('corrections', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('control_number');
+                $table->datetime('filled_at')->nullable();
+                $table->datetime('submitted_at')->nullable();
+                $table->datetime('processed_at')->nullable();
+                $table->longText('remarks')->nullable();
+                $table->longText('reasons')->nullable();
+                $table->string('requested_by')->nullable();
+                $table->string('processed_by')->nullable();
+                $table->string('endorsed_by')->nullable();
+                $table->string('status')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

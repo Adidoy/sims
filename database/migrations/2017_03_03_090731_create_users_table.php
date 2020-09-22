@@ -12,24 +12,26 @@ class CreateUsersTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('users', function(Blueprint $table)
-		{
-			$table->increments('id');
-			$table->string('username',50)->unique();
-			$table->string('password',254);
-			$table->string('firstname',100);
-			$table->string('middlename',50)->nullable();
-			$table->string('lastname',50);
-			$table->string('email',100)->nullable();
-			$table->string('contact')->nullable();
-			$table->integer('access');
-			$table->string('office')->nullable();
-			$table->string('department')->nullable();
-			$table->string('position')->nullable();
-			$table->boolean('status');
-			$table->timestamps();
-			$table->softDeletes();
-		});
+		if(!Schema::hasTable('users')){
+			Schema::create('users', function(Blueprint $table)
+			{
+				$table->increments('id');
+				$table->string('username',50)->unique();
+				$table->string('password',254);
+				$table->string('firstname',100);
+				$table->string('middlename',50)->nullable();
+				$table->string('lastname',50);
+				$table->string('email',100)->nullable();
+				$table->string('contact')->nullable();
+				$table->integer('access');
+				$table->string('office')->nullable();
+				$table->string('department')->nullable();
+				$table->string('position')->nullable();
+				$table->boolean('status');
+				$table->timestamps();
+				$table->softDeletes();
+			});
+		} 
 	}
 
 	/**

@@ -13,19 +13,21 @@ class CreateNotificationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('notifications', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('title');
-            $table->longtext('description');
-            $table->datetime('valid_until');
-            $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')
-                    ->references('id')
-                    ->on('users')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('notifications')){
+            Schema::create('notifications', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('title');
+                $table->longtext('description');
+                $table->datetime('valid_until');
+                $table->integer('user_id')->unsigned();
+                $table->foreign('user_id')
+                        ->references('id')
+                        ->on('users')
+                        ->onUpdate('cascade')
+                        ->onDelete('cascade');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

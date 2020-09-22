@@ -12,9 +12,11 @@ class AddSpecificUserToAnnouncements extends Migration {
      */
     public function up()
     {
-        Schema::table('announcements', function (Blueprint $table) {
-            $table->string('specified_users')->nullable();
-        });
+        if(!Schema::hasTable('announcements')){
+            Schema::table('announcements', function (Blueprint $table) {
+                $table->string('specified_users')->nullable();
+            });
+        }
     }
 
     /**

@@ -13,28 +13,31 @@ class CreateMonthlyledgerView extends Migration
      */
     public function up()
     {
-        DB::statement("
-          CREATE DEFINER=`root`@`localhost` VIEW monthlyledger_v AS
-          SELECT
-                max(reference) as reference,
-                max(date) as date,
-                supplies.stocknumber,
-                sum(received_quantity) AS received_quantity,
-                avg(received_unitcost) AS received_unitcost,
-                sum(issued_quantity) AS issued_quantity,
-                avg(issued_unitcost) AS issued_unitcost,
-                avg(daystoconsume) as daystoconsume
-            FROM
-                ledgercards
-            LEFT JOIN 
-                supplies
-            ON
-                supplies.id = ledgercards.supply_id
-          GROUP BY
-                YEAR (date),
-                MONTH (date), 
-                supplies.stocknumber 
-        ");
+        $query = DB::select("SELECT * FROM information_schema.VIEWS WHERE TABLE_NAME='monthlyledger_v'");
+        if(empty($query)){
+            DB::statement("
+              CREATE DEFINER=`root`@`localhost` VIEW monthlyledger_v AS
+              SELECT
+                    max(reference) as reference,
+                    max(date) as date,
+                    supplies.stocknumber,
+                    sum(received_quantity) AS received_quantity,
+                    avg(received_unitcost) AS received_unitcost,
+                    sum(issued_quantity) AS issued_quantity,
+                    avg(issued_unitcost) AS issued_unitcost,
+                    avg(daystoconsume) as daystoconsume
+                FROM
+                    ledgercards
+                LEFT JOIN 
+                    supplies
+                ON
+                    supplies.id = ledgercards.supply_id
+              GROUP BY
+                    YEAR (date),
+                    MONTH (date), 
+                    supplies.stocknumber 
+            ");
+        } 
     }
 
     /**
