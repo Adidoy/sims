@@ -16,7 +16,7 @@ class CreateUacsView extends Migration
         $query = DB::select("SELECT * FROM information_schema.VIEWS WHERE TABLE_NAME='uacs_v'");
         if(empty($query)){
             DB::statement("
-                CREATE DEFINER=`root`@`localhost` VIEW uacs_v AS
+                CREATE VIEW uacs_v AS
                 SELECT
                     purchaseorders.date_received AS date_received,
                     supplies.stocknumber AS stocknumber,

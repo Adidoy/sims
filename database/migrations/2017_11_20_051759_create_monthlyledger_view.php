@@ -16,7 +16,7 @@ class CreateMonthlyledgerView extends Migration
         $query = DB::select("SELECT * FROM information_schema.VIEWS WHERE TABLE_NAME='monthlyledger_v'");
         if(empty($query)){
             DB::statement("
-              CREATE DEFINER=`root`@`localhost` VIEW monthlyledger_v AS
+              CREATE VIEW monthlyledger_v AS
               SELECT
                     max(reference) as reference,
                     max(date) as date,

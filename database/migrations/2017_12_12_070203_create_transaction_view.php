@@ -16,7 +16,7 @@ class CreateTransactionView extends Migration
         $query = DB::select("SELECT * FROM information_schema.VIEWS WHERE TABLE_NAME='transaction_v'");
         if(empty($query)){
             DB::statement("
-                CREATE DEFINER=`root`@`localhost` VIEW transaction_v AS
+                CREATE VIEW transaction_v AS
                 SELECT 
                     stockcards.id as id,
                     stockcards.date as date,

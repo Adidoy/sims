@@ -16,7 +16,7 @@ class CreateRequestsSummaryView extends Migration
         $query = DB::select("SELECT * FROM information_schema.VIEWS WHERE TABLE_NAME='requests_v2'");
         if(empty($query)){
             DB::STATEMENT("
-                CREATE DEFINER=`root`@`localhost` VIEW requests_v2 AS
+                CREATE VIEW requests_v2 AS
                 SELECT 
                 o.code,
                 o.name,

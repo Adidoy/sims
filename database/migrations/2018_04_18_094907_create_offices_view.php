@@ -16,7 +16,7 @@ class CreateOfficesView extends Migration
         $query = DB::select("SELECT * FROM information_schema.VIEWS WHERE TABLE_NAME='offices_v'");
         if(empty($query)){
             DB::statement("
-                CREATE DEFINER=`root`@`localhost` VIEW offices_v AS
+                CREATE VIEW offices_v AS
                 SELECT o1.id AS 'office_id',
                        IFNULL(o4.id,IFNULL(o3.id,IFNULL(o2.id,o1.id))) AS 'sector_id',
                        o1.code AS 'level1',

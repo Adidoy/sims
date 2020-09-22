@@ -13,12 +13,10 @@ class CreateDeliveriesView extends Migration
      */
     public function up()
     {
-        $query = DB::select("SELECT * FROM information_schema.VIEWS WHERE TABLE_NAME='vDeliveries'");
+        $query = DB::select("SELECT * FROM information_schema.VIEWS WHERE TABLE_NAME='vDeliverySummary'");
         if(empty($query)){
             DB::STATEMENT("
-                CREATE VIEW vDeliveries AS
-                SELECT *
-                FROM (
+                CREATE VIEW vDeliverySummary AS
                     SELECT  deliveries_header.id AS `ID`  
                             , deliveries_header.`local` AS `DeliveryReference`
                             , suppliers.`name` AS `Supplier`
@@ -42,8 +40,6 @@ class CreateDeliveriesView extends Migration
                             , receipts.`created_at`
                     FROM receipts JOIN suppliers
                     ON suppliers.`id` = receipts.`supplier_id`
-                ) AS Deliveries
-                ORDER BY Deliveries.created_at DESC
             ");
 	    } 
     }
